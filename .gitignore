@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+__pycache__/
+.venv/
+.cache/
+build/
+site/_site/
+site/.quarto/
+site/reports/
+site/social/
+site/latest.json
+*.log
+.DS_Store

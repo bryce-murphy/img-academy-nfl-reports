@@ -1,0 +1,9 @@
+[project]
+name = "img-academy-nfl-reports"
+version = "0.1.0"
+description = "Evidence-led weekly reporting on IMG Academy football alumni in the NFL"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.ruff]
+line-length = 100
