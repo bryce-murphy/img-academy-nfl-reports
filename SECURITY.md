@@ -6,7 +6,13 @@ The supported version is the current main branch. Rotate any exposed credential 
 
 ## Repository controls
 
-The initial setup enables available public-repository secret scanning, push protection, Dependabot alerts and security fixes, CodeQL, private vulnerability reporting, read-only default Actions permissions, and protected main-branch changes. Actions are pinned to immutable commit SHAs. Workflow inputs are passed through environment variables and validated; untrusted pull-request text is never inserted into shell programs. Pull requests never receive social credentials. No pull_request_target workflow or self-hosted runner is used.
+Verified September 26, 2026: public-repository secret scanning, push protection, Dependabot alerts and security fixes, CodeQL, private vulnerability reporting, and read-only default Actions permissions are enabled. Actions cannot approve pull requests. Allowed actions are GitHub-owned actions plus `github/codeql-action`; full commit-SHA pinning is enforced. Non-provider secret patterns and validity checks were not enabled at verification; core secret scanning and push protection are enabled.
+
+`main` requires pull requests and up-to-date passing `tests` and `analyze` checks from GitHub Actions. Signed commits, linear history, and resolved review conversations are required. Administrators are subject to these controls. Force pushes and branch deletion are disabled. External approving reviews are set to zero for the solo maintainer; stale approvals are dismissed. Adding a collaborator should trigger review of this policy before requiring an external approval.
+
+Use a feature branch and a signed commit, then a pull request; do not temporarily disable protections to land changes. GitHub's web editor or `createCommitOnBranch` API can produce verified commits when a local signing key is not configured. The existing initial commit predates signature enforcement.
+
+Workflow inputs are passed through environment variables and validated; untrusted pull-request text is never inserted into shell programs. Pull requests never receive social credentials. No pull_request_target workflow or self-hosted runner is used.
 
 No runtime third-party Python dependencies are needed by the initial report builder. Data has explicit HTTPS origins, download limits, schema checks, upstream timestamps, and SHA-256 manifests. All external text is escaped before HTML rendering. Only approved NFL/ESPN image hosts are rendered.
 
