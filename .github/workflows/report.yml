@@ -19,7 +19,7 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: '0 9 * 9-12,1-2 2'
+    - cron: '0 9 * 9-12,1-2 3'
       timezone: America/New_York
 permissions:
   contents: read
