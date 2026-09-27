@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Archive · {{ site.title }}{% endblock %}
+{% block content %}
+<article class="prose">
+  <h1>Every edition</h1>
+  {% if editions %}
+  <ol class="archive-list">
+  {% for e in editions %}
+    <li>
+      <p class="eyebrow">{{ e.season }} · Week {{ e.week }}{% if e.data.historical %} · Historical replay{% endif %}</p>
+      <a href="{{ root }}editions/{{ e.id }}/">{{ e.editorial.headline }}</a>
+      <p class="caption">{{ e.editorial.dek }}</p>
+    </li>
+  {% endfor %}
+  </ol>
+  {% else %}
+  <p>The first edition publishes on a Wednesday during the NFL season.</p>
+  {% endif %}
+</article>
+{% endblock %}

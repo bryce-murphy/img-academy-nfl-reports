@@ -1,0 +1,50 @@
+"""Decide whether the reporting week's data has landed. Pure functions over loaded datasets."""
+from __future__ import annotations
+
+from collections import defaultdict
+from dataclasses import dataclass, field
+from datetime import date, datetime
+
+from .evidence import num, snap_table_complete
+
+
+@dataclass
+class Readiness:
+    missing_required: list[str] = field(default_factory=list)
+    missing_optional: list[str] = field(default_factory=list)
+
+    def ready(self, final):
+        return not self.missing_required and (final or not self.missing_optional)
+
+    def missing(self):
+        return self.missing_required + self.missing_optional
+
+
+def _updated_on(timestamp):
+    return datetime.fromisoformat(timestamp.replace("Z", "+00:00")).date()
+
+
+def assess(data, manifest, games, season, week):
+    report = Readiness()
+    last_day = max(date.fromisoformat(g["gameday"]) for g in games)
+    ended = {p["game_id"] for p in data["pbp"] if p.get("desc", "").strip().upper() == "END GAME"}
+    for game in games:
+        if num(game["home_score"]) is None or num(game["away_score"]) is None:
+            report.missing_required.append(f"final score for {game['game_id']}")
+        if game["game_id"] not in ended:
+            report.missing_required.append(f"play-by-play end of game for {game['game_id']}")
+    if not any(int(s["season"]) == season and int(s["week"]) == week for s in data["stats"]):
+        report.missing_required.append("weekly player statistics")
+    rosters_updated = manifest.get("rosters", {}).get("updated_at")
+    if not rosters_updated or _updated_on(rosters_updated) <= last_day:
+        report.missing_required.append("weekly rosters updated after the last game")
+    by_team = defaultdict(list)
+    for row in data.get("snaps", []):
+        by_team[(row["game_id"], row["team"])].append(row)
+    for game in games:
+        for team in (game["away_team"], game["home_team"]):
+            if not snap_table_complete(by_team.get((game["game_id"], team), [])):
+                report.missing_optional.append(f"snap counts for {team} in {game['game_id']}")
+    if not any(int(i["season"]) == season and int(i["week"]) == week for i in data.get("injuries", [])):
+        report.missing_optional.append("injury report")
+    return report

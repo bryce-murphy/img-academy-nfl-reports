@@ -15,3 +15,7 @@ site/social/
 site/latest.json
 *.log
 .DS_Store
+
+_site/
+.venv-*/
+.claude/launch.json

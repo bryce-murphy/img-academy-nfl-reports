@@ -1,5 +1,5 @@
 {
-  "title": "IMG to the NFL",
+  "title": "IMG Academy → NFL",
   "author": "Bryce Murphy",
   "timezone": "America/New_York",
   "schedule": "Wednesday, 09:00 America/New_York",
@@ -8,7 +8,7 @@
   "display_third_party_images": false,
   "linkedin_profile": "https://www.linkedin.com/in/bryce-murphy/",
   "x_profile": "https://x.com/BryceVMurphy",
-  "season_types": ["REG", "POST"],
+  "season_types": ["REG", "WC", "DIV", "CON", "SB"],
   "max_source_age_hours": 48,
   "registry_reviewed_season": 2026,
   "registry_scope": "Played football at IMG Academy; camps and training-only attendance excluded",

@@ -1,0 +1,21 @@
+<article class="card" id="player-{{ p.id }}" style="--team: {{ p.team_color }}">
+  <p class="eyebrow">{{ p.team }} / {{ p.position }}</p>
+  <h3>{{ p.name }}</h3>
+  <p class="score">{{ p.score_line }}</p>
+  {% if p.stats_withheld %}
+  <p class="withheld">Stats withheld: the box score and play-by-play disagree.</p>
+  {% else %}
+  <div class="metrics">{% for m in p.metrics %}<div><strong>{{ m.value | num }}</strong><span>{{ m.label }}</span></div>{% endfor %}</div>
+  {% endif %}
+  <p class="evidence">{{ p.availability.evidence }} · Snaps {{ p.snap_line }}</p>
+  {% if p.injury_report %}<p class="availability-note">This week's injury report: {{ p.injury_report.designation or "no game designation" }} · {{ p.injury_report.primary_injury or "reason not supplied" }}. A pregame report, not a diagnosis or proof of absence.</p>{% endif %}
+  {% if p.next_gen %}<ul class="ngs">{% for m in p.next_gen %}<li>{{ m.label }}: <strong>{{ m.value }} {{ m.unit }}</strong></li>{% endfor %}</ul>{% endif %}
+  {% if p.key_plays %}
+  <details>
+    <summary>Key moments · {{ p.key_plays | length }}</summary>
+    <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }} · EPA {{ k.epa }}</span>{{ k.description }}</li>{% endfor %}</ol>
+    <p class="caption">Chosen by the size of each play's expected points added (EPA). EPA belongs to the offense on the play; it is not a player grade.</p>
+  </details>
+  {% endif %}
+  <footer>{{ p.context }}{% if p.context and p.source_url %} · {% endif %}{% if p.source_url %}<a href="{{ p.source_url }}" rel="noopener">IMG Academy affiliation source</a>{% endif %}</footer>
+</article>
