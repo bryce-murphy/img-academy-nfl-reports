@@ -118,6 +118,49 @@ class RenderTests(SiteTestCase):
         sources_json = json.loads(self.read(out / "editions" / "2026-week-02" / "sources.json"))
         self.assertEqual(sources_json, {})
 
+    def test_every_page_has_a_large_share_image_and_favicon(self):
+        out = self.render()
+        image = CONFIG["site_url"] + "static/share-card.png"
+        for page in out.rglob("*.html"):
+            html = self.read(page)
+            self.assertIn(f'<meta property="og:image" content="{image}">', html, page)
+            self.assertIn('<meta name="twitter:card" content="summary_large_image">', html, page)
+            self.assertIn('<meta property="og:image:alt"', html, page)
+            self.assertIn('static/favicon.svg" type="image/svg+xml">', html, page)
+        with open(out / "static" / "share-card.png", "rb") as handle:
+            header = handle.read(24)
+        self.assertEqual(header[:8], b"\x89PNG\r\n\x1a\n")
+        self.assertEqual((int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")), (1200, 630))
+        self.assertTrue((out / "static" / "favicon.svg").exists())
+
+    def test_cards_say_how_much_a_player_played_in_words(self):
+        html = self.read(self.render() / "index.html")
+        delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
+        self.assertNotIn("Positive snap count", html)
+        self.assertIn(f"Played {delpit['snaps']['defense']:g} defensive snaps", html)
+
+    def test_participation_line(self):
+        def player(snaps, metrics=(), label=ev.PLAYED, evidence="Positive snap count"):
+            return {"snaps": snaps, "metrics": [{"label": m, "value": 1} for m in metrics], "availability": {"label": label, "evidence": evidence}}
+
+        line = site.participation_line
+        self.assertEqual(line(player({"defense": 47, "st": 2}, ["solo tackles"])), "Played 47 defensive snaps and 2 on special teams.")
+        self.assertEqual(line(player({"offense": 40}, ["receiving yards"])), "Played 40 offensive snaps.")
+        self.assertEqual(line(player({"offense": 3, "defense": 1, "st": 12}, ["solo tackles"])), "Played 3 offensive snaps, 1 defensive snap and 12 on special teams.")
+        self.assertEqual(line(player({"st": 12}, ["solo tackles"])), "Played 12 special-teams snaps.")
+        self.assertEqual(line(player({"offense": 68, "st": 4}, ["offensive snaps", "special-teams snaps"])), "")
+        self.assertEqual(
+            line(player({}, ["receiving yards"], evidence="Recorded play involvement")),
+            "Recorded play involvement; snap counts not available.",
+        )
+        self.assertEqual(line(dict(player({"offense": 68}, ["offensive snaps"]), stats_withheld=True)), "Played 68 offensive snaps.")
+
+    def test_linkedin_draft_is_first_person_and_states_independence(self):
+        drafts = json.loads(self.read(self.render() / "editions" / "2026-week-02" / "social-drafts.json"))
+        self.assertIn("Every week I track", drafts["linkedin"])
+        self.assertIn("Not affiliated with IMG Academy or the NFL", drafts["linkedin"])
+        self.assertNotIn("participation evidence", drafts["linkedin"])
+
     def test_helpers(self):
         delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
         self.assertEqual(site.result_line(delpit), "W 23–19 vs. TB")
