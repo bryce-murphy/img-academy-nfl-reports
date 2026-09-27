@@ -5,7 +5,7 @@ import base64
 import json
 from urllib.error import HTTPError
 from urllib.parse import quote, urlencode, urlparse
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 API = "https://api.github.com"
 
@@ -16,12 +16,23 @@ class GitHubError(RuntimeError):
         self.status = status
 
 
+class _RefuseRedirects(HTTPRedirectHandler):
+    """Never follow redirects: a 3xx would resend the Authorization header to the new location."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_OPENER = build_opener(_RefuseRedirects)
+
+
 def urllib_transport(method, url, headers, body):
-    if urlparse(url).hostname != "api.github.com":
-        raise GitHubError(0, f"refusing a non-GitHub host in {url}")
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or parsed.hostname != "api.github.com":
+        raise GitHubError(0, f"refusing a non-GitHub URL {url}")
     request = Request(url, data=body, method=method, headers=headers)
     try:
-        with urlopen(request, timeout=60) as response:
+        with _OPENER.open(request, timeout=60) as response:
             return response.status, response.read()
     except HTTPError as exc:
         return exc.code, exc.read()

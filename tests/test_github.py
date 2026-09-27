@@ -2,7 +2,7 @@ import base64
 import json
 import unittest
 
-from src.github import GitHub, GitHubError, urllib_transport
+from src.github import GitHub, GitHubError, urllib_transport, _RefuseRedirects
 
 
 class FakeTransport:
@@ -80,6 +80,19 @@ class GitHubTests(unittest.TestCase):
     def test_transport_refuses_other_hosts(self):
         with self.assertRaises(GitHubError):
             urllib_transport("GET", "https://example.org/repos", {}, None)
+
+    def test_redirects_are_never_followed(self):
+        self.assertIsNone(_RefuseRedirects().redirect_request(None, None, 302, "Found", {}, "https://evil.example/"))
+
+    def test_transport_refuses_plain_http(self):
+        with self.assertRaises(GitHubError):
+            urllib_transport("GET", "http://api.github.com/repos", {}, None)
+
+    def test_redirect_status_is_an_error(self):
+        gh, _ = client((302, {"message": "Moved"}))
+        with self.assertRaises(GitHubError) as ctx:
+            gh.open_prs()
+        self.assertEqual(ctx.exception.status, 302)
 
 
 if __name__ == "__main__":
