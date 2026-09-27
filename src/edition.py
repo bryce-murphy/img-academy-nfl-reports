@@ -167,7 +167,7 @@ def player_record(alum, wk, warnings):
     highlights = sorted((p for p in involvement if ev.num(p.get("epa")) is not None), key=lambda p: abs(ev.num(p["epa"])), reverse=True)[:3]
     next_team = current.get("team") or team
     upcoming = None
-    if not wk.historical:
+    if not wk.historical and current.get("status") not in ("CUT", "RET"):
         upcoming = next_game(data["schedule"], wk.season, wk.week, next_team)
         upcoming.update(team=next_team, team_name=wk.team_name(next_team), team_color=wk.team_color(next_team))
     draft = f"{person['draft_year']} draft, round {person.get('draft_round', '')}" if person.get("draft_year") else ""
@@ -272,7 +272,12 @@ def due_week(season, week, *, today, historical, scheduled, season_types, source
 
 def build_week(season, week, games, *, historical, final, registry, sources=fetch):
     data, manifest, warnings = sources(season, week=week, historical=historical)
-    report = readiness.assess(data, manifest, games, season, week)
+    ids = {alum["gsis_id"] for alum in registry}
+    followed_teams = {
+        row["team"] for row in data["rosters"]
+        if row["gsis_id"] in ids and int(row["season"]) == season and int(row["week"]) == week
+    }
+    report = readiness.assess(data, manifest, games, season, week, followed_teams=followed_teams)
     if not report.ready(final):
         raise NotReady("Waiting for: " + "; ".join(report.missing()), week=week)
     warnings = list(warnings) + [f"{item} not yet available; related claims withheld" for item in report.missing_optional]

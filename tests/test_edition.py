@@ -92,6 +92,22 @@ class EditionTests(unittest.TestCase):
         self.assertTrue(tate["team_changed"])
         self.assertEqual((tate["next_game"]["team"], tate["next_game"]["opponent"]), ("CLE", "CAR"))
 
+    def test_cut_player_has_no_up_next(self):
+        data, _, _ = fixture_data.load()
+        for row in data["current_rosters"]:
+            if row["gsis_id"] == alum("Carnell Tate")["gsis_id"]:
+                row["status"] = "CUT"
+        tate = player(build(data), "Carnell Tate")
+        self.assertIsNone(tate["next_game"])
+
+    def test_retired_player_has_no_up_next(self):
+        data, _, _ = fixture_data.load()
+        for row in data["current_rosters"]:
+            if row["gsis_id"] == alum("Carnell Tate")["gsis_id"]:
+                row["status"] = "RET"
+        tate = player(build(data), "Carnell Tate")
+        self.assertIsNone(tate["next_game"])
+
     def test_yardage_mismatch_withholds_only_that_player(self):
         data, _, _ = fixture_data.load()
         for row in data["stats"]:

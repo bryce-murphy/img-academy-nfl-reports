@@ -1,5 +1,7 @@
 # Launch plan and verified source findings
 
+> The decisions of 2026-09-26 in [the v1 design spec](superpowers/specs/2026-09-26-wednesday-edition-v1-design.md) supersede this plan where they differ: the brand, full automation with headline approval, Git as the archive, and Quarto retired in favor of Jinja2.
+
 Data research checked September 25, 2026; cadence and repository controls updated September 26. This is a build plan, not an assertion that every feature is already enabled.
 
 ## Accepted decisions

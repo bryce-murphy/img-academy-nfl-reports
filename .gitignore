@@ -8,11 +8,6 @@ __pycache__/
 .venv/
 .cache/
 build/
-site/_site/
-site/.quarto/
-site/reports/
-site/social/
-site/latest.json
 *.log
 .DS_Store
 

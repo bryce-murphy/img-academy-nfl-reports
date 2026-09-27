@@ -24,17 +24,22 @@ def _updated_on(timestamp):
     return datetime.fromisoformat(timestamp.replace("Z", "+00:00")).date()
 
 
-def assess(data, manifest, games, season, week):
+def assess(data, manifest, games, season, week, followed_teams=None):
     report = Readiness()
     last_day = max(date.fromisoformat(g["gameday"]) for g in games)
     ended = {p["game_id"] for p in data["pbp"] if p.get("desc", "").strip().upper() == "END GAME"}
+    stats_by_game = defaultdict(list)
+    for row in data["stats"]:
+        if int(row["season"]) == season and int(row["week"]) == week:
+            stats_by_game[row["game_id"]].append(row)
     for game in games:
         if num(game["home_score"]) is None or num(game["away_score"]) is None:
             report.missing_required.append(f"final score for {game['game_id']}")
         if game["game_id"] not in ended:
             report.missing_required.append(f"play-by-play end of game for {game['game_id']}")
-    if not any(int(s["season"]) == season and int(s["week"]) == week for s in data["stats"]):
-        report.missing_required.append("weekly player statistics")
+        if followed_teams is None or {game["away_team"], game["home_team"]} & followed_teams:
+            if not stats_by_game.get(game["game_id"]):
+                report.missing_required.append(f"player statistics for {game['game_id']}")
     rosters_updated = manifest.get("rosters", {}).get("updated_at")
     if not rosters_updated or _updated_on(rosters_updated) <= last_day:
         report.missing_required.append("weekly rosters updated after the last game")
