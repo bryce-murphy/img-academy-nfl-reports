@@ -185,7 +185,7 @@ alternates = ["…", "…"]
 ### Drafting step
 
 1. Build a fact sheet from `edition.json` only: played players with metrics, results, key-play descriptions, availability counts, next games. Play descriptions are treated as quoted data in the prompt, never as instructions.
-2. Call the Messages API (`api.anthropic.com` added to a separate host allowlist) with a structured-output request for the TOML fields. The model ID lives in `config.json` (`editorial_model`); request format and model choice are confirmed against current API documentation during implementation. Timeout 60 s; two retries on 429/5xx.
+2. Call the Messages API (`api.anthropic.com` added to a separate host allowlist) with a structured-output request for the TOML fields. The model ID lives in `config.json` (`editorial_model`, `claude-opus-5-5`) called at explicit `medium` effort, with the fact sheet wrapped in `<edition_facts>` tags in the user message. Timeout 60 s; two retries on 429/5xx.
 3. Validate (below). On success, write `source = "claude"`. On API failure or a failed hard check, write the template fallback (`source = "fallback"`) and include the rejected draft and reasons in the PR description so the owner can still use it.
 
 ### Validator

@@ -20,7 +20,7 @@
 - Edition id `<season>-week-<WW>` (e.g. `2026-week-03`); PR branch `edition/<id>`; blocking issue title `Edition <id> blocked` with label `edition-blocked`.
 - Schedule (America/New_York): attempts `30 14 * 9-12,1-2 2`, `30 20 * 9-12,1-2 2`, `30 6 * 9-12,1-2 3` (final); reminder `0 9 * 9-12,1-2 3`.
 - Headline file limits: headline ≤ 70 characters, dek ≤ 160 characters, lead ≤ 80 words, exactly two alternates.
-- Claude call: official `anthropic` SDK, model `claude-opus-5` (from `config.json` `editorial_model`), `client.beta.messages.create(..., betas=["server-side-fallback-2026-07-01"], fallbacks="default", output_config={"format": {"type": "json_schema", ...}})`. Check `stop_reason` before reading content. Any failure falls back to the template headline; the pipeline never waits on Claude.
+- Claude call: official `anthropic` SDK, model `claude-opus-5-5` (from `config.json` `editorial_model`), `client.beta.messages.create(..., betas=["server-side-fallback-2026-07-01"], fallbacks="default", output_config={"effort": "medium", "format": {"type": "json_schema", ...}})`, facts wrapped in `<edition_facts>` tags. Check `stop_reason` before reading content. Any failure falls back to the template headline; the pipeline never waits on Claude.
 - Snap table is "complete" when a team has rows for ≥ 22 distinct players in the game, with at least one positive offensive and one positive defensive snap count.
 - Accuracy rules: IDs, never names; missing evidence is never a DNP; never infer injury, illness or benching; yardage disagreement withholds that player's stat line instead of failing the edition.
 - Files the code writes into `editions/` use LF line endings (`newline="\n"`).

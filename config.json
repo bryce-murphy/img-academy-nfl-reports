@@ -12,5 +12,6 @@
   "max_source_age_hours": 48,
   "registry_reviewed_season": 2026,
   "registry_scope": "Played football at IMG Academy; camps and training-only attendance excluded",
-  "site_url": "https://bryce-murphy.github.io/img-academy-nfl-reports/"
+  "site_url": "https://bryce-murphy.github.io/img-academy-nfl-reports/",
+  "editorial_model": "claude-opus-5-5"
 }
