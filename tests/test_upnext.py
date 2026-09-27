@@ -3,10 +3,11 @@ import unittest
 from src.upnext import kickoff_label, matchup_label, next_game
 
 
-def game(week, away, home, day, time="13:00", stadium="Field", location="Home", game_type="REG"):
+def game(week, away, home, day, time="13:00", stadium="Field", location="Home", game_type="REG", away_score="", home_score=""):
     return {
         "season": "2026", "game_type": game_type, "week": str(week), "away_team": away, "home_team": home,
         "gameday": day, "gametime": time, "stadium": stadium, "location": location,
+        "away_score": away_score, "home_score": home_score,
     }
 
 
@@ -44,12 +45,39 @@ class NextGameTests(unittest.TestCase):
         self.assertEqual(next_game(SCHEDULE, 2026, 2, ""), {"kind": "unconfirmed"})
 
     def test_no_future_game(self):
-        self.assertEqual(next_game(SCHEDULE, 2026, 18, "PHI"), {"kind": "season_complete"})
+        # No future game after week 5: since no postseason games exist for PHI, unconfirmed
         self.assertEqual(next_game(SCHEDULE, 2026, 5, "PHI"), {"kind": "unconfirmed"})
+        # Week 18 regular season with no bracket game: still unconfirmed (not yet known who advances)
+        reg_only = [game(18, "PHI", "CHI", "2026-12-27", "13:00", home_score="28", away_score="24")]
+        self.assertEqual(next_game(reg_only, 2026, 18, "PHI"), {"kind": "unconfirmed"})
+        # After week 19 (one playoff week), team with no game: season_complete
+        self.assertEqual(next_game(reg_only, 2026, 19, "PHI"), {"kind": "season_complete"})
 
     def test_postseason_games_are_found(self):
-        schedule = [game(19, "PHI", "CHI", "2027-01-16", game_type="POST")]
-        self.assertEqual(next_game(schedule, 2026, 18, "PHI")["week"], 19)
+        schedule = [game(19, "PHI", "CHI", "2027-01-16", game_type="WC")]
+        info = next_game(schedule, 2026, 18, "PHI")
+        self.assertEqual((info["kind"], info["week"]), ("game", 19))
+
+    def test_wildcard_loss_is_season_complete(self):
+        schedule = [game(19, "PHI", "CHI", "2027-01-16", game_type="WC", away_score="17", home_score="21")]
+        self.assertEqual(next_game(schedule, 2026, 19, "PHI"), {"kind": "season_complete"})
+
+    def test_wildcard_win_with_no_later_game_is_unconfirmed(self):
+        schedule = [game(19, "PHI", "CHI", "2027-01-16", game_type="WC", away_score="28", home_score="24")]
+        self.assertEqual(next_game(schedule, 2026, 19, "PHI"), {"kind": "unconfirmed"})
+
+    def test_superbowl_is_always_season_complete(self):
+        schedule = [game(22, "PHI", "KC", "2027-02-07", game_type="SB", away_score="31", home_score="34")]
+        self.assertEqual(next_game(schedule, 2026, 22, "PHI"), {"kind": "season_complete"})
+
+    def test_na_values_become_none(self):
+        na_schedule = [game(3, "PHI", "CHI", "2026-09-28", time="NA", stadium="NA")]
+        info = next_game(na_schedule, 2026, 2, "PHI")
+        self.assertIsNone(info["kickoff_et"])
+        self.assertIsNone(info["venue"])
+
+    def test_midnight_kickoff_label(self):
+        self.assertEqual(kickoff_label({"date": "2026-10-11", "kickoff_et": "00:05"}), "Sun, Oct 11 · 12:05 a.m. ET")
 
 
 class LabelTests(unittest.TestCase):
