@@ -110,14 +110,17 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     if week is None:
         return Outcome("skipped", "No NFL week finished in the last seven days.")
     eid = edition_id(season, week)
-    if scheduled and cfg["registry_reviewed_season"] != season:
-        return block(gh, eid, "Registry review", f"data/alumni.json was last reviewed for {cfg['registry_reviewed_season']}; review it for {season} and update config.json.", s)
     if gh.file_exists(f"editions/{eid}/edition.json", "main"):
+        issue = gh.find_issue(f"Edition {eid} blocked", BLOCKED_LABEL)
+        if issue:
+            gh.close_issue(issue["number"], f"Resolved: edition {eid} is published on main.")
         return Outcome("published", f"Edition {eid} is already on main.")
     branch = f"edition/{eid}"
     pr = gh.find_pr(branch)
     if pr and not s.refresh:
         return Outcome("pending", f"Edition {eid} is waiting for approval in #{pr['number']}.", number=pr["number"])
+    if scheduled and cfg["registry_reviewed_season"] != season:
+        return block(gh, eid, "Registry review", f"data/alumni.json was last reviewed for {cfg['registry_reviewed_season']}; review it for {season} and update config.json.", s)
     try:
         edition, manifest, report = build_week(season, week, games, historical=s.historical, final=final, registry=registry, sources=sources)
     except NotReady as exc:

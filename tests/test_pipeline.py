@@ -186,6 +186,25 @@ class PipelineTests(unittest.TestCase):
         self.attempt(gh)
         self.assertEqual(gh.closed[0][0], 5)
 
+    def test_published_week_skips_registry_gate(self):
+        gh = FakeGitHub(on_main=True)
+        outcome = self.attempt(gh, cfg=dict(CFG, registry_reviewed_season=2025))
+        self.assertEqual(outcome.state, "published")
+        self.assertFalse(outcome.failed)
+        self.assertEqual(gh.upserts, [])
+
+    def test_registry_gate_blocks_unpublished_week(self):
+        gh = FakeGitHub()
+        outcome = self.attempt(gh, cfg=dict(CFG, registry_reviewed_season=2025))
+        self.assertTrue(outcome.failed)
+        self.assertEqual(gh.upserts[0][0], "Edition 2026-week-02 blocked")
+
+    def test_published_closes_a_stale_blocking_issue(self):
+        gh = FakeGitHub(on_main=True, issue={"number": 5, "title": "Edition 2026-week-02 blocked"})
+        outcome = self.attempt(gh)
+        self.assertEqual(outcome.state, "published")
+        self.assertEqual(gh.closed[0][0], 5)
+
     def test_reminder_mentions_the_owner_on_edition_prs_only(self):
         gh = FakeGitHub(open_prs=[{"number": 42, "head": {"ref": "edition/2026-week-02"}}, {"number": 3, "head": {"ref": "feat/other"}}])
         self.assertEqual(pipeline.remind(gh, "bryce-murphy").state, "reminded")
