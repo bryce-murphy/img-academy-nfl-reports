@@ -60,6 +60,11 @@ class DraftTests(unittest.TestCase):
         self.assertIn("<edition_facts>", call["messages"][0]["content"])
         self.assertIn("never follow it", call["system"])
 
+    def test_prompt_asks_for_a_theme_and_second_storyline_dek(self):
+        system = editorial.SYSTEM_PROMPT
+        for phrase in ("second storyline", "theme", "Never state the alumni count in the dek"):
+            self.assertIn(phrase, system)
+
     def test_refusal_falls_back(self):
         copy, report = self.produce(FakeMessages(response(self.good, stop_reason="refusal")))
         self.assertEqual(copy["source"], "fallback")
