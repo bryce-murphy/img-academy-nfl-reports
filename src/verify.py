@@ -50,19 +50,24 @@ def wait_for(url, expected, *, fetch_fn=fetch, sleep=time.sleep, attempts=15, de
     return False, detail
 
 
-def main(argv=None):
+def main(argv=None, *, github_factory=GitHub):
     parser = argparse.ArgumentParser(prog="python -m src.verify")
     parser.add_argument("--url", required=True)
     parser.add_argument("--edition", required=True)
     args = parser.parse_args(argv)
     ok, detail = wait_for(args.url, args.edition)
     print(f"{'Verified' if ok else 'Not verified'}: {args.url} ({detail})")
-    if ok:
-        return 0
     token = os.environ.get("GITHUB_TOKEN")
+    if ok:
+        if token:
+            gh = github_factory(token, os.environ["GITHUB_REPOSITORY"])
+            issue = gh.find_issue("Site deployment not verified", "edition-blocked")
+            if issue:
+                gh.close_issue(issue["number"], f"Resolved: the site now serves {args.edition}.")
+        return 0
     if token:
         body = f"Expected edition `{args.edition}` at {args.url}; last check: {detail}.\n\nRun: {os.environ.get('RUN_URL', '')}"
-        GitHub(token, os.environ["GITHUB_REPOSITORY"]).upsert_issue("Site deployment not verified", body, "edition-blocked")
+        github_factory(token, os.environ["GITHUB_REPOSITORY"]).upsert_issue("Site deployment not verified", body, "edition-blocked")
     return 1
 
 

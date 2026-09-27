@@ -17,7 +17,7 @@ def snap_rows(team, count=22):
 def ready_data():
     return {
         "pbp": [{"game_id": "g1", "desc": "END GAME"}],
-        "stats": [{"season": "2026", "week": "3"}],
+        "stats": [{"season": "2026", "week": "3", "game_id": "g1"}],
         "snaps": snap_rows("PHI") + snap_rows("CHI"),
         "injuries": [{"season": "2026", "week": "3"}],
     }
@@ -43,8 +43,23 @@ class ReadinessTests(unittest.TestCase):
 
     def test_missing_weekly_stats_is_required(self):
         data = ready_data()
-        data["stats"] = [{"season": "2026", "week": "2"}]
-        self.assertIn("weekly player statistics", self.check(data).missing_required)
+        data["stats"] = [{"season": "2026", "week": "2", "game_id": "g1"}]
+        self.assertIn("player statistics for g1", self.check(data).missing_required)
+
+    def test_stats_are_required_per_game_not_just_anywhere_in_the_week(self):
+        game2 = dict(GAME, game_id="g2", away_team="SEA", home_team="ARI")
+        data = ready_data()
+        data["pbp"].append({"game_id": "g2", "desc": "END GAME"})
+        report = assess(data, MANIFEST, [GAME, game2], 2026, 3)
+        self.assertIn("player statistics for g2", report.missing_required)
+        self.assertNotIn("player statistics for g1", report.missing_required)
+
+    def test_stats_requirement_can_be_scoped_to_followed_teams(self):
+        game2 = dict(GAME, game_id="g2", away_team="SEA", home_team="ARI")
+        data = ready_data()
+        data["pbp"].append({"game_id": "g2", "desc": "END GAME"})
+        report = assess(data, MANIFEST, [GAME, game2], 2026, 3, followed_teams={"PHI", "CHI"})
+        self.assertNotIn("player statistics for g2", report.missing_required)
 
     def test_rosters_must_update_after_the_last_game(self):
         report = self.check(manifest={"rosters": {"updated_at": "2026-09-28T07:00:00Z"}})
@@ -64,8 +79,10 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(self.check(data).missing_optional, ["injury report"])
 
     def test_week_two_fixture_is_ready(self):
-        data, manifest, _ = fixture_data.load()
-        report = assess(data, manifest, fixture_data.week_games(data), 2026, 2)
+        data, manifest, registry = fixture_data.load()
+        ids = {alum["gsis_id"] for alum in registry}
+        followed_teams = {r["team"] for r in data["rosters"] if r["gsis_id"] in ids and r["season"] == "2026" and r["week"] == "2"}
+        report = assess(data, manifest, fixture_data.week_games(data), 2026, 2, followed_teams=followed_teams)
         self.assertEqual(report.missing(), [])
 
 

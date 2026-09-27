@@ -18,6 +18,7 @@ REMINDER = "0 9 * 9-12,1-2 3"
 BLOCKED_LABEL = "edition-blocked"
 SEASON_MONTHS = {9, 10, 11, 12, 1, 2}
 FENCE = "`" * 3
+FENCE4 = "`" * 4
 
 
 @dataclass
@@ -106,7 +107,9 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     except NotReady as exc:
         return not_ready(gh, edition_id(season, exc.week) if exc.week else str(season), str(exc), final, s)
     except DataError as exc:
-        return block(gh, str(season), "Choosing the reporting week", str(exc), s)
+        if scheduled and str(exc) == "No completed reporting window":
+            return Outcome("skipped", str(exc))
+        return not_ready(gh, str(season), str(exc), final, s)
     if week is None:
         return Outcome("skipped", "No NFL week finished in the last seven days.")
     eid = edition_id(season, week)
@@ -126,15 +129,16 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     except NotReady as exc:
         return not_ready(gh, eid, str(exc), final, s)
     except DataError as exc:
-        return block(gh, eid, "Validation", str(exc), s)
+        step = "Data sources" if str(exc).startswith(("Cannot verify", "Stale source")) else "Validation"
+        return block(gh, eid, step, str(exc), s)
     files = {f"editions/{eid}/edition.json": dump_json(edition), f"editions/{eid}/sources.json": dump_json(manifest, sort_keys=True)}
-    if pr and gh.branch_authors(branch) - {s.bot_login}:
+    head = gh.ref_sha(branch)
+    if (pr or head is not None) and gh.branch_authors(branch) - {s.bot_login}:
         copy = editorial.loads(gh.read_file(f"editions/{eid}/editorial.toml", branch))
         draft_report = {"used": "owner edits kept", "reasons": [], "rejected": None, "notes": []}
     else:
         copy, draft_report = (drafter or default_drafter(cfg))(edition)
         files[f"editions/{eid}/editorial.toml"] = editorial.dumps(copy).encode("utf-8")
-    head = gh.ref_sha(branch)
     if head is None:
         head = gh.ref_sha("main")
         gh.create_branch(branch, head)
@@ -170,7 +174,7 @@ def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
     if draft_report.get("rejected"):
         lines += ["<details><summary>Claude's draft was not used. Reasons and text:</summary>", ""]
         lines += [f"- {reason}" for reason in draft_report["reasons"]]
-        lines += ["", FENCE + "toml", editorial.dumps(dict(draft_report["rejected"], source="claude")).rstrip(), FENCE, "</details>", ""]
+        lines += ["", FENCE4 + "toml", editorial.dumps(dict(draft_report["rejected"], source="claude")).rstrip(), FENCE4, "</details>", ""]
     elif draft_report.get("reasons"):
         lines += [f"> {reason}" for reason in draft_report["reasons"]] + [""]
     if draft_report.get("notes"):

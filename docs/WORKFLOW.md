@@ -2,7 +2,7 @@
 
 ## Recommended first production architecture
 
-Use GitHub Actions for Python collection/validation, versioned GitHub Release assets for the public edition archive, Quarto plus small JavaScript interactions for pages, GitHub Pages for hosting, and separate OAuth publishers for LinkedIn and X. Readers load a prebuilt site; they do not query nflverse or a database on page view. No Supabase, Vercel account, or Netlify account is needed for this design.
+Use GitHub Actions for Python collection/validation, edition data and the approved headline committed under `editions/<id>/` as the v1 archive (with versioned GitHub Release assets for the public edition archive planned for later), Jinja2-rendered static pages, GitHub Pages for hosting, and separate OAuth publishers for LinkedIn and X. Readers load a prebuilt site; they do not query nflverse or a database on page view. No Supabase, Vercel account, or Netlify account is needed for this design.
 
 | Stage | Durable output | Failure behavior |
 | --- | --- | --- |

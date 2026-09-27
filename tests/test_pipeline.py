@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import fixture_data
 from src import editorial, pipeline
+from src.errors import DataError
 from src.pipeline import Settings
 
 CFG = {
@@ -87,6 +88,12 @@ def template_drafter(edition):
     return editorial.fallback(edition), {"used": "fallback", "reasons": ["test drafter"], "rejected": None, "notes": []}
 
 
+def rejecting_drafter(edition):
+    fallback = editorial.fallback(edition)
+    rejected = dict(fallback, lead="Contains a ``` code fence right in the draft text.")
+    return fallback, {"used": "fallback", "reasons": ["rejected reason"], "rejected": rejected, "notes": []}
+
+
 def without_end_of_game(data):
     data = deepcopy(data)
     data["pbp"] = [p for p in data["pbp"] if p["desc"].strip().upper() != "END GAME"]
@@ -147,6 +154,68 @@ class PipelineTests(unittest.TestCase):
         self.assertNotIn("editions/2026-week-02/editorial.toml", files)
         self.assertIn("Owner headline", gh.updated[0][1])
 
+    def _raising_sources(self, message):
+        def sources(season, *, week=None, only=None, historical=False):
+            raise DataError(message)
+        return sources
+
+    def test_preseason_scheduled_run_is_skipped_without_an_issue(self):
+        gh = FakeGitHub()
+        settings = Settings(event="schedule", schedule=FIRST, automation="on")
+        outcome = pipeline.run_attempt(
+            settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+            sources=self._raising_sources("No completed reporting window"), drafter=template_drafter,
+        )
+        self.assertEqual(outcome.state, "skipped")
+        self.assertFalse(outcome.failed)
+        self.assertEqual(gh.upserts, [])
+        self.assertEqual(gh.commits, [])
+
+    def test_schedule_fetch_failure_waits_on_early_attempts(self):
+        gh = FakeGitHub()
+        settings = Settings(event="schedule", schedule=FIRST, automation="on")
+        outcome = pipeline.run_attempt(
+            settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+            sources=self._raising_sources("nflverse fetch failed"), drafter=template_drafter,
+        )
+        self.assertEqual(outcome.state, "waiting")
+        self.assertFalse(outcome.failed)
+        self.assertEqual(gh.upserts, [])
+
+    def test_schedule_fetch_failure_blocks_on_final_attempt(self):
+        gh = FakeGitHub()
+        settings = Settings(event="schedule", schedule=FINAL, automation="on", run_url="https://run")
+        outcome = pipeline.run_attempt(
+            settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+            sources=self._raising_sources("nflverse fetch failed"), drafter=template_drafter,
+        )
+        self.assertTrue(outcome.failed)
+        self.assertEqual(gh.upserts[0][0], "Edition 2026 blocked")
+
+    def test_owner_edits_kept_when_branch_exists_without_an_open_pr(self):
+        owner_copy = editorial.dumps(dict(editorial.fallback(fixture_data.golden_edition()), headline="Owner headline", source="owner"))
+        gh = FakeGitHub(pr=None, authors={BOT, "bryce-murphy"}, branch_file=owner_copy)
+        gh.refs["edition/2026-week-02"] = "branch-sha"
+        settings = Settings(event="workflow_dispatch", week=2, automation="on", bot_login=BOT)
+        outcome = self.attempt(gh, settings)
+        self.assertEqual(outcome.state, "opened")
+        branch, head, files = gh.commits[0]
+        self.assertEqual(head, "branch-sha")
+        self.assertNotIn("editions/2026-week-02/editorial.toml", files)
+        self.assertIn("Owner headline", gh.opened[0][2])
+
+    def test_rejected_draft_containing_backticks_stays_inside_its_fence(self):
+        gh = FakeGitHub()
+        settings = Settings(event="workflow_dispatch", week=2, automation="on", bot_login=BOT)
+        outcome = pipeline.run_attempt(
+            settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+            sources=sources_from(self.data, self.manifest), drafter=rejecting_drafter,
+        )
+        self.assertEqual(outcome.state, "opened")
+        body = gh.opened[0][2]
+        self.assertIn("````toml", body)
+        self.assertIn("Contains a ``` code fence right in the draft text.", body)
+
     def test_missing_data_waits_on_early_attempts(self):
         gh = FakeGitHub()
         outcome = self.attempt(gh, data=without_end_of_game(self.data))
@@ -180,6 +249,18 @@ class PipelineTests(unittest.TestCase):
         outcome = self.attempt(gh, data=data)
         self.assertTrue(outcome.failed)
         self.assertIn("Final score disagreement", gh.upserts[0][1])
+        self.assertIn("**Step:** Validation", gh.upserts[0][1])
+
+    def test_stale_source_failure_is_labeled_data_sources(self):
+        def sources(season, *, week=None, only=None, historical=False):
+            if only:
+                return {key: self.data[key] for key in only}, {}, []
+            raise DataError("Stale source: rosters")
+        gh = FakeGitHub()
+        settings = Settings(event="schedule", schedule=FIRST, automation="on", run_url="https://run", bot_login=BOT)
+        outcome = pipeline.run_attempt(settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY, sources=sources, drafter=template_drafter)
+        self.assertTrue(outcome.failed)
+        self.assertIn("**Step:** Data sources", gh.upserts[0][1])
 
     def test_success_closes_a_blocking_issue(self):
         gh = FakeGitHub(issue={"number": 5, "title": "Edition 2026-week-02 blocked"})
