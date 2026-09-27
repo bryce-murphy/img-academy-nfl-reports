@@ -3,7 +3,7 @@
   "author": "Bryce Murphy",
   "timezone": "America/New_York",
   "schedule": "Wednesday, 09:00 America/New_York",
-  "scheduled_reports_enabled": false,
+  "scheduled_reports_enabled": true,
   "social_publishing_enabled": false,
   "display_third_party_images": false,
   "linkedin_profile": "https://www.linkedin.com/in/bryce-murphy/",
