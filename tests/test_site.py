@@ -124,16 +124,6 @@ class RenderTests(SiteTestCase):
         self.assertEqual(site.initials("J.J. McCarthy"), "JM")
         self.assertIn("1 sack", site.contribution(delpit))
 
-    def test_stylesheet_uses_img_palette_and_team_colors_only_as_bars(self):
-        css = (site.ROOT / "static" / "styles.css").read_text(encoding="utf-8")
-        self.assertIn("--brand:#0057b8", css)
-        self.assertIn("--navy:#003057", css)
-        self.assertNotIn("#f2f4ef", css)
-        team_uses = re.findall(r"([\w-]+):[^;{}]*var\(--team", css)
-        self.assertTrue(team_uses)
-        for prop in team_uses:
-            self.assertTrue(prop.startswith("border"), f"team color used for {prop}")
-
     def test_stylesheet_uses_img_academy_palette_and_team_colors_only_as_bars(self):
         css = (site.ROOT / "static" / "styles.css").read_text(encoding="utf-8")
         for token in ("--brand:#0057b8", "--navy:#002d54", "--ink:#424242", "--wash:#f5f5f5"):
