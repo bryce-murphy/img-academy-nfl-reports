@@ -2,6 +2,8 @@ import re
 import unittest
 from pathlib import Path
 
+from src import pipeline
+
 WORKFLOWS = Path(__file__).resolve().parents[1] / ".github" / "workflows"
 
 
@@ -34,6 +36,14 @@ class WorkflowTests(unittest.TestCase):
                     run_indent = depth
                 elif run_indent is not None:
                     self.assertNotIn("${{", line, f"{path.name}: {stripped}")
+
+    def test_edition_schedule_matches_the_pipeline(self):
+        text = (WORKFLOWS / "edition.yml").read_text(encoding="utf-8")
+        for cron in [*pipeline.ATTEMPTS, pipeline.REMINDER]:
+            self.assertIn(f"- cron: '{cron}'", text)
+        self.assertEqual(text.count("timezone: America/New_York"), 4)
+        self.assertIn("environment: edition", text)
+        self.assertIn("vars.EDITION_AUTOMATION == 'on'", text)
 
 
 if __name__ == "__main__":
