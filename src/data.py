@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import io
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
@@ -17,6 +18,12 @@ RELEASES = "https://api.github.com/repos/nflverse/nflverse-data/releases/tags/"
 DOWNLOADS = "https://github.com/nflverse/nflverse-data/releases/download/"
 HOSTS = {"api.github.com", "github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com"}
 MAX_BYTES = 180_000_000
+DOWNLOAD_ATTEMPTS = 3
+RETRY_SECONDS = 20
+
+
+def pause(seconds):
+    time.sleep(seconds)
 
 
 def utcnow():
@@ -82,6 +89,32 @@ def week_filter(week):
     return lambda row: row.get("week") == wanted
 
 
+def fetch_verified(name, tag, filename, historical, max_age_hours):
+    # nflverse replaces assets in place, so the listed digest can briefly lead the
+    # download. Re-read both after a pause; never accept bytes that don't match.
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        release = json.loads(get_bytes(RELEASES + tag))
+        assets = [a for a in release["assets"] if a["name"] == filename]
+        if len(assets) != 1:
+            raise DataError(f"Expected one asset named {filename}")
+        asset = assets[0]
+        fetched = utcnow()
+        updated = stamp(asset["updated_at"])
+        if updated > fetched:
+            raise DataError(f"Source timestamp is in the future: {name}")
+        if not historical and name not in {"players", "teams"}:
+            if (fetched - updated).total_seconds() > max_age_hours * 3600:
+                raise DataError(f"Stale source: {name}")
+        url = DOWNLOADS + tag + "/" + filename
+        payload = get_bytes(url)
+        digest = hashlib.sha256(payload).hexdigest()
+        if not asset.get("digest", "").startswith("sha256:") or asset["digest"] == "sha256:" + digest:
+            return asset, fetched, url, payload, digest
+        if attempt < DOWNLOAD_ATTEMPTS:
+            pause(RETRY_SECONDS)
+    raise DataError(f"Upstream checksum mismatch: {name}")
+
+
 def load_sources(season, cache, max_age_hours=48, historical=False, only=None, week=None):
     cache = Path(cache)
     cache.mkdir(parents=True, exist_ok=True)
@@ -91,24 +124,7 @@ def load_sources(season, cache, max_age_hours=48, historical=False, only=None, w
         if only is not None and name not in only:
             continue
         try:
-            release = json.loads(get_bytes(RELEASES + tag))
-            assets = [a for a in release["assets"] if a["name"] == filename]
-            if len(assets) != 1:
-                raise DataError(f"Expected one asset named {filename}")
-            asset = assets[0]
-            fetched = utcnow()
-            updated = stamp(asset["updated_at"])
-            if updated > fetched:
-                raise DataError(f"Source timestamp is in the future: {name}")
-            if not historical and name not in {"players", "teams"}:
-                if (fetched - updated).total_seconds() > max_age_hours * 3600:
-                    raise DataError(f"Stale source: {name}")
-            url = DOWNLOADS + tag + "/" + filename
-            payload = get_bytes(url)
-            digest = hashlib.sha256(payload).hexdigest()
-            if asset.get("digest", "").startswith("sha256:"):
-                if asset["digest"] != "sha256:" + digest:
-                    raise DataError(f"Upstream checksum mismatch: {name}")
+            asset, fetched, url, payload, digest = fetch_verified(name, tag, filename, historical, max_age_hours)
             keep = week_filter(week) if week is not None and name == "pbp" else None
             datasets[name] = parse_csv(payload, filename, required, keep)
             (cache / filename).write_bytes(payload)
