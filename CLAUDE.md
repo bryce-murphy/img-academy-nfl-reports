@@ -14,6 +14,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 ```
 
 - **Refresh the test fixtures** (network): `.venv/Scripts/python scripts/make_fixtures.py`, then run the golden test with `UPDATE_GOLDEN=1` and review the diff.
+- **Regenerate the share image** after editing `scripts/share_card.html`: `.venv/Scripts/python scripts/make_share_card.py` (headless Edge or Chrome; writes `static/share-card.png`).
 - **Regenerate the dependency lock:** `uv pip compile requirements.in --universal --generate-hashes --python-version 3.12 --system-certs -o requirements.txt`
 - **Local pip installs** on this machine need `PIP_CERT=/c/ProgramData/Norton/Antivirus/wscert.pem` (antivirus TLS interception).
 
