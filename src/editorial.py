@@ -166,6 +166,23 @@ def _unknown_names(body, facts_text):
     return unknown
 
 
+def _values_text(value):
+    parts = []
+
+    def walk(item):
+        if isinstance(item, str):
+            parts.append(item)
+        elif isinstance(item, dict):
+            for inner in item.values():
+                walk(inner)
+        elif isinstance(item, list):
+            for inner in item:
+                walk(inner)
+
+    walk(value)
+    return " ".join(parts).lower()
+
+
 @dataclass
 class Review:
     errors: list[str] = field(default_factory=list)
@@ -215,9 +232,11 @@ def review(copy, edition):
     for p in edition["players"]:
         if p["availability"]["label"] != ev.PLAYED and _mentions(body, p["name"], last_names):
             result.problems.append(f"names {p['name']}, whose status is {p['availability']['label']}")
-    lower_body, lower_facts = body.lower(), text.lower()
+    lower_body = body.lower()
+    mentioned = [entry for entry, player in zip(facts["players"], edition["players"]) if _mentions(body, player["name"], last_names)]
+    support = " ".join(_values_text(entry) for entry in mentioned)
     for term in BLOCKED_TERMS:
-        if term in lower_body and term not in lower_facts:
+        if term in lower_body and term not in support:
             result.problems.append(f"uses '{term}' without supporting data")
     result.notes.extend(f"name not found in the data: {phrase}" for phrase in _unknown_names(body, text))
     return result

@@ -4,11 +4,14 @@ import re
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import fixture_data
 from src import edition as ed
+from src import editorial
 from src import evidence as ev
 from src.errors import DataError, NotReady
+from src.readiness import Readiness
 
 EXPECTED_LABELS = {
     "Grant Delpit": "Played",
@@ -155,6 +158,32 @@ class EditionTests(unittest.TestCase):
         self.assertEqual(ed.stat_season_type("REG"), "REG")
         self.assertEqual(ed.stat_season_type("WC"), "POST")
         self.assertEqual(ed.stat_season_type("SB"), "POST")
+
+
+class MainHeadlineTests(unittest.TestCase):
+    def test_writes_fallback_headline_without_overwriting_an_existing_one(self):
+        data = fixture_data.load()[0]
+        fixture_manifest = fixture_data.load()[1]
+        games = fixture_data.week_games(data)
+        golden_edition = fixture_data.golden_edition()
+
+        def run():
+            with mock.patch.object(ed, "due_week", return_value=(2, games)), \
+                 mock.patch.object(ed, "build_week", return_value=(golden_edition, fixture_manifest, Readiness())):
+                return ed.main(["--season", "2026", "--week", "2", "--out", tmp])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(run(), 0)
+            headline_path = Path(tmp) / "2026-week-02" / "editorial.toml"
+            raw = headline_path.read_bytes()
+            self.assertNotIn(b"\r\n", raw)
+            self.assertEqual(editorial.load(headline_path)["source"], "fallback")
+
+            owner_copy = dict(editorial.fallback(golden_edition), headline="Owner headline")
+            headline_path.write_bytes(editorial.dumps(owner_copy).encode("utf-8"))
+
+            self.assertEqual(run(), 0)
+            self.assertIn("Owner headline", headline_path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

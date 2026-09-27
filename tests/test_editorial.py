@@ -90,6 +90,14 @@ class ReviewTests(unittest.TestCase):
     def test_blocked_terms_need_support(self):
         self.assertTrue(any("bench" in p for p in self.review(dek="Delpit was benched late.").problems))
 
+    def test_blocked_terms_are_scoped_to_the_named_player(self):
+        problems = self.review(headline="Grant Delpit injured on the final play").problems
+        self.assertTrue(any("injur" in p for p in problems))
+
+    def test_blocked_terms_without_a_named_player_need_support(self):
+        problems = self.review(dek="An injury-filled week for the alumni.").problems
+        self.assertTrue(any("injur" in p for p in problems))
+
     def test_unknown_names_are_notes_not_problems(self):
         result = self.review(lead="Grant Delpit chased Justin Jefferson all day.")
         self.assertEqual(result.problems, [])
