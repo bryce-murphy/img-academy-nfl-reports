@@ -11,14 +11,12 @@ from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
+from .errors import DataError, NotReady  # noqa: F401  (re-exported)
+
 RELEASES = "https://api.github.com/repos/nflverse/nflverse-data/releases/tags/"
 DOWNLOADS = "https://github.com/nflverse/nflverse-data/releases/download/"
 HOSTS = {"api.github.com", "github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com"}
 MAX_BYTES = 180_000_000
-
-
-class DataError(RuntimeError):
-    """A source cannot safely support this report."""
 
 
 def utcnow():
@@ -50,7 +48,7 @@ def specifications(season):
         "current_rosters": ("rosters", f"roster_{season}.csv", {"gsis_id", "team", "status"}),
         "players": ("players", "players.csv", {"gsis_id", "display_name", "pfr_id"}),
         "stats": ("stats_player", f"stats_player_week_{season}.csv", {"player_id", "week", "season", "game_id", "team"}),
-        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {"game_id", "play_id", "desc", "epa", "wpa"}),
+        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {"game_id", "play_id", "week", "desc", "epa", "wpa"}),
         "snaps": ("snap_counts", f"snap_counts_{season}.csv", {"game_id", "pfr_player_id", "offense_snaps", "defense_snaps", "st_snaps"}),
         "injuries": ("injuries", f"injuries_{season}.csv", {"gsis_id", "week", "report_status", "report_primary_injury"}),
         "teams": ("teams", "teams_colors_logos.csv", {"team_abbr", "team_name", "team_logo_espn"}),
@@ -60,7 +58,7 @@ def specifications(season):
     }
 
 
-def parse_csv(payload, filename, required):
+def parse_csv(payload, filename, required, keep=None):
     if filename.endswith(".gz"):
         with gzip.GzipFile(fileobj=io.BytesIO(payload)) as stream:
             payload = stream.read(MAX_BYTES + 1)
@@ -69,13 +67,22 @@ def parse_csv(payload, filename, required):
     reader = csv.DictReader(io.StringIO(payload.decode("utf-8-sig")))
     if not required.issubset(set(reader.fieldnames or [])):
         raise DataError(f"Required columns changed in {filename}")
-    rows = list(reader)
-    if not rows:
+    rows, seen = [], 0
+    for row in reader:
+        seen += 1
+        if keep is None or keep(row):
+            rows.append(row)
+    if not seen:
         raise DataError(f"Empty source: {filename}")
     return rows
 
 
-def load_sources(season, cache, max_age_hours=48, historical=False, only=None):
+def week_filter(week):
+    wanted = str(week)
+    return lambda row: row.get("week") == wanted
+
+
+def load_sources(season, cache, max_age_hours=48, historical=False, only=None, week=None):
     cache = Path(cache)
     cache.mkdir(parents=True, exist_ok=True)
     datasets, manifest, warnings = {}, {}, []
@@ -102,7 +109,8 @@ def load_sources(season, cache, max_age_hours=48, historical=False, only=None):
             if asset.get("digest", "").startswith("sha256:"):
                 if asset["digest"] != "sha256:" + digest:
                     raise DataError(f"Upstream checksum mismatch: {name}")
-            datasets[name] = parse_csv(payload, filename, required)
+            keep = week_filter(week) if week is not None and name == "pbp" else None
+            datasets[name] = parse_csv(payload, filename, required, keep)
             (cache / filename).write_bytes(payload)
             manifest[name] = {"url": url, "updated_at": asset["updated_at"], "fetched_at": fetched.isoformat(), "sha256": digest, "rows": len(datasets[name])}
         except Exception as exc:
