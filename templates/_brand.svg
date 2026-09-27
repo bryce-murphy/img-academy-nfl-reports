@@ -1,8 +1,8 @@
 <svg class="brand-mark" viewBox="0 0 420 60" role="img" aria-labelledby="brand-title" xmlns="http://www.w3.org/2000/svg">
   <title id="brand-title">IMG Academy to the NFL</title>
   <text x="0" y="44" textLength="206" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">IMG ACADEMY</text>
-  <circle cx="224" cy="32" r="5" fill="currentColor"/>
-  <path d="M234 32 C 262 4, 300 4, 326 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 8"/>
-  <path d="M316 18 L328 30 L312 34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="224" cy="28.5" r="5" fill="currentColor"/>
+  <path d="M236 28.5 C 258 2, 300 2, 326 25" pathLength="11" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2"/>
+  <path d="M322.5 12.7 L326.7 24.0 L314.9 26.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="340" y="44" textLength="72" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">NFL</text>
 </svg>

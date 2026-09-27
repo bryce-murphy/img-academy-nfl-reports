@@ -6,28 +6,33 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@500;600&display=block">
 <style>
   html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
-  body { background: #002D54; color: #FFFFFF; font-family: Inter, sans-serif; position: relative; }
-  .rule { position: absolute; left: 0; top: 0; width: 1200px; height: 14px; background: #0057B8; }
+  body { background: #0057B8; color: #FFFFFF; font-family: Inter, sans-serif; position: relative; }
+  .rule { position: absolute; left: 0; top: 0; width: 1200px; height: 14px; background: #002D54; }
   .field { position: absolute; left: 0; top: 0; }
   .brand { position: absolute; left: 88px; top: 70px; width: 500px; color: #FFFFFF; }
-  .eyebrow { position: absolute; left: 88px; top: 176px; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #DCE3EB; }
+  .brand svg { display: block; width: 100%; height: auto; }
+  .eyebrow { position: absolute; left: 88px; top: 176px; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #FFFFFF; }
   h1 { position: absolute; left: 88px; top: 214px; width: 640px; margin: 0; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 74px; line-height: 1.0; }
-  .sub { position: absolute; left: 88px; top: 462px; width: 720px; margin: 0; font-size: 24px; font-weight: 500; color: #DCE3EB; }
-  .foot { position: absolute; left: 88px; right: 88px; bottom: 56px; display: flex; justify-content: space-between; font-size: 20px; font-weight: 500; color: #DCE3EB; border-top: 2px solid #0057B8; padding-top: 22px; }
+  .sub { position: absolute; left: 88px; top: 462px; width: 720px; margin: 0; font-size: 24px; font-weight: 500; color: #FFFFFF; }
+  .foot { position: absolute; left: 88px; right: 88px; bottom: 56px; display: flex; justify-content: space-between; font-size: 20px; font-weight: 500; color: #FFFFFF; border-top: 2px solid #002D54; padding-top: 22px; }
 </style>
 </head>
 <body>
 <svg class="field" width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="2">
+  <g stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2">
     <line x1="780" y1="14" x2="780" y2="630"/><line x1="880" y1="14" x2="880" y2="630"/><line x1="980" y1="14" x2="980" y2="630"/><line x1="1080" y1="14" x2="1080" y2="630"/><line x1="1180" y1="14" x2="1180" y2="630"/>
   </g>
-  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="2">
+  <g stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2">
     <line x1="820" y1="150" x2="840" y2="150"/><line x1="920" y1="150" x2="940" y2="150"/><line x1="1020" y1="150" x2="1040" y2="150"/><line x1="1120" y1="150" x2="1140" y2="150"/>
     <line x1="820" y1="480" x2="840" y2="480"/><line x1="920" y1="480" x2="940" y2="480"/><line x1="1020" y1="480" x2="1040" y2="480"/><line x1="1120" y1="480" x2="1140" y2="480"/>
   </g>
-  <path d="M792 500 C 812 440, 840 380, 872 340" fill="none" stroke="#DCE3EB" stroke-opacity="0.8" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 16"/>
+  <g stroke="#DCE3EB" stroke-width="6" stroke-linecap="round">
+    <line x1="839" y1="317" x2="788" y2="348" stroke-opacity="0.45"/>
+    <line x1="864" y1="341" x2="783" y2="392" stroke-opacity="0.7"/>
+    <line x1="875" y1="374" x2="824" y2="406" stroke-opacity="0.45"/>
+  </g>
   <g transform="translate(1010 250) rotate(-32)">
-    <path d="M-150 0 C -95 -98, 95 -98, 150 0 C 95 98, -95 98, -150 0 Z" fill="#0057B8" stroke="#DCE3EB" stroke-width="5"/>
+    <path d="M-150 0 C -95 -98, 95 -98, 150 0 C 95 98, -95 98, -150 0 Z" fill="#002D54" stroke="#DCE3EB" stroke-width="5"/>
     <path d="M-150 0 C -95 -98, 95 -98, 150 0" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="18" transform="translate(0 14) scale(0.9)"/>
     <path d="M-100 -42 C -90 -16, -90 16, -100 42" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
     <path d="M100 -42 C 90 -16, 90 16, 100 42" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
@@ -38,13 +43,7 @@
   </g>
 </svg>
 <div class="rule"></div>
-<svg class="brand" viewBox="0 0 420 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <text x="0" y="44" textLength="206" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">IMG ACADEMY</text>
-  <circle cx="224" cy="32" r="5" fill="currentColor"/>
-  <path d="M234 32 C 262 4, 300 4, 326 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 8"/>
-  <path d="M316 18 L328 30 L312 34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="340" y="44" textLength="72" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">NFL</text>
-</svg>
+<div class="brand"><!-- brand: templates/_brand.svg --></div>
 <p class="eyebrow">The Wednesday edition</p>
 <h1>IMG Academy football alumni in the NFL, week by week.</h1>
 <p class="sub">Box scores, snap counts and what's next for every alum.</p>
