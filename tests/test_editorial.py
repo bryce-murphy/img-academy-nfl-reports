@@ -49,6 +49,29 @@ class FallbackTests(unittest.TestCase):
         result = editorial.review(copy, edition)
         self.assertEqual((result.errors, result.problems), ([], []))
 
+    def test_fallback_dek_tells_the_second_storyline_without_a_count(self):
+        edition = fixture_data.golden_edition()
+        players = {p["id"]: p for p in edition["players"]}
+        first, second = (players[pid]["name"] for pid in edition["featured_ranking"][:2])
+        dek = editorial.fallback(edition)["dek"]
+        self.assertIn(second, dek)
+        self.assertNotIn(first, dek)
+        self.assertNotIn("alumni", dek)
+        self.assertLessEqual(len(dek), editorial.LIMITS["dek"])
+
+    def test_fallback_lead_carries_the_alumni_count(self):
+        edition = fixture_data.golden_edition()
+        lead = editorial.fallback(edition)["lead"]
+        self.assertIn(f"{edition['counts']['played']} of the {edition['counts']['followed']} IMG Academy alumni", lead)
+
+    def test_fallback_with_one_player_passes_review(self):
+        edition = fixture_data.golden_edition()
+        edition["featured_ranking"] = edition["featured_ranking"][:1]
+        copy = editorial.fallback(edition)
+        result = editorial.review(copy, edition)
+        self.assertEqual(result.errors, [])
+        self.assertTrue(copy["dek"])
+
     def test_metric_phrases_use_the_singular_for_one(self):
         self.assertEqual(editorial.metric_phrase(1, "sacks"), "1 sack")
         self.assertEqual(editorial.metric_phrase(5, "solo tackles"), "5 solo tackles")
