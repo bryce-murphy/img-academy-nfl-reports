@@ -1,0 +1,78 @@
+:root{--ink:#102226;--muted:#57676a;--paper:#f2f4ef;--card:#fcfcf9;--green:#123d35;--lime:#d1ee6d;--line:#d5ddd5;--warn:#bc8e47;--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,Arial,sans-serif}
+a{color:inherit;text-underline-offset:3px}
+a:focus-visible,summary:focus-visible{outline:3px solid #628008;outline-offset:3px}
+.masthead,main,.site-footer{max-width:1180px;margin:0 auto;padding-left:48px;padding-right:48px}
+.masthead{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 24px;padding-top:28px;padding-bottom:20px;border-bottom:2px solid var(--ink)}
+.brand{display:block;color:var(--ink);text-decoration:none;line-height:0}
+.brand svg{height:48px;width:auto;max-width:100%}
+.independent{margin:0;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.masthead nav{display:flex;gap:20px;font-size:14px;font-weight:600}
+.masthead nav a{text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+.masthead nav a:hover{border-color:var(--green)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:0}
+.edition-line{margin:28px 0 8px;color:var(--muted)}
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;align-items:start;padding:12px 0 36px;border-bottom:1px solid var(--line)}
+.hero h1{font:800 clamp(44px,6vw,84px)/.95 var(--display);letter-spacing:-1px;margin:8px 0 18px;overflow-wrap:anywhere}
+.dek{font-size:19px;margin:0 0 12px}
+.lead{color:var(--muted);margin:0;max-width:640px}
+.cta{display:inline-block;margin-top:20px;background:var(--ink);color:#fff;padding:12px 18px;font-weight:700;font-size:14px;text-decoration:none}
+.featured{background:var(--card);border:1px solid var(--line);border-top:8px solid var(--team,var(--green));padding:20px;min-height:260px;display:grid;grid-template-rows:auto 1fr auto}
+.scorebug{justify-self:end;margin:0;background:var(--ink);color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;padding:6px 12px}
+.monogram{font:800 120px/1 var(--display);color:var(--team,var(--green));opacity:.6;text-align:center;align-self:center}
+.featured-name{margin:0;font-size:13px;color:var(--muted)}
+.section{padding:36px 0;border-bottom:1px solid var(--line)}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:18px}
+.section-head h2,.method h2{font:800 34px/1.05 var(--display);margin:0}
+.section-head p{margin:0;font-size:13px;color:var(--muted);text-align:right}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--team,var(--green));padding:20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h3{font:700 30px/1.05 var(--display);margin:0}
+.score{margin:0;font-size:13px;font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:6px 0}
+.metrics strong{display:block;font:800 34px/1 var(--display)}
+.metrics span{display:block;font-size:11px;color:var(--muted);line-height:1.3}
+.evidence,.caption{font-size:12px;color:var(--muted);margin:0}
+.withheld,.availability-note{margin:0;padding:10px 12px;background:#f8f3e9;border-left:3px solid var(--warn);font-size:12px}
+.ngs{margin:0;padding:10px 12px 10px 28px;background:#eef3ea;font-size:12px}
+details summary{cursor:pointer;font-weight:700;font-size:13px}
+.plays{padding-left:20px;font-size:12px}
+.plays li{margin:10px 0}
+.play-meta{display:block;font-size:10px;font-weight:700;letter-spacing:.3px;color:var(--green)}
+.card footer{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+.box{width:100%;border-collapse:collapse;font-size:14px}
+.box th,.box td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.box thead th{font-size:12px;font-weight:600;color:var(--muted)}
+.box tbody th{font-weight:600}
+.box td:last-child,.box th:last-child{text-align:right;white-space:nowrap}
+.availability{margin:0;display:grid;gap:12px}
+.availability>div{background:var(--card);border:1px solid var(--line);padding:14px 16px;display:grid;grid-template-columns:200px 1fr;gap:4px 16px}
+.availability dt{font-weight:700;font-size:14px}
+.availability dd{margin:0;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}
+.availability dd.note{grid-column:2;font-size:12px;color:var(--muted)}
+.up-next{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.matchup{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--team,var(--green));padding:18px}
+.matchup h3{font:700 26px/1.1 var(--display);margin:6px 0}
+.matchup p{margin:4px 0;font-size:14px}
+.matchup .venue,.matchup .who{color:var(--muted);font-size:13px}
+.method{margin:36px 0 0;padding:32px;background:var(--green);color:#eef5e9}
+.method h2{color:#fff;margin-bottom:12px}
+.method ul{font-size:14px;padding-left:20px}
+.method .warnings li{color:#ffe7b3}
+.method table{border-collapse:collapse;width:100%;font-size:12px;margin:18px 0}
+.method th,.method td{text-align:left;padding:8px;border-bottom:1px solid #44685b;overflow-wrap:anywhere}
+.method th{color:var(--lime)}
+.method .caption{color:#c4d5c9}
+.prose{max-width:760px;padding:24px 0 48px}
+.prose h1{font:800 clamp(40px,5vw,64px)/1 var(--display);margin:24px 0}
+.prose h2{font:700 28px/1.1 var(--display);margin:32px 0 8px}
+.archive-list{list-style:none;padding:0;margin:24px 0}
+.archive-list li{padding:16px 0;border-bottom:1px solid var(--line)}
+.archive-list a{font:700 28px/1.1 var(--display);text-decoration:none}
+.site-footer{padding-top:24px;padding-bottom:40px;font-size:12px;color:var(--muted)}
+@media (max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
+@media (max-width:640px){.masthead,main,.site-footer{padding-left:16px;padding-right:16px}.masthead{grid-template-columns:1fr}.masthead nav{gap:16px}.brand svg{height:40px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{flex-direction:column}.section-head p{text-align:left}.availability>div{grid-template-columns:1fr}.availability dd.note{grid-column:1}.method{padding:20px}.monogram{font-size:96px}}
+@media print{details{display:block}.card{break-inside:avoid}}

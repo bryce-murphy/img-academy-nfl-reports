@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Methodology · {{ site.title }}{% endblock %}
+{% block description %}How {{ site.title }} decides what it can and cannot claim.{% endblock %}
+{% block content %}
+<article class="prose">
+  <h1>How the report earns your trust</h1>
+  <p>{{ site.title }} follows NFL players who played football at IMG Academy. Camps and training-only attendance do not qualify. Every player in the registry has a published affiliation source and a stable NFL player ID; nobody is matched by name.</p>
+  <h2>When a player counts as having played</h2>
+  <ul>
+    <li>A positive offensive, defensive or special-teams snap count.</li>
+    <li>A recorded role in a play, such as a tackle, target or carry. Penalty-only mentions do not count.</li>
+    <li>A positive box-score statistic.</li>
+  </ul>
+  <p>If a player has recorded plays but zero snaps, the sources disagree. That is labeled <strong>Conflicting evidence</strong>, and social posts wait for review.</p>
+  <h2>When a player did not play</h2>
+  <p>Absence is described only by what a source states.</p>
+  <ul>
+    <li><strong>Inactive for the game:</strong> the weekly roster lists the player as inactive.</li>
+    <li><strong>Practice squad:</strong> the weekly roster lists the player on the practice squad, not elevated.</li>
+    <li><strong>Reserve list:</strong> the player is on a reserve list. The reason is not inferred.</li>
+    <li><strong>No snaps recorded:</strong> the player was active but is absent from a complete snap-count table.</li>
+    <li><strong>Participation unverified:</strong> the evidence is incomplete. Missing data is never treated as a DNP.</li>
+  </ul>
+  <p>Illness, injury and benching are never guessed. Injury designations appear as that week's pregame report, not as proof of absence.</p>
+  <h2>Checks behind every edition</h2>
+  <ul>
+    <li>Final scores agree between the schedule and the play-by-play end-of-game record.</li>
+    <li>Passing, rushing and receiving yards reconcile with recorded plays. If they disagree, that player's stat line is withheld and labeled.</li>
+    <li>Duplicate plays, ambiguous identities, stale required feeds and score disagreements stop the edition.</li>
+  </ul>
+  <p>These are consistency checks within nflverse data, not an independent audit against official gamebooks.</p>
+  <h2>Key plays and EPA</h2>
+  <p>Key moments are the plays involving the player with the largest expected points added (EPA). EPA measures the offense's change in scoring expectation on the whole play. It is not an individual grade, and a negative number can be good news for a defender.</p>
+  <h2>Up next</h2>
+  <p>The next game comes from the league schedule for the player's current team. Kickoff times are Eastern. A bye is shown as a bye; an unknown time or venue is shown as TBD. Next-game availability is not shown because Wednesday's practice reports may not exist yet.</p>
+  <h2>Headlines</h2>
+  <p>A draft headline is written from the edition's checked data, then checked again: every number must appear in the data, only players who played can be featured, and no absence is explained without a source. The editor approves every headline before it publishes.</p>
+  <h2>Schedule and corrections</h2>
+  <p>Editions publish on Wednesdays during the regular season and postseason, after every game of the week is final. NFL statistics can be corrected later in the week.</p>
+  <h2>Sources and independence</h2>
+  <p>Data comes from <a href="https://github.com/nflverse/nflverse-data">nflverse</a> (CC BY 4.0); snap counts originate with Pro Football Reference. Every edition links its data file and source checksums. Team logos and player photographs are not used. This is an independent project by {{ site.author }}, not affiliated with or endorsed by IMG Academy, the NFL, its teams or its players.</p>
+</article>
+{% endblock %}

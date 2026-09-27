@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ editorial.headline }} · {{ site.title }}{% endblock %}
+{% block description %}{{ editorial.dek }}{% endblock %}
+{% block meta %}
+<meta name="edition-id" content="{{ edition.id }}">
+<meta property="article:published_time" content="{{ edition.generated_at }}">
+{% endblock %}
+{% block content %}
+<p class="eyebrow edition-line">The Wednesday edition · {{ edition.season }} · Week {{ edition.week }} recap{% if up_next %} · what's next{% endif %}{% if edition.historical %} · Historical replay{% endif %}</p>
+<section class="hero" aria-labelledby="headline">
+  <div class="hero-copy">
+    <h1 id="headline">{{ editorial.headline }}</h1>
+    <p class="dek">{{ editorial.dek }}</p>
+    <p class="lead">{{ editorial.lead }}</p>
+    {% if featured %}<a class="cta" href="#player-{{ featured.id }}">{{ featured.name }}'s week →</a>{% endif %}
+  </div>
+  {% if featured %}
+  <aside class="featured" style="--team: {{ featured.team_color }}" aria-label="Featured player">
+    <p class="scorebug">{{ featured.score_line }}</p>
+    <div class="monogram" aria-hidden="true">{{ featured.initials }}</div>
+    <p class="featured-name">{{ featured.name }} · {{ featured.team_name }}</p>
+  </aside>
+  {% endif %}
+</section>
+{% if played %}
+<section class="section" aria-labelledby="in-action">
+  <div class="section-head"><h2 id="in-action">Alumni in action</h2><p>{{ edition.counts.played }} of {{ edition.counts.followed }} alumni played</p></div>
+  <div class="cards">
+  {% for p in played %}
+    {% include "_card.html" %}
+  {% endfor %}
+  </div>
+</section>
+<section class="section" aria-labelledby="box-score">
+  <div class="section-head"><h2 id="box-score">The weekly box score</h2><p>Position-specific summaries</p></div>
+  <div class="table-wrap">
+    <table class="box">
+      <thead><tr><th scope="col">Player</th><th scope="col">Team result</th><th scope="col">Contribution</th><th scope="col">Snaps</th></tr></thead>
+      <tbody>
+      {% for p in played %}
+        <tr><th scope="row">{{ p.name }} · {{ p.team }}</th><td>{{ p.result_line }}</td><td>{{ p.contribution }}</td><td>{{ p.snap_line }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% if availability %}
+<section class="section" aria-labelledby="availability-desk">
+  <div class="section-head"><h2 id="availability-desk">Availability desk</h2><p>Verified absences and unknowns stay separate</p></div>
+  <dl class="availability">
+  {% for group in availability %}
+    <div>
+      <dt>{{ group.label }}</dt>
+      <dd>{% for p in group.players %}<span>{{ p.name }}{% if p.team %} · {{ p.team }}{% endif %}</span>{% endfor %}</dd>
+      <dd class="note">{{ group.note }}</dd>
+    </div>
+  {% endfor %}
+  </dl>
+</section>
+{% endif %}
+{% if up_next %}
+<section class="section" aria-labelledby="up-next">
+  <div class="section-head"><h2 id="up-next">On the horizon</h2><p>Kickoff times are Eastern</p></div>
+  <div class="up-next">
+  {% for g in up_next %}
+    <article class="matchup" style="--team: {{ g.team_color }}">
+      <p class="eyebrow">{{ g.team_name }}</p>
+      <h3>{{ g.heading }}</h3>
+      {% if g.when %}<p>{{ g.when }}</p>{% endif %}
+      {% if g.venue %}<p class="venue">{{ g.venue }}</p>{% endif %}
+      <p class="who">{{ g.players | join(", ") }}</p>
+    </article>
+  {% endfor %}
+  </div>
+  <p class="caption">Next-game availability is not shown: this week's practice reports may not be out yet.</p>
+</section>
+{% endif %}
+<section class="method" aria-labelledby="evidence">
+  <h2 id="evidence">Trust the story. Check the evidence.</h2>
+  <ul>{% for check in edition.validation.checks %}<li>{{ check }}</li>{% endfor %}</ul>
+  {% if edition.warnings %}<ul class="warnings">{% for warning in edition.warnings %}<li>{{ warning }}</li>{% endfor %}</ul>{% endif %}
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Source</th><th scope="col">Upstream update (UTC)</th><th scope="col">Rows</th></tr></thead>
+    <tbody>{% for name, source in sources %}<tr><td><a href="{{ source.url }}">{{ name }}</a></td><td>{{ source.updated_at }}</td><td>{{ source.rows }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p><a href="{{ data_path }}edition.json">Edition data</a> · <a href="{{ data_path }}sources.json">Source checksums</a> · <a href="{{ root }}methodology/">How the checks work</a></p>
+  <p class="caption">{{ edition.label }} · built {{ edition.generated_at }}. Statistics can be corrected after publication. Data: nflverse, CC BY 4.0; snap counts originate with Pro Football Reference.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Page not found · {{ site.title }}{% endblock %}
+{% block content %}
+<article class="prose">
+  <h1>Page not found</h1>
+  <p>That page doesn't exist. <a href="{{ root }}">Read this week's edition</a> or browse the <a href="{{ root }}archive/">archive</a>.</p>
+</article>
+{% endblock %}
