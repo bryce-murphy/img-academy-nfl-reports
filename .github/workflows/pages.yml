@@ -1,0 +1,81 @@
+name: Deploy site
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'editions/**'
+      - 'templates/**'
+      - 'static/**'
+      - 'src/**'
+      - 'config.json'
+      - 'requirements.txt'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      edition: ${{ steps.latest.outputs.edition }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install hash-pinned dependencies
+        run: python -m pip install --require-hashes -r requirements.txt
+      - run: python -m unittest discover -s tests
+      - name: Render and check the site
+        run: python -m src.site build --out _site --check
+      - name: Find the latest edition
+        id: latest
+        run: echo "edition=$(python -m src.site latest-id)" >> "$GITHUB_OUTPUT"
+      - name: Package the site
+        if: steps.latest.outputs.edition != 'none'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+  deploy:
+    needs: build
+    if: needs.build.outputs.edition != 'none'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+  verify:
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Confirm the live site serves the new edition
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+          EDITION: ${{ needs.build.outputs.edition }}
+          GITHUB_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python -m src.verify --url "$PAGE_URL" --edition "$EDITION"
