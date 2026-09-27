@@ -37,6 +37,6 @@ Use three separately permissioned jobs: build (read-only), deploy/archive (narro
 
 On failure, keep the last good website available and visibly dated. Do not promote an old edition as new. Notify the owner with a failed step and actionable reason. Do not expose tokens or raw auth responses. A Thursday correction run should compare published facts, version meaningful changes, and avoid re-sending the original social posts.
 
-### Manual-first launch
+### Current state (v1, September 2026)
 
-Current implementation supports collection, core validation, recap generation, and draft artifacts. Matchup previews, durable release archiving, redesigned player pages, public Pages deployment, platform image generation and social publishing are planned, not yet active. Validate those with manual runs before enabling scheduled generation and posting. Profile URLs alone do not connect the social APIs.
+Implemented: collection, validation, the edition model with up-next, Claude-drafted headlines with a template fallback, a weekly PR opened by a GitHub App, Jinja2 rendering, GitHub Pages deployment and live verification. Each edition's data and approved headline are committed under `editions/<id>/`, so Git is the v1 archive. Planned: player pages, a matchup angle, release-asset evidence bundles, social graphics and automated posting, and a Thursday correction pass. The weekly routine is in [operations](OPERATIONS.md).

@@ -302,3 +302,18 @@ Schedule: Sat–Sun build; Mon dry run on Week 2 (first public deploy); Tue Week
 ## 17. Open question for review
 
 Should the Week 2 edition (built Monday as the dry run, labeled "Historical replay", no up-next) remain in the public archive as the first edition? Default: yes.
+
+## 18. Implementation notes (2026-09-26)
+
+Adjustments made while planning, within the approved design:
+
+- The hash-locked dependency file is `requirements.txt` (generated from `requirements.in` with uv), so Dependabot can read it.
+- `social-drafts.json` is produced by the renderer at deploy time, so it always matches the approved headline. The PR description carries the same drafts for review.
+- Capitalized names in a Claude draft that aren't in the data become review notes rather than rejections, which avoids false positives from title-cased prose. Blocked terms (injury, benched, …) count as supported only when they appear in the named player's own facts.
+- `Deploy site` skips its deploy job until the first edition exists.
+- The Claude call uses the official `anthropic` SDK with model `claude-opus-5-5` at explicit `medium` effort (owner-directed, following Anthropic's "Prompting Claude Opus 5.5" guide), server-side refusal fallbacks (`fallbacks: "default"`), and the edition facts wrapped in `<edition_facts>` tags that the system prompt marks as data, never instructions.
+- nflverse schedules label playoff games `WC`, `DIV`, `CON`, `SB` (never `POST`); `config.json` `season_types` uses those values and stats/Next Gen Stats matching maps them to `POST`.
+- Up-next distinguishes "Next matchup unconfirmed" (a team still alive whose next opponent isn't scheduled) from "Season complete", and treats `NA` schedule values as unknown.
+- The site palette follows the official IMG Academy Brand Guidelines (v1.2, May 2024) supplied by the owner — IMG Blue `#0057B8`, navy `#002D54`, light `#DDE3EB`, text `#424242` — with team colors used only as bars and borders; no IMG Academy logo, crest or typefaces. Public copy always says "IMG Academy", never "IMG" alone, per the guidelines' editorial rule.
+- The GitHub App is referenced by its Client ID (`EDITION_APP_CLIENT_ID`), as `actions/create-github-app-token` v3 expects. GitHub API calls live in `src/github.py` (the spec's `publish.py`), which refuses redirects and non-GitHub hosts; the PR body is built in `src/pipeline.py`, and live-site verification is `src/verify.py`.
+- The Claude request timeout is 120 seconds with two SDK retries.

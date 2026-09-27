@@ -13,3 +13,7 @@ Fair use can apply to news reporting/commentary, but it requires a case-specific
 Before enabling an image, record its exact source, photographer/rightsholder, permission or asset-specific license, attribution requirement, permitted web/social uses, modification restrictions and expiration date. Prefer images supplied with explicit permission or an asset-specific open license that supports the intended use. Player consent alone may not clear the photographer's copyright. Do not invent synthetic athlete likenesses as a shortcut.
 
 Upstream photo/logo URLs can remain as provenance metadata; they are not displayed by default. An IMG Academy logo requires a separate decision and permission record. The project's MIT license applies to code, not third-party media.
+
+## Wordmark
+
+The site's name, IMG Academy → NFL, is set as plain text beside an original path graphic. It uses no IMG Academy or NFL logo, typeface or trade dress, and the masthead states that the project is not affiliated with either. Using an official IMG Academy mark requires written permission recorded here first: the grantor, scope, permitted web and social uses, attribution and any expiry. The site's colors follow the official IMG Academy Brand Guidelines (v1.2, May 2024); colors alone do not imply endorsement, and the independence label stays in the masthead.

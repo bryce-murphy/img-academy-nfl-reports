@@ -14,9 +14,13 @@ Use a feature branch and a signed commit, then a pull request; do not temporaril
 
 Workflow inputs are passed through environment variables and validated; untrusted pull-request text is never inserted into shell programs. Pull requests never receive social credentials. No pull_request_target workflow or self-hosted runner is used.
 
-No runtime third-party Python dependencies are needed by the initial report builder. Data has explicit HTTPS origins, download limits, schema checks, upstream timestamps, and SHA-256 manifests. All external text is escaped before HTML rendering. Only approved NFL/ESPN image hosts are rendered.
+Runtime dependencies are Jinja2 and the official Anthropic SDK, installed from a hash-locked `requirements.txt` with `--require-hashes`. Data has explicit HTTPS origins, download limits, schema checks, upstream timestamps and SHA-256 manifests. Jinja2 autoescaping escapes all page text. No third-party images are rendered.
 
 No setup guarantees a completely safe repository. Account 2FA/passkeys, collaborator access, OAuth grants, alert review, and credential rotation remain account-owner responsibilities.
+
+## Weekly automation
+
+The **Weekly edition** workflow runs only from `main`, in the `edition` environment, whose deployment branch is `main`. It mints a one-hour GitHub App installation token limited to Contents, Pull requests and Issues on this repository. The App cannot push to the protected `main` branch, and its commits are made through the GraphQL API, so GitHub marks them Verified. The Anthropic API key is exposed only to the pipeline step and is sent only to `api.anthropic.com`. Pull-request workflows never receive these secrets. Setting the repository variable `EDITION_AUTOMATION` to anything other than `on` stops every automated run. The **Deploy site** workflow grants `pages: write` and `id-token: write` only to its deploy job.
 
 ## Future publishing boundary
 
