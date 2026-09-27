@@ -1,7 +1,12 @@
 import gzip
+import hashlib
+import json
+import tempfile
 import unittest
+from unittest import mock
 
-from src.data import DataError, parse_csv, specifications, week_filter
+from src import data
+from src.data import DataError, load_sources, parse_csv, specifications, week_filter
 from src.errors import NotReady
 
 
@@ -27,6 +32,43 @@ class ParseCsvTests(unittest.TestCase):
 
     def test_pbp_specification_requires_week_column(self):
         self.assertIn("week", specifications(2026)["pbp"][2])
+
+
+SCHEDULE_V1 = b"game_id,season,game_type,gameday,home_score,away_score\n2026_02_PHI_TEN,2026,REG,2026-09-20,20,24\n"
+SCHEDULE_V2 = SCHEDULE_V1 + b"2026_02_CLE_TB,2026,REG,2026-09-20,19,23\n"
+
+
+def release(payload):
+    digest = "sha256:" + hashlib.sha256(payload).hexdigest()
+    return json.dumps({"assets": [{"name": "games.csv", "updated_at": "2026-09-27T21:46:18Z", "digest": digest}]}).encode()
+
+
+class LoadSourcesTests(unittest.TestCase):
+    """nflverse replaces assets in place; the listed digest can lead the download by a few seconds."""
+
+    def load(self, responses):
+        calls = []
+
+        def fake_get(url):
+            calls.append(url)
+            return responses.pop(0)
+
+        with tempfile.TemporaryDirectory() as cache, mock.patch.object(data, "get_bytes", fake_get), mock.patch.object(data, "pause") as pause:
+            datasets, manifest, _ = load_sources(2026, cache, historical=True, only={"schedule"})
+        return datasets, manifest, calls, pause
+
+    def test_checksum_mismatch_during_a_replacement_is_retried(self):
+        responses = [release(SCHEDULE_V2), SCHEDULE_V1, release(SCHEDULE_V2), SCHEDULE_V2]
+        datasets, manifest, calls, pause = self.load(responses)
+        self.assertEqual(len(datasets["schedule"]), 2)
+        self.assertEqual(manifest["schedule"]["sha256"], hashlib.sha256(SCHEDULE_V2).hexdigest())
+        self.assertEqual(len(calls), 4)
+        pause.assert_called_once()
+
+    def test_persistent_checksum_mismatch_fails_closed(self):
+        responses = [release(SCHEDULE_V2), SCHEDULE_V1] * data.DOWNLOAD_ATTEMPTS
+        with self.assertRaisesRegex(DataError, "Cannot verify schedule: Upstream checksum mismatch: schedule"):
+            self.load(responses)
 
 
 class ErrorTests(unittest.TestCase):
