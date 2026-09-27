@@ -96,6 +96,27 @@ class RenderTests(SiteTestCase):
             self.assertIn("The first edition is on its way", self.read(out / "index.html"))
             self.assertTrue((out / "methodology" / "index.html").exists())
 
+    def test_build_writes_every_published_artifact(self):
+        out = self.render()
+        self.assertTrue((out / "static" / "styles.css").exists())
+        self.assertTrue((out / ".nojekyll").exists())
+        not_found = self.read(out / "404.html")
+        self.assertIn('href="https://bryce-murphy.github.io/img-academy-nfl-reports/archive/"', not_found)
+        sitemap = self.read(out / "sitemap.xml")
+        self.assertIn(
+            "<loc>https://bryce-murphy.github.io/img-academy-nfl-reports/editions/2026-week-02/</loc>", sitemap
+        )
+        with open(out / "robots.txt", encoding="utf-8", newline="") as handle:
+            robots = handle.read()
+        self.assertEqual(
+            robots,
+            "User-agent: *\nAllow: /\nSitemap: https://bryce-murphy.github.io/img-academy-nfl-reports/sitemap.xml\n",
+        )
+        edition_json = json.loads(self.read(out / "editions" / "2026-week-02" / "edition.json"))
+        self.assertEqual(edition_json, fixture_data.golden_edition())
+        sources_json = json.loads(self.read(out / "editions" / "2026-week-02" / "sources.json"))
+        self.assertEqual(sources_json, {})
+
     def test_helpers(self):
         delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
         self.assertEqual(site.result_line(delpit), "W 23–19 vs. TB")
