@@ -1,4 +1,4 @@
-:root{--ink:#0e1b29;--muted:#587089;--paper:#ffffff;--wash:#f3f5f6;--card:#ffffff;--brand:#0057b8;--navy:#003057;--sky:#95c0f4;--line:#dde3eb;--warn:#bc8e47;--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif}
+:root{--ink:#424242;--muted:#587089;--paper:#ffffff;--wash:#f5f5f5;--card:#ffffff;--brand:#0057b8;--brand-dark:#004b9f;--navy:#002d54;--light:#dde3eb;--line:#dde3eb;--warm:#cecac8;--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,Arial,sans-serif}
@@ -21,7 +21,7 @@ a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-off
 .dek{font-size:19px;margin:0 0 12px}
 .lead{color:var(--muted);margin:0;max-width:640px}
 .cta{display:inline-block;margin-top:20px;background:var(--brand);color:#fff;padding:12px 18px;font-weight:700;font-size:14px;text-decoration:none}
-.cta:hover{background:var(--navy);color:#fff}
+.cta:hover{background:var(--brand-dark);color:#fff}
 .featured{background:var(--wash);border:1px solid var(--line);border-top:8px solid var(--team,var(--brand));padding:20px;min-height:260px;display:grid;grid-template-rows:auto 1fr auto}
 .scorebug{justify-self:end;margin:0;background:var(--navy);color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;padding:6px 12px}
 .monogram{font:800 120px/1 var(--display);color:var(--navy);text-align:center;align-self:center}
@@ -38,7 +38,7 @@ a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-off
 .metrics strong{display:block;font:800 34px/1 var(--display);color:var(--navy)}
 .metrics span{display:block;font-size:11px;color:var(--muted);line-height:1.3}
 .evidence,.caption{font-size:12px;color:var(--muted);margin:0}
-.withheld,.availability-note{margin:0;padding:10px 12px;background:#fbf5ea;border-left:3px solid var(--warn);font-size:12px}
+.withheld,.availability-note{margin:0;padding:10px 12px;background:var(--wash);border-left:3px solid var(--warm);font-size:12px}
 .ngs{margin:0;padding:10px 12px 10px 28px;background:var(--wash);font-size:12px}
 details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .plays{padding-left:20px;font-size:12px}
@@ -61,15 +61,15 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .matchup h3{font:700 26px/1.1 var(--display);margin:6px 0;color:var(--navy)}
 .matchup p{margin:4px 0;font-size:14px}
 .matchup .venue,.matchup .who{color:var(--muted);font-size:13px}
-.method{margin:36px 0 0;padding:32px;background:var(--navy);color:#eef3f8}
+.method{margin:36px 0 0;padding:32px;background:var(--navy);color:#fff}
 .method h2{color:#fff;margin-bottom:12px}
-.method a:hover{color:var(--sky)}
+.method a:hover{color:var(--light)}
 .method ul{font-size:14px;padding-left:20px}
-.method .warnings li{color:#ffe7b3}
+.method .warnings li{color:#fff;font-weight:600}
 .method table{border-collapse:collapse;width:100%;font-size:12px;margin:18px 0}
-.method th,.method td{text-align:left;padding:8px;border-bottom:1px solid #1d4a78;overflow-wrap:anywhere}
-.method th{color:var(--sky)}
-.method .caption{color:#c7d5e6}
+.method th,.method td{text-align:left;padding:8px;border-bottom:1px solid var(--brand-dark);overflow-wrap:anywhere}
+.method th{color:var(--light)}
+.method .caption{color:var(--light)}
 .prose{max-width:760px;padding:24px 0 48px}
 .prose h1{font:800 clamp(40px,5vw,64px)/1 var(--display);margin:24px 0;color:var(--navy)}
 .prose h2{font:700 28px/1.1 var(--display);margin:32px 0 8px;color:var(--navy)}
