@@ -1,9 +1,11 @@
 """Render the static site from committed editions with Jinja2 templates."""
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import shutil
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -215,3 +217,59 @@ def build_site(out, editions_root=ROOT / "editions", config=None):
     page("sitemap.xml", "sitemap.xml", canonical=site_url, root="", urls=urls)
     (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {site_url}sitemap.xml\n", encoding="utf-8", newline="\n")
     return written
+
+
+LINK = re.compile(r'(?:href|src)="([^"#?]*)[^"]*"')
+
+
+def check_site(out, editions):
+    out = Path(out)
+    problems = []
+    for e in editions:
+        page = out / "editions" / e.id / "index.html"
+        if f'<meta name="edition-id" content="{e.id}">' not in page.read_text(encoding="utf-8"):
+            problems.append(f"editions/{e.id}/index.html is missing its edition-id")
+    if editions and f'<meta name="edition-id" content="{editions[-1].id}">' not in (out / "index.html").read_text(encoding="utf-8"):
+        problems.append("index.html does not show the latest edition")
+    for page in sorted(out.rglob("*.html")):
+        text = page.read_text(encoding="utf-8")
+        name = page.relative_to(out).as_posix()
+        if "{{" in text or "{%" in text:
+            problems.append(f"{name} contains unrendered template syntax")
+        for target in LINK.findall(text):
+            if not target or target.startswith(("http://", "https://", "mailto:")):
+                continue
+            resolved = (page.parent / target).resolve()
+            if target.endswith("/") or resolved.is_dir():
+                resolved = resolved / "index.html"
+            if not resolved.exists():
+                problems.append(f"{name} links to missing {target}")
+    return problems
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(prog="python -m src.site")
+    sub = parser.add_subparsers(dest="command", required=True)
+    build = sub.add_parser("build", help="Render the site")
+    build.add_argument("--out", type=Path, default=ROOT / "_site")
+    build.add_argument("--editions", type=Path, default=ROOT / "editions")
+    build.add_argument("--check", action="store_true", help="Exit 1 if links or edition ids are wrong")
+    latest = sub.add_parser("latest-id", help="Print the newest edition id, or 'none'")
+    latest.add_argument("--editions", type=Path, default=ROOT / "editions")
+    args = parser.parse_args(argv)
+    if args.command == "latest-id":
+        editions = load_editions(args.editions)
+        print(editions[-1].id if editions else "none")
+        return 0
+    written = build_site(args.out, args.editions)
+    print(f"Rendered {len(written)} pages into {args.out}")
+    if args.check:
+        problems = check_site(args.out, load_editions(args.editions))
+        for problem in problems:
+            print(f"::error::{problem}")
+        return 1 if problems else 0
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

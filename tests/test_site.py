@@ -124,5 +124,34 @@ class RenderTests(SiteTestCase):
         self.assertIn("1 sack", site.contribution(delpit))
 
 
+import contextlib
+import io
+
+
+class CheckTests(SiteTestCase):
+    def test_rendered_site_passes_its_checks(self):
+        out = self.render()
+        self.assertEqual(site.check_site(out, site.load_editions(self.editions)), [])
+
+    def test_broken_link_is_reported(self):
+        out = self.render()
+        page = out / "archive" / "index.html"
+        page.write_text(page.read_text(encoding="utf-8") + '<a href="../missing/">x</a>', encoding="utf-8")
+        self.assertTrue(any("missing" in p for p in site.check_site(out, site.load_editions(self.editions))))
+
+    def test_missing_edition_id_is_reported(self):
+        out = self.render()
+        (out / "index.html").write_text("<html></html>", encoding="utf-8")
+        self.assertIn("index.html does not show the latest edition", site.check_site(out, site.load_editions(self.editions)))
+
+    def test_cli_build_check_and_latest_id(self):
+        out = self.render()
+        self.assertEqual(site.main(["build", "--out", str(out), "--editions", str(self.editions), "--check"]), 0)
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            site.main(["latest-id", "--editions", str(self.editions)])
+        self.assertEqual(buffer.getvalue().strip(), "2026-week-02")
+
+
 if __name__ == "__main__":
     unittest.main()
