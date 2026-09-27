@@ -295,6 +295,11 @@ def main(argv=None):
     edition, manifest, report = build_week(args.season, week, games, historical=args.historical, final=True, registry=load_registry())
     directory = args.out / edition["id"]
     write_edition(edition, manifest, directory)
+    from . import editorial  # local import: editorial reads edition dicts; edition never needs editorial otherwise
+
+    headline_file = directory / "editorial.toml"
+    if not headline_file.exists():
+        headline_file.write_bytes(editorial.dumps(editorial.fallback(edition)).encode("utf-8"))
     print(f"Built {directory}: {edition['counts']['played']} of {edition['counts']['followed']} alumni played; "
           f"missing optional data: {', '.join(report.missing_optional) or 'none'}")
     return 0

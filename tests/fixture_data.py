@@ -33,3 +33,19 @@ def week_games(data, week=2, season=2026):
 def roster_samples():
     with (FIXTURES / "roster_samples.csv").open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def golden_edition():
+    return json.loads((FIXTURES / "expected_edition.json").read_text(encoding="utf-8"))
+
+
+def write_edition_dir(root, edition, copy=None, sources=None):
+    """Write editions/<id>/ with edition.json, sources.json and editorial.toml for tests."""
+    from src import editorial
+
+    target = Path(root) / edition["id"]
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "edition.json").write_text(json.dumps(edition), encoding="utf-8")
+    (target / "sources.json").write_text(json.dumps(sources or {}), encoding="utf-8")
+    (target / "editorial.toml").write_text(editorial.dumps(copy or editorial.fallback(edition)), encoding="utf-8")
+    return target
