@@ -28,3 +28,8 @@ def week_games(data, week=2, season=2026):
         g for g in data["schedule"]
         if int(g["season"]) == season and int(g["week"]) == week and g["game_type"] == "REG"
     ]
+
+
+def roster_samples():
+    with (FIXTURES / "roster_samples.csv").open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))

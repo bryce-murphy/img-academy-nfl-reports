@@ -37,6 +37,30 @@ class FixtureTests(unittest.TestCase):
         self.assertEqual(len(by_team), 32)
         self.assertTrue(all(ev.snap_table_complete(rows) for rows in by_team.values()))
 
+    def test_reserve_rows_carry_reserve_codes(self):
+        reserved = [r for r in fixture_data.roster_samples() if r["status"] == "RES"]
+        self.assertTrue(reserved)
+        self.assertTrue(all(r["status_description_abbr"].startswith("R") for r in reserved))
+
+    def test_elevated_practice_squad_players_appear_active(self):
+        elevated = [r for r in fixture_data.roster_samples() if r["status"] == "ACT"]
+        self.assertTrue(elevated)
+        by_pfr_id = defaultdict(list)
+        for row in self.data["snaps"]:
+            by_pfr_id[row["pfr_player_id"]].append(row)
+        found = False
+        for player in elevated:
+            for snap in by_pfr_id.get(player["pfr_id"], []):
+                counts = [ev.num(snap.get(key)) for key in ev.SNAP_KEYS]
+                if any(value is not None and value > 0 for value in counts):
+                    label = ev.availability(snap, [], {}, {"status": "ACT"}, True, False)[0]
+                    self.assertEqual(label, ev.PLAYED)
+                    found = True
+                    break
+            if found:
+                break
+        self.assertTrue(found)
+
 
 if __name__ == "__main__":
     unittest.main()

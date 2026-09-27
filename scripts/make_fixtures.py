@@ -32,6 +32,7 @@ PBP_BASE = [
 ]
 PLAYER_COLUMNS = ["gsis_id", "display_name", "pfr_id", "position", "college_name", "draft_year", "draft_round"]
 TEAM_COLUMNS = ["team_abbr", "team_name", "team_color", "team_logo_espn"]
+ROSTER_SAMPLE_COLUMNS = ["gsis_id", "full_name", "team", "week", "status", "status_description_abbr", "pfr_id"]
 
 
 def write(name, rows, columns):
@@ -80,9 +81,19 @@ def main():
     for name in ("ngs_passing", "ngs_receiving", "ngs_rushing"):
         rows = [r for r in data[name] if r["season"] == str(SEASON) and r["week"] == week and r["player_gsis_id"] in ids]
         write(name, rows, columns_of(data[name], name))
+    week_rosters = [r for r in data["rosters"] if r["week"] == week]
+    reserved = sorted((r for r in week_rosters if r["status"] == "RES"), key=lambda r: r["gsis_id"])[:10]
+    elevated = [
+        r for r in week_rosters
+        if r["status"] == "ACT" and r.get("status_description_abbr", "").startswith("P")
+    ]
+    write("roster_samples", reserved + elevated, ROSTER_SAMPLE_COLUMNS)
     (OUT / "alumni.json").write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8", newline="\n")
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
-    print(f"Wrote fixtures for {len(registry)} players and {len(week_games)} games to {OUT}")
+    print(
+        f"Wrote fixtures for {len(registry)} players and {len(week_games)} games to {OUT} "
+        f"({len(reserved)} RES rows, {len(elevated)} elevated rows)"
+    )
 
 
 if __name__ == "__main__":
