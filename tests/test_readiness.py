@@ -78,6 +78,22 @@ class ReadinessTests(unittest.TestCase):
         data["injuries"] = []
         self.assertEqual(self.check(data).missing_optional, ["injury report"])
 
+    def test_charting_gaps_are_listed_but_never_delay_an_attempt(self):
+        report = self.check()
+        self.assertIn("FTN charting for g1", report.pending)
+        self.assertIn("PFR charting for g1", report.pending)
+        self.assertIn("Next Gen Stats (receiving) for Week 3", report.pending)
+        self.assertEqual(report.missing(), [])
+        self.assertTrue(report.ready(final=False))
+
+    def test_charting_present_leaves_nothing_pending(self):
+        data = ready_data()
+        data["ftn"] = [{"nflverse_game_id": "g1", "season": "2026", "week": "3"}]
+        data["pfr_def"] = [{"game_id": "g1", "season": "2026", "week": "3"}]
+        for kind in ("passing", "receiving", "rushing"):
+            data[f"ngs_{kind}"] = [{"season": "2026", "week": "3"}]
+        self.assertEqual(self.check(data).pending, [])
+
     def test_week_two_fixture_is_ready(self):
         data, manifest, registry = fixture_data.load()
         ids = {alum["gsis_id"] for alum in registry}

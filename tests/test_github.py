@@ -63,6 +63,11 @@ class GitHubTests(unittest.TestCase):
         self.assertEqual(gh.upsert_issue("Edition x blocked", "new body", "edition-blocked"), 3)
         self.assertEqual((transport.requests[1]["method"], transport.requests[1]["json"]), ("PATCH", {"body": "new body"}))
 
+    def test_update_pr_sends_title_and_body(self):
+        gh, transport = client((200, {}))
+        gh.update_pr(9, "new body", title="Edition 2026 Week 2: New headline")
+        self.assertEqual((transport.requests[0]["method"], transport.requests[0]["json"]), ("PATCH", {"body": "new body", "title": "Edition 2026 Week 2: New headline"}))
+
     def test_branch_authors(self):
         gh, _ = client((200, {"commits": [{"author": {"login": "edition-bot[bot]"}}, {"author": None, "commit": {"author": {"email": "x@example.org"}}}]}))
         self.assertEqual(gh.branch_authors("edition/x"), {"edition-bot[bot]", "x@example.org"})

@@ -1,3 +1,5 @@
+import contextlib
+import io
 import os
 import unittest
 from unittest import mock
@@ -71,8 +73,10 @@ class MainClosesBlockingIssueTests(unittest.TestCase):
         factory = lambda token, repo: gh
         env = {"GITHUB_TOKEN": "tok", "GITHUB_REPOSITORY": "bryce-murphy/img-academy-nfl-reports"}
         with mock.patch.object(verify, "wait_for", lambda url, expected, **kw: (fetch_fn(),  "detail")):
-            with mock.patch.dict(os.environ, env, clear=False):
-                return verify.main(["--url", URL, "--edition", "2026-week-03"], github_factory=factory)
+            with mock.patch.dict(os.environ, env, clear=False), contextlib.redirect_stdout(io.StringIO()) as output:
+                code = verify.main(["--url", URL, "--edition", "2026-week-03"], github_factory=factory)
+        self.assertIn("Verified" if code == 0 else "Not verified", output.getvalue())
+        return code
 
     def test_successful_verification_closes_an_open_blocking_issue(self):
         gh = FakeGitHub("tok", "repo", issue={"number": 9, "title": "Site deployment not verified"})

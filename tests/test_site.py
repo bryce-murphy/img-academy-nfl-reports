@@ -306,7 +306,9 @@ class CheckTests(SiteTestCase):
 
     def test_cli_build_check_and_latest_id(self):
         out = self.render()
-        self.assertEqual(site.main(["build", "--out", str(out), "--editions", str(self.editions), "--check"]), 0)
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(site.main(["build", "--out", str(out), "--editions", str(self.editions), "--check"]), 0)
+        self.assertIn("Rendered ", output.getvalue())
         buffer = io.StringIO()
         with contextlib.redirect_stdout(buffer):
             site.main(["latest-id", "--editions", str(self.editions)])

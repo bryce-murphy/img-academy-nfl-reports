@@ -154,15 +154,43 @@ def _mentions(body, name, last_names):
     return last_names[last] == 1 and len(last) >= 4 and re.search(rf"\b{re.escape(last)}\b", body) is not None
 
 
-def _unknown_names(body, facts_text):
+def _ends_sentence(word):
+    """'Bay.' ends a sentence; initials ('J.J.', 'A.') and suffixes ('Jr.') do not."""
+    core = word.rstrip(".!?")
+    return word != core and len(core) > 1 and "." not in core and core not in NAME_SUFFIXES
+
+
+def _name_runs(text):
+    """Runs of capitalized words, split at sentence endings."""
+    for run in CAPITALIZED_RUN.findall(text):
+        current = []
+        for word in run.split():
+            current.append(word)
+            if _ends_sentence(word):
+                yield current
+                current = []
+        if current:
+            yield current
+
+
+def _clean(words):
+    return re.sub(r"['’]s$", "", " ".join(words).rstrip(".,;:!?"))
+
+
+def _unknown_names(texts, facts_text):
+    """Multi-word capitalized phrases not found in the facts. Each field is checked on its own, and a
+    known name after a description ('Fellow Eagle Nolan Smith') counts as known."""
+    known = lambda phrase: phrase in facts_text or phrase in NAME_ALLOWLIST
     unknown = []
-    for run in CAPITALIZED_RUN.findall(body):
-        words = run.split()
-        while words and words[0] in LEADING_WORDS:
-            words.pop(0)
-        phrase = re.sub(r"['’]s$", "", " ".join(words).rstrip(".,;:!?"))
-        if len(words) >= 2 and phrase not in facts_text and phrase not in NAME_ALLOWLIST and phrase not in unknown:
-            unknown.append(phrase)
+    for text in texts:
+        for words in _name_runs(text):
+            while words and (words[0] in LEADING_WORDS or words[0].lower() in NUMBER_WORDS):
+                words = words[1:]
+            if len(words) < 2 or any(known(_clean(words[i:])) for i in range(len(words) - 1)):
+                continue
+            phrase = _clean(words)
+            if phrase not in unknown:
+                unknown.append(phrase)
     return unknown
 
 
@@ -238,7 +266,7 @@ def review(copy, edition):
     for term in BLOCKED_TERMS:
         if term in lower_body and term not in support:
             result.problems.append(f"uses '{term}' without supporting data")
-    result.notes.extend(f"name not found in the data: {phrase}" for phrase in _unknown_names(body, text))
+    result.notes.extend(f"name not found in the data: {phrase}" for phrase in _unknown_names([copy["headline"], copy["dek"], copy["lead"], *alternates], text))
     return result
 
 

@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import os
 import re
@@ -263,7 +265,10 @@ class MainHeadlineTests(unittest.TestCase):
         def run():
             with mock.patch.object(ed, "due_week", return_value=(2, games)), \
                  mock.patch.object(ed, "build_week", return_value=(golden_edition, fixture_manifest, Readiness())):
-                return ed.main(["--season", "2026", "--week", "2", "--out", tmp])
+                with contextlib.redirect_stdout(io.StringIO()) as output:
+                    code = ed.main(["--season", "2026", "--week", "2", "--out", tmp])
+                self.assertIn("Built ", output.getvalue())
+                return code
 
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(run(), 0)

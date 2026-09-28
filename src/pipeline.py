@@ -113,6 +113,9 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     if week is None:
         return Outcome("skipped", "No NFL week finished in the last seven days.")
     eid = edition_id(season, week)
+    stale = gh.find_issue(f"Edition {season} blocked", BLOCKED_LABEL)
+    if stale:  # opened by an earlier schedule failure, before any week was known
+        gh.close_issue(stale["number"], f"Resolved: the schedule loaded and edition {eid} is due.")
     if gh.file_exists(f"editions/{eid}/edition.json", "main"):
         issue = gh.find_issue(f"Edition {eid} blocked", BLOCKED_LABEL)
         if issue:
@@ -145,11 +148,12 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     gh.commit_files(branch, head, files, f"Edition {season} Week {week}: data and headline draft")
     drafts = social_drafts(edition, copy, f"{cfg['site_url']}editions/{eid}/")
     body = pr_body(edition, copy, draft_report, report, drafts, s.run_url)
+    title = f"Edition {season} Week {week}: {copy['headline']}"
     if pr:
         number = pr["number"]
-        gh.update_pr(number, body)
+        gh.update_pr(number, body, title=title)
     else:
-        number = gh.open_pr(branch, f"Edition {season} Week {week}: {copy['headline']}", body)["number"]
+        number = gh.open_pr(branch, title, body)["number"]
         gh.request_review(number, [cfg["owner_github"]])
     issue = gh.find_issue(f"Edition {eid} blocked", BLOCKED_LABEL)
     if issue:
@@ -185,6 +189,9 @@ def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
     lines += ["", f"**Availability:** {by_label}", ""]
     if readiness_report.missing_optional:
         lines += ["**Published without:**"] + [f"- {item}" for item in readiness_report.missing_optional] + [""]
+    if readiness_report.pending:
+        lines += ["**Charting not yet available (those card lines are left off; a refresh adds them):**"]
+        lines += [f"- {item}" for item in readiness_report.pending] + [""]
     if edition["warnings"]:
         lines += ["**Warnings**"] + [f"- {warning}" for warning in edition["warnings"]] + [""]
     lines += ["**Checks**"] + [f"- {check}" for check in edition["validation"]["checks"]] + [""]

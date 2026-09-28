@@ -5,6 +5,7 @@ import fixture_data
 from src import editorial, pipeline
 from src.errors import DataError
 from src.pipeline import Settings
+from src.readiness import Readiness
 
 CFG = {
     "scheduled_reports_enabled": True,
@@ -53,8 +54,8 @@ class FakeGitHub:
         self.opened.append((branch, title, body))
         return {"number": 42}
 
-    def update_pr(self, number, body):
-        self.updated.append((number, body))
+    def update_pr(self, number, body, title=None):
+        self.updated.append((number, body, title))
 
     def request_review(self, number, reviewers):
         self.reviews.append((number, list(reviewers)))
@@ -153,6 +154,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(head, "branch-sha")
         self.assertNotIn("editions/2026-week-02/editorial.toml", files)
         self.assertIn("Owner headline", gh.updated[0][1])
+        self.assertEqual(gh.updated[0][2], "Edition 2026 Week 2: Owner headline")  # the title follows the headline
 
     def _raising_sources(self, message):
         def sources(season, *, week=None, only=None, historical=False):
@@ -267,6 +269,17 @@ class PipelineTests(unittest.TestCase):
         self.attempt(gh)
         self.assertEqual(gh.closed[0][0], 5)
 
+    def test_success_closes_a_season_level_blocking_issue(self):
+        # A schedule failure opens "Edition <season> blocked" before any week is known.
+        gh = FakeGitHub(issue={"number": 10, "title": "Edition 2026 blocked"})
+        self.assertEqual(self.attempt(gh).state, "opened")
+        self.assertEqual(gh.closed[0][0], 10)
+
+    def test_published_week_closes_a_season_level_blocking_issue(self):
+        gh = FakeGitHub(on_main=True, issue={"number": 10, "title": "Edition 2026 blocked"})
+        self.assertEqual(self.attempt(gh).state, "published")
+        self.assertEqual(gh.closed[0][0], 10)
+
     def test_published_week_skips_registry_gate(self):
         gh = FakeGitHub(on_main=True)
         outcome = self.attempt(gh, cfg=dict(CFG, registry_reviewed_season=2025))
@@ -285,6 +298,16 @@ class PipelineTests(unittest.TestCase):
         outcome = self.attempt(gh)
         self.assertEqual(outcome.state, "published")
         self.assertEqual(gh.closed[0][0], 5)
+
+    def test_pr_body_lists_pending_charting(self):
+        edition = fixture_data.golden_edition()
+        copy = editorial.fallback(edition)
+        report = {"used": "fallback", "reasons": [], "rejected": None, "notes": []}
+        drafts = {"state": "withheld", "reason": "test"}
+        body = pipeline.pr_body(edition, copy, report, Readiness(pending=["FTN charting for 2026_03_PHI_TB"]), drafts, "run")
+        self.assertIn("**Charting not yet available", body)
+        self.assertIn("- FTN charting for 2026_03_PHI_TB", body)
+        self.assertNotIn("Charting not yet available", pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run"))
 
     def test_reminder_mentions_the_owner_on_edition_prs_only(self):
         gh = FakeGitHub(open_prs=[{"number": 42, "head": {"ref": "edition/2026-week-02"}}, {"number": 3, "head": {"ref": "feat/other"}}])
