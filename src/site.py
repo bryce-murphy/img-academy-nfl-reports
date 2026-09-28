@@ -87,6 +87,24 @@ def snap_line(player):
     return " · ".join(parts) if parts else "—"
 
 
+def participation_line(player):
+    """How much a player played, in words; the card's metric tiles already carry lineman snap counts."""
+    availability = player["availability"]
+    if availability["label"] != ev.PLAYED:
+        return f"{availability['evidence']} · Snaps {snap_line(player)}"
+    metrics = player["metrics"]
+    if metrics and not player.get("stats_withheld") and all(m["label"].endswith("snaps") for m in metrics):
+        return ""
+    snaps = player["snaps"]
+    parts = [f"{ev.fmt(snaps[key])} {name} snap{'' if snaps[key] == 1 else 's'}" for key, name in (("offense", "offensive"), ("defense", "defensive")) if snaps.get(key)]
+    if snaps.get("st"):
+        count = ev.fmt(snaps["st"])
+        parts.append(f"{count} on special teams" if parts else f"{count} special-teams snap{'' if snaps['st'] == 1 else 's'}")
+    if not parts:
+        return f"{availability['evidence']}; snap counts not available."
+    return "Played " + (parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]) + "."
+
+
 def player_view(player):
     view = dict(player)
     view.update(
@@ -95,6 +113,7 @@ def player_view(player):
         result_line=result_line(player),
         contribution=contribution(player),
         snap_line=snap_line(player),
+        participation=participation_line(player),
         source_url=player["alumni_source"] if player["alumni_source"].startswith("https://") else "",
     )
     return view
@@ -154,8 +173,9 @@ def social_drafts(edition, copy, url):
     week = edition["week"]
     linkedin = (
         f"{copy['headline']}\n\n{copy['dek']}\n\n"
-        f"The IMG Academy → NFL Week {week} edition has results, participation evidence and what's next "
-        f"for every alum we follow. Missing information is labeled, not guessed.\n\n{url}"
+        f"Every week I track the IMG Academy football alumni in the NFL: results, how much each one played "
+        f"and what's next. Every number is checked against the data. Here's Week {week}:\n\n{url}\n\n"
+        "A personal project, not an official IMG Academy or NFL publication."
     )
     x = f"{copy['headline']}\n\nIMG Academy → NFL, Week {week}: {url}"
     return {"state": "draft", "edition": edition["id"], "url": url, "linkedin": linkedin, "x": x}

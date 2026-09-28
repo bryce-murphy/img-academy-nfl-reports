@@ -14,6 +14,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 ```
 
 - **Refresh the test fixtures** (network): `.venv/Scripts/python scripts/make_fixtures.py`, then run the golden test with `UPDATE_GOLDEN=1` and review the diff.
+- **Regenerate the share image** after editing `scripts/share_card.html`: `.venv/Scripts/python scripts/make_share_card.py` (headless Edge or Chrome; writes `static/share-card.png`).
 - **Regenerate the dependency lock:** `uv pip compile requirements.in --universal --generate-hashes --python-version 3.12 --system-certs -o requirements.txt`
 - **Local pip installs** on this machine need `PIP_CERT=/c/ProgramData/Norton/Antivirus/wscert.pem` (antivirus TLS interception).
 
@@ -40,6 +41,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - Automation never rewrites a merged `editions/<id>/` directory.
 - Pin every GitHub Action to a full SHA. Use only GitHub-owned actions. Never put `${{ }}` expressions inside `run:` scripts; pass values through `env:`.
 - Public copy says "IMG Academy" in full, never "IMG" alone (brand guidelines' editorial rule).
+- The author works at IMG Academy: never write "not affiliated". The label is "Not an official IMG Academy or NFL publication"; the site does not mention the author's job.
 - Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders.
 
 ## Git

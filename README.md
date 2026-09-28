@@ -1,6 +1,6 @@
 # IMG Academy → NFL
 
-Independent, evidence-led weekly coverage of NFL players who played football at IMG Academy, by [Bryce Murphy](https://www.linkedin.com/in/bryce-murphy/). A public portfolio project, not affiliated with or endorsed by IMG Academy or the NFL.
+Independent, evidence-led weekly coverage of NFL players who played football at IMG Academy, by [Bryce Murphy](https://www.linkedin.com/in/bryce-murphy/). A personal portfolio project, not an official IMG Academy or NFL publication and not endorsed by either.
 
 **Read it:** https://bryce-murphy.github.io/img-academy-nfl-reports/
 
