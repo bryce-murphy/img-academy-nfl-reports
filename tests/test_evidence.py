@@ -222,5 +222,19 @@ class KeyPlayTests(unittest.TestCase):
         self.assertEqual(self.ids([play(1, "", sack_player_id=True), play(2, "NA", sack_player_id=True)]), [])
 
 
+class RecordedRoleTests(unittest.TestCase):
+    def test_only_allowlisted_roles_count(self):
+        play = {"solo_tackle_1_player_id": ME, "penalty_player_id": ME, "fantasy_player_id": ME, "lateral_receiver_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["solo_tackle_1"])
+
+    def test_every_matched_role_is_kept_in_order(self):
+        play = {"sack_player_id": ME, "forced_fumble_player_1_player_id": ME, "qb_hit_1_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["sack", "qb_hit_1", "forced_fumble_player_1"])
+
+    def test_side_and_impact_match_key_plays(self):
+        self.assertEqual(ev.side_and_impact(play(1, -1.8, sack_player_id=True), ME, "CLE"), ("defense", "Sack"))
+        self.assertEqual(ev.side_and_impact(play(2, 3.1, posteam="CLE", defteam="TB", td_player_id=True), ME, "CLE"), ("offense", "Touchdown"))
+
+
 if __name__ == "__main__":
     unittest.main()

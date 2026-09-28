@@ -255,6 +255,35 @@ class EditionTests(unittest.TestCase):
         self.assertEqual(ed.stat_season_type("SB"), "POST")
 
 
+class PlaysTests(unittest.TestCase):
+    def test_every_recorded_play_is_saved_with_field_details(self):
+        tate = player(build(), "Carnell Tate")
+        self.assertEqual(len(tate["plays"]), 5)
+        first = tate["plays"][0]
+        for key in ("down", "ydstogo", "yardline_100", "yards_gained", "air_yards", "complete_pass", "roles", "side", "offense_name"):
+            self.assertIn(key, first)
+        self.assertEqual(first["roles"], ["receiver"])
+        self.assertEqual([p["play_id"] for p in tate["plays"]], sorted((p["play_id"] for p in tate["plays"]), key=float))
+
+    def test_key_plays_are_among_plays_and_unchanged(self):
+        edition = build()
+        for p in edition["players"]:
+            ids = {q["play_id"] for q in p["plays"]}
+            self.assertTrue({k["play_id"] for k in p["key_plays"]} <= ids, p["name"])
+
+    def test_blank_cells_stay_null(self):
+        record = ed.play_record({"play_id": "7", "epa": "NA", "air_yards": "", "posteam": "CLE", "defteam": "TB", "desc": "x", "qtr": "1", "time": "15:00", "solo_tackle_1_player_id": "00-1"}, "00-1", "TB", lambda t: t)
+        self.assertIsNone(record["epa"])
+        self.assertIsNone(record["air_yards"])
+        self.assertIsNone(record["sack"])
+
+    def test_schema_version_is_two(self):
+        self.assertEqual(build()["schema_version"], 2)
+
+    def test_a_player_without_recorded_plays_has_an_empty_list(self):
+        self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
+
+
 class MainHeadlineTests(unittest.TestCase):
     def test_writes_fallback_headline_without_overwriting_an_existing_one(self):
         data = fixture_data.load()[0]

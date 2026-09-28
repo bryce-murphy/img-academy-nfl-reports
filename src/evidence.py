@@ -205,6 +205,25 @@ TACKLE_ROLES = (
     "solo_tackle_1_player_id", "solo_tackle_2_player_id", "assist_tackle_1_player_id", "assist_tackle_2_player_id",
     "assist_tackle_3_player_id", "assist_tackle_4_player_id", "tackle_with_assist_1_player_id", "tackle_with_assist_2_player_id",
 )
+RECORDED_ROLES = (
+    "passer", "rusher", "receiver", "td_player", "interception", "sack", "half_sack_1", "half_sack_2",
+    "qb_hit_1", "qb_hit_2", "tackle_for_loss_1", "tackle_for_loss_2", "forced_fumble_player_1",
+    "forced_fumble_player_2", "fumble_recovery_1", "fumble_recovery_2", "fumbled_1", "fumbled_2",
+    "pass_defense_1", "pass_defense_2", "solo_tackle_1", "solo_tackle_2", "assist_tackle_1", "assist_tackle_2",
+    "assist_tackle_3", "assist_tackle_4", "tackle_with_assist_1", "tackle_with_assist_2", "safety",
+    "punt_returner", "kickoff_returner", "punter", "kicker", "blocked",
+)
+
+
+def recorded_roles(play, pid):
+    """Roles in which the play-by-play names this player (player pages' 'recorded plays')."""
+    return [role for role in RECORDED_ROLES if play.get(f"{role}_player_id") == pid]
+
+
+def side_and_impact(play, pid, team):
+    if play.get("defteam") == team:
+        return "defense", _defensive_impact(play, pid)[1]
+    return "offense", "Touchdown" if play.get("td_player_id") == pid else None
 
 
 def _defensive_impact(play, pid):
@@ -231,12 +250,12 @@ def key_plays(plays, pid, team, limit=3):
         epa = num(play.get("epa"))
         if epa is None:
             continue
-        if play.get("defteam") == team:
-            rank_, impact = _defensive_impact(play, pid)
+        side, impact = side_and_impact(play, pid, team)
+        if side == "defense":
+            rank_, _ = _defensive_impact(play, pid)
             tier = rank_ if rank_ is not None else len(DEFENSIVE_IMPACT) + (1 if epa < 0 else 2)
             chosen.append(((tier, epa), play, "defense", impact))
         else:
-            impact = "Touchdown" if play.get("td_player_id") == pid else None
             chosen.append(((0, -abs(epa)), play, "offense", impact))
     chosen.sort(key=lambda item: item[0])
     return [
