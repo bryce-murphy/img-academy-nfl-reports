@@ -62,7 +62,7 @@ class DraftTests(unittest.TestCase):
 
     def test_prompt_asks_for_a_theme_and_second_storyline_dek(self):
         system = editorial.SYSTEM_PROMPT
-        for phrase in ("second storyline", "theme", "Never state the alumni count in the dek"):
+        for phrase in ("second storyline", "theme", "Never state the alumni count in the dek", 'Always write "IMG Academy" in full'):
             self.assertIn(phrase, system)
 
     def test_refusal_falls_back(self):

@@ -123,6 +123,12 @@ class ReviewTests(unittest.TestCase):
         problems = self.review(dek="An injury-filled week for the alumni.").problems
         self.assertTrue(any("injur" in p for p in problems))
 
+    def test_img_alone_is_an_error_but_img_academy_is_fine(self):
+        # Week 1's first Claude draft said "IMG alumni"; public copy always says "IMG Academy".
+        self.assertTrue(any("IMG Academy" in e for e in self.review(dek="IMG alumni kept meeting across the line.").errors))
+        self.assertTrue(any("IMG Academy" in e for e in self.review(alternates=["IMG's best week", "Week 2"]).errors))
+        self.assertEqual(self.review(dek="IMG Academy alumni kept meeting across the line.").errors, [])
+
     def test_unknown_names_are_notes_not_problems(self):
         result = self.review(lead="Grant Delpit chased Justin Jefferson all day.")
         self.assertEqual(result.problems, [])

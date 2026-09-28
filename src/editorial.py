@@ -43,6 +43,7 @@ SINGULAR = {
     "extra points": "extra point", "punts": "punt", "pass yards": "pass yard", "rush yards": "rush yard",
     "receiving yards": "receiving yard", "punt yards": "punt yard",
 }
+IMG_ALONE = re.compile(r"\bIMG\b(?! Academy)")  # brand rule: public copy never shortens IMG Academy
 CONTROL = re.compile(r"[\x00-\x1f\x7f]")
 
 
@@ -255,6 +256,9 @@ def review(copy, edition):
     for alternate in alternates:
         if len(alternate) > LIMITS["headline"]:
             result.errors.append(f"an alternate headline is {len(alternate)} characters; the limit is {LIMITS['headline']}")
+    for key, text in (("headline", copy["headline"]), ("dek", copy["dek"]), ("lead", copy["lead"]), *(("alternate headline", a) for a in alternates)):
+        if IMG_ALONE.search(text):
+            result.errors.append(f'{key} says "IMG" alone; write "IMG Academy" in full')
     if len(copy["lead"].split()) > LEAD_WORDS:
         result.errors.append(f"lead is {len(copy['lead'].split())} words; the limit is {LEAD_WORDS}")
     players = {p["id"]: p for p in edition["players"]}
@@ -364,6 +368,7 @@ What each part is for:
 - Headline: one player, one concrete thing they did, and the game result.
 - Dek: one sentence that opens with the week's theme and then backs it up with the second storyline, the best story after the headline. The theme is a real pattern in the facts, such as a shared position group, two alumni in the same game, or a run of wins; if no pattern is there, skip the theme and tell the second storyline alone. Name at most two players, neither of them the headline player, with one stat each, so the line stays easy to read. Never state the alumni count in the dek; it belongs in the lead. The shape, with placeholders in brackets: "A big week for IMG Academy defenders: [player] added a sack in the same win, and [player] had one of his own on the road." Fill it only from the facts, and change the wording to fit the week.
 - Lead: one paragraph that expands the headline and ends with how many alumni played, in plain words. Vary sentence length and connect facts with cause and consequence instead of stacking stat lists.
+- Always write "IMG Academy" in full; never shorten it to "IMG".
 - Avoid roll-call constructions such as "X of Y teams winning and Z losing", generic openers such as "In all" or "Overall", and sentences that only list numbers.
 
 Rules:
