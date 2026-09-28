@@ -18,8 +18,8 @@ RELEASES = "https://api.github.com/repos/nflverse/nflverse-data/releases/tags/"
 DOWNLOADS = "https://github.com/nflverse/nflverse-data/releases/download/"
 HOSTS = {"api.github.com", "github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com"}
 MAX_BYTES = 180_000_000
-DOWNLOAD_ATTEMPTS = 3
-RETRY_SECONDS = 20
+DOWNLOAD_ATTEMPTS = 4
+RETRY_SECONDS = 30
 
 
 def pause(seconds):
@@ -120,7 +120,7 @@ def fetch_verified(name, tag, filename, historical, max_age_hours):
         if not asset.get("digest", "").startswith("sha256:") or asset["digest"] == "sha256:" + digest:
             return asset, fetched, url, payload, digest
         if attempt < DOWNLOAD_ATTEMPTS:
-            pause(RETRY_SECONDS)
+            pause(RETRY_SECONDS * attempt)  # 30, 60, 90 s: a replaced asset can take over a minute to reach the CDN
     raise DataError(f"Upstream checksum mismatch: {name}")
 
 
