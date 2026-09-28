@@ -249,6 +249,13 @@ class RecordedRoleTests(unittest.TestCase):
         play = {"sack_player_id": ME, "forced_fumble_player_1_player_id": ME, "qb_hit_1_player_id": ME}
         self.assertEqual(ev.recorded_roles(play, ME), ["sack", "qb_hit_1", "forced_fumble_player_1"])
 
+    def test_td_only_credit_is_recorded_under_the_real_column_name(self):
+        # td_player_id is the real nflverse column; the role name must be "td" so
+        # f"{role}_player_id" reads it (not "td_player", which would look for the
+        # nonexistent "td_player_player_id" and silently miss every TD-only play).
+        play = {"td_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["td"])
+
     def test_side_and_impact_match_key_plays(self):
         self.assertEqual(ev.side_and_impact(play(1, -1.8, sack_player_id=True), ME, "CLE"), ("defense", "Sack"))
         self.assertEqual(ev.side_and_impact(play(2, 3.1, posteam="CLE", defteam="TB", td_player_id=True), ME, "CLE"), ("offense", "Touchdown"))

@@ -206,7 +206,7 @@ TACKLE_ROLES = (
     "assist_tackle_3_player_id", "assist_tackle_4_player_id", "tackle_with_assist_1_player_id", "tackle_with_assist_2_player_id",
 )
 RECORDED_ROLES = (
-    "passer", "rusher", "receiver", "td_player", "interception", "sack", "half_sack_1", "half_sack_2",
+    "passer", "rusher", "receiver", "td", "interception", "sack", "half_sack_1", "half_sack_2",
     "qb_hit_1", "qb_hit_2", "tackle_for_loss_1", "tackle_for_loss_2", "forced_fumble_player_1",
     "forced_fumble_player_2", "fumble_recovery_1", "fumble_recovery_2", "fumbled_1", "fumbled_2",
     "pass_defense_1", "pass_defense_2", "solo_tackle_1", "solo_tackle_2", "assist_tackle_1", "assist_tackle_2",
