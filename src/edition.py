@@ -12,6 +12,7 @@ from . import evidence as ev
 from . import readiness
 from .data import load_sources, utcnow
 from .errors import DataError, NotReady
+from .players import SLUG
 from .upnext import next_game
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +55,9 @@ def load_registry(path=ROOT / "data" / "alumni.json"):
     ids = [a["gsis_id"] for a in registry]
     if len(ids) != len(set(ids)) or not all(re.fullmatch(r"00-\d{7}", i) for i in ids):
         raise DataError("Invalid or duplicate alumni IDs")
+    slugs = [a.get("slug", "") for a in registry]
+    if not all(SLUG.fullmatch(s or "") for s in slugs) or len(slugs) != len(set(slugs)):
+        raise DataError("Every alumni entry needs a unique lowercase slug")
     return registry
 
 

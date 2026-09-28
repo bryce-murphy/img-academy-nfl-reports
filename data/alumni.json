@@ -1,6 +1,7 @@
 [
   {
     "name": "Tyler Booker",
+    "slug": "tyler-booker",
     "gsis_id": "00-0040007",
     "pfr_id": "BookTy00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -9,6 +10,7 @@
   },
   {
     "name": "Warren Brinson",
+    "slug": "warren-brinson",
     "gsis_id": "00-0040016",
     "pfr_id": "BrinWa00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -17,6 +19,7 @@
   },
   {
     "name": "Jihaad Campbell",
+    "slug": "jihaad-campbell",
     "gsis_id": "00-0040708",
     "pfr_id": "CampJi00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -25,6 +28,7 @@
   },
   {
     "name": "Andre Cisco",
+    "slug": "andre-cisco",
     "gsis_id": "00-0036941",
     "pfr_id": "CiscAn00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -33,6 +37,7 @@
   },
   {
     "name": "Grant Delpit",
+    "slug": "grant-delpit",
     "gsis_id": "00-0036282",
     "pfr_id": "DelpGr00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -41,6 +46,7 @@
   },
   {
     "name": "Daniel Faalele",
+    "slug": "daniel-faalele",
     "gsis_id": "00-0038118",
     "pfr_id": "FaalDa00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -49,6 +55,7 @@
   },
   {
     "name": "Hjalte Froholdt",
+    "slug": "hjalte-froholdt",
     "gsis_id": "00-0035258",
     "pfr_id": "FrohHj00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -57,6 +64,7 @@
   },
   {
     "name": "Eric Gregory",
+    "slug": "eric-gregory",
     "gsis_id": "00-0040371",
     "pfr_id": "GregEr00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -65,6 +73,7 @@
   },
   {
     "name": "Robert Hainsey",
+    "slug": "robert-hainsey",
     "gsis_id": "00-0036985",
     "pfr_id": "HainRo00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -73,6 +82,7 @@
   },
   {
     "name": "JC Latham",
+    "slug": "jc-latham",
     "gsis_id": "00-0039731",
     "pfr_id": "LathJC00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -81,6 +91,7 @@
   },
   {
     "name": "J.J. McCarthy",
+    "slug": "jj-mccarthy",
     "gsis_id": "00-0039923",
     "pfr_id": "McCaJJ00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -89,6 +100,7 @@
   },
   {
     "name": "Evan Neal",
+    "slug": "evan-neal",
     "gsis_id": "00-0037612",
     "pfr_id": "NealEv00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -97,6 +109,7 @@
   },
   {
     "name": "Greg Newsome II",
+    "slug": "greg-newsome-ii",
     "gsis_id": "00-0036996",
     "pfr_id": "NewsGr00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -105,6 +118,7 @@
   },
   {
     "name": "Cesar Ruiz",
+    "slug": "cesar-ruiz",
     "gsis_id": "00-0036408",
     "pfr_id": "RuizCe00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -113,6 +127,7 @@
   },
   {
     "name": "Nolan Smith",
+    "slug": "nolan-smith",
     "gsis_id": "00-0039013",
     "pfr_id": "SmitNo02",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -121,6 +136,7 @@
   },
   {
     "name": "Xavier Thomas",
+    "slug": "xavier-thomas",
     "gsis_id": "00-0039367",
     "pfr_id": "ThomXa01",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -129,6 +145,7 @@
   },
   {
     "name": "DJ Turner II",
+    "slug": "dj-turner-ii",
     "gsis_id": "00-0038549",
     "pfr_id": "TurnDJ01",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
@@ -137,6 +154,7 @@
   },
   {
     "name": "Carnell Tate",
+    "slug": "carnell-tate",
     "gsis_id": "00-0041438",
     "pfr_id": "TateCa00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
@@ -145,6 +163,7 @@
   },
   {
     "name": "Francis Mauigoa",
+    "slug": "francis-mauigoa",
     "gsis_id": "00-0041505",
     "pfr_id": "MauiFr01",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
@@ -153,6 +172,7 @@
   },
   {
     "name": "Daylen Everette",
+    "slug": "daylen-everette",
     "gsis_id": "00-0041393",
     "pfr_id": "EverDa00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
@@ -161,6 +181,7 @@
   },
   {
     "name": "DeMonte Capehart",
+    "slug": "demonte-capehart",
     "gsis_id": "00-0041079",
     "pfr_id": "CapeDe00",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
@@ -169,6 +190,7 @@
   },
   {
     "name": "Kaytron Allen",
+    "slug": "kaytron-allen",
     "gsis_id": "00-0041096",
     "pfr_id": "AlleKa01",
     "source_url": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
@@ -177,6 +199,7 @@
   },
   {
     "name": "K.J. Osborn",
+    "slug": "kj-osborn",
     "gsis_id": "00-0036345",
     "pfr_id": "OsboKJ00",
     "source_url": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/",
