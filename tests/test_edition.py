@@ -283,6 +283,22 @@ class PlaysTests(unittest.TestCase):
     def test_a_player_without_recorded_plays_has_an_empty_list(self):
         self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
 
+    def test_lateral_is_one_if_either_flag_is_one_zero_only_if_both_are_explicitly_zero(self):
+        def lateral(reception, rush):
+            row = {"play_id": "7", "posteam": "CLE", "defteam": "TB", "desc": "x", "qtr": "1", "time": "15:00"}
+            if reception is not None:
+                row["lateral_reception"] = reception
+            if rush is not None:
+                row["lateral_rush"] = rush
+            return ed.play_record(row, "00-1", "TB", lambda t: t)["lateral"]
+
+        self.assertEqual(lateral("1", None), 1)
+        self.assertEqual(lateral(None, "1"), 1)
+        self.assertEqual(lateral("0", "0"), 0)
+        self.assertIsNone(lateral("0", None))
+        self.assertIsNone(lateral(None, "0"))
+        self.assertIsNone(lateral(None, None))
+
 
 class MainHeadlineTests(unittest.TestCase):
     def test_writes_fallback_headline_without_overwriting_an_existing_one(self):

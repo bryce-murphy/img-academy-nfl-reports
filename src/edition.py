@@ -169,7 +169,7 @@ def play_record(play, pid, team, team_name):
         "play_type": play.get("play_type", ""),
         **{k: _int_or_none(play.get(k)) for k in _INTS},
         **{k: _flag_or_none(play.get(k)) for k in _FLAGS},
-        "lateral": 1 if 1 in laterals else (0 if 0 in laterals else None),
+        "lateral": 1 if 1 in laterals else (0 if laterals == [0, 0] else None),
         "cp": _round_or_none(play.get("cp"), 3),
         "qb_epa": _round_or_none(play.get("qb_epa"), 3),
         "epa": _round_or_none(play.get("epa"), 2),
