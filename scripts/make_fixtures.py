@@ -29,6 +29,8 @@ SCHEDULE_COLUMNS = [
 PBP_BASE = [
     "game_id", "play_id", "week", "season_type", "desc", "epa", "wpa", "qtr", "time", "play_type",
     "total_home_score", "total_away_score", "passing_yards", "rushing_yards", "receiving_yards",
+    "posteam", "defteam", "down", "ydstogo", "yardline_100", "yards_gained", "first_down",
+    "third_down_failed", "fourth_down_failed", "fumble_lost", "touchdown", "sack", "interception",
 ]
 PLAYER_COLUMNS = ["gsis_id", "display_name", "pfr_id", "position", "college_name", "draft_year", "draft_round"]
 TEAM_COLUMNS = ["team_abbr", "team_name", "team_color", "team_logo_espn"]

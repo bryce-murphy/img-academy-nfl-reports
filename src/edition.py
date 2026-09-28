@@ -164,7 +164,6 @@ def player_record(alum, wk, warnings):
     metrics = metrics_for(position, stat, snap)
     if mismatches:
         metrics = [dict(m, value=None) for m in metrics]
-    highlights = sorted((p for p in involvement if ev.num(p.get("epa")) is not None), key=lambda p: abs(ev.num(p["epa"])), reverse=True)[:3]
     next_team = current.get("team") or team
     upcoming = None
     if not wk.historical and current.get("status") not in ("CUT", "RET"):
@@ -185,8 +184,8 @@ def player_record(alum, wk, warnings):
         "stats_withheld": bool(mismatches),
         "snaps": {"offense": ev.clean(snap.get("offense_snaps")), "defense": ev.clean(snap.get("defense_snaps")), "st": ev.clean(snap.get("st_snaps"))},
         "key_plays": [
-            {"play_id": p["play_id"], "quarter": ev.quarter_label(p.get("qtr")), "clock": p.get("time", ""), "description": p["desc"], "epa": round(ev.num(p["epa"]), 2)}
-            for p in highlights
+            dict(k, offense_name=wk.team_name(k["offense"]), defense_name=wk.team_name(k["defense"]))
+            for k in ev.key_plays(involvement, pid, team)
         ],
         "next_gen": next_gen(wk, pid, team, game),
         "injury_report": {"designation": injury.get("report_status", ""), "primary_injury": injury.get("report_primary_injury", "")}

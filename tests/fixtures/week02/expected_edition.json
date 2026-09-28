@@ -188,25 +188,43 @@
       },
       "key_plays": [
         {
-          "play_id": "2344",
-          "quarter": "Q3",
-          "clock": "10:20",
-          "description": "(10:20) (Shotgun) 6-B.Mayfield scrambles up the middle pushed ob at CLE 5 for 9 yards (9-G.Delpit).",
-          "epa": 2.03
+          "play_id": "842",
+          "quarter": "Q1",
+          "clock": "02:28",
+          "description": "(2:28) 6-B.Mayfield sacked at TB 17 for 0 yards (9-G.Delpit).",
+          "epa": -0.6,
+          "side": "defense",
+          "impact": "Sack",
+          "offense": "TB",
+          "defense": "CLE",
+          "offense_name": "Tampa Bay Buccaneers",
+          "defense_name": "Cleveland Browns"
         },
         {
-          "play_id": "3344",
-          "quarter": "Q4",
-          "clock": "12:44",
-          "description": "(12:44) (Shotgun) 6-B.Mayfield pass short middle to 14-C.Godwin to TB 30 for 14 yards (9-G.Delpit).",
-          "epa": 1.43
+          "play_id": "624",
+          "quarter": "Q1",
+          "clock": "05:37",
+          "description": "(5:37) (Shotgun) 6-B.Mayfield pass short left to 7-B.Irving to CLE 30 for 3 yards (9-G.Delpit).",
+          "epa": -0.21,
+          "side": "defense",
+          "impact": null,
+          "offense": "TB",
+          "defense": "CLE",
+          "offense_name": "Tampa Bay Buccaneers",
+          "defense_name": "Cleveland Browns"
         },
         {
           "play_id": "1905",
           "quarter": "Q2",
           "clock": "01:56",
           "description": "(1:56) (No Huddle, Shotgun) 1-K.Gainwell right tackle to CLE 22 for 4 yards (9-G.Delpit).",
-          "epa": 0.82
+          "epa": 0.82,
+          "side": "defense",
+          "impact": null,
+          "offense": "TB",
+          "defense": "CLE",
+          "offense_name": "Tampa Bay Buccaneers",
+          "defense_name": "Cleveland Browns"
         }
       ],
       "next_gen": [],
@@ -286,21 +304,39 @@
           "quarter": "Q2",
           "clock": "05:58",
           "description": "(5:58) 26-K.Johnson up the middle to GB 43 for -3 yards (8-A.Cisco). FUMBLES (8-A.Cisco), touched at GB 42, recovered by GB-10-J.Love at GB 38.",
-          "epa": -1.73
+          "epa": -1.73,
+          "side": "defense",
+          "impact": "Forced fumble",
+          "offense": "GB",
+          "defense": "NYJ",
+          "offense_name": "Green Bay Packers",
+          "defense_name": "New York Jets"
         },
         {
-          "play_id": "4724",
-          "quarter": "OT",
-          "clock": "05:54",
-          "description": "(5:54) 10-J.Love pass short left to 0-M.Golden pushed ob at NYJ 8 for 14 yards (8-A.Cisco).",
-          "epa": -1.38
+          "play_id": "2654",
+          "quarter": "Q3",
+          "clock": "07:44",
+          "description": "(7:44) 10-J.Love pass incomplete deep left to 9-C.Watson (8-A.Cisco).",
+          "epa": -0.76,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "GB",
+          "defense": "NYJ",
+          "offense_name": "Green Bay Packers",
+          "defense_name": "New York Jets"
         },
         {
           "play_id": "2677",
           "quarter": "Q3",
           "clock": "07:39",
           "description": "(7:39) (Shotgun) 10-J.Love pass incomplete short right to 9-C.Watson [8-A.Cisco].",
-          "epa": -1.27
+          "epa": -1.27,
+          "side": "defense",
+          "impact": "QB hit",
+          "offense": "GB",
+          "defense": "NYJ",
+          "offense_name": "Green Bay Packers",
+          "defense_name": "New York Jets"
         }
       ],
       "next_gen": [],
@@ -376,25 +412,43 @@
       },
       "key_plays": [
         {
-          "play_id": "3082",
-          "quarter": "Q4",
-          "clock": "13:45",
-          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith).",
-          "epa": -0.84
-        },
-        {
           "play_id": "1717",
           "quarter": "Q2",
           "clock": "01:26",
           "description": "(1:26) (Shotgun) 1-C.Ward sacked at TEN 27 for -5 yards (3-N.Smith).",
-          "epa": -0.74
+          "epa": -0.74,
+          "side": "defense",
+          "impact": "Sack",
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "3082",
+          "quarter": "Q4",
+          "clock": "13:45",
+          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith).",
+          "epa": -0.84,
+          "side": "defense",
+          "impact": "Tackle for loss",
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
         },
         {
           "play_id": "611",
           "quarter": "Q1",
           "clock": "05:11",
           "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith).",
-          "epa": 0.3
+          "epa": 0.3,
+          "side": "defense",
+          "impact": "Stop",
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
         }
       ],
       "next_gen": [],
@@ -474,21 +528,39 @@
           "quarter": "Q4",
           "clock": "12:54",
           "description": "(12:54) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate (2-T.Woolen).",
-          "epa": -1.38
+          "epa": -1.38,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
         },
         {
           "play_id": "115",
           "quarter": "Q1",
           "clock": "13:51",
           "description": "(13:51) (Shotgun) 1-C.Ward pass incomplete short middle to 14-C.Tate.",
-          "epa": -1.24
+          "epa": -1.24,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
         },
         {
           "play_id": "2312",
           "quarter": "Q3",
           "clock": "11:00",
           "description": "(11:00) (Shotgun) 1-C.Ward pass short middle to 14-C.Tate to TEN 22 for 6 yards (2-T.Woolen).",
-          "epa": -0.97
+          "epa": -0.97,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "PHI",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "Philadelphia Eagles"
         }
       ],
       "next_gen": [
@@ -581,21 +653,39 @@
           "quarter": "Q4",
           "clock": "00:37",
           "description": "(:37) 31-K.Allen left tackle to DAL 33 for 3 yards (28-S.Revel).",
-          "epa": -2.58
+          "epa": -2.58,
+          "side": "offense",
+          "impact": null,
+          "offense": "WAS",
+          "defense": "DAL",
+          "offense_name": "Washington Commanders",
+          "defense_name": "Dallas Cowboys"
         },
         {
           "play_id": "4117",
           "quarter": "Q4",
           "clock": "02:23",
           "description": "(2:23) 31-K.Allen left tackle to DAL 41 for 9 yards (53-D.Winters). WAS-76-S.Cosmi was injured during the play.",
-          "epa": 0.57
+          "epa": 0.57,
+          "side": "offense",
+          "impact": null,
+          "offense": "WAS",
+          "defense": "DAL",
+          "offense_name": "Washington Commanders",
+          "defense_name": "Dallas Cowboys"
         },
         {
           "play_id": "4159",
           "quarter": "Q4",
           "clock": "02:00",
           "description": "(2:00) 31-K.Allen left tackle to DAL 40 for 1 yard (97-K.Clark).",
-          "epa": -0.51
+          "epa": -0.51,
+          "side": "offense",
+          "impact": null,
+          "offense": "WAS",
+          "defense": "DAL",
+          "offense_name": "Washington Commanders",
+          "defense_name": "Dallas Cowboys"
         }
       ],
       "next_gen": [],

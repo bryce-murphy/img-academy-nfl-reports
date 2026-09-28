@@ -81,7 +81,7 @@ def fact_sheet(edition):
             entry.update(
                 metrics=metrics,
                 snaps=p["snaps"],
-                key_plays=[f"{k['quarter']} {k['clock']}: {k['description']} (offense EPA {k['epa']})" for k in p["key_plays"]],
+                key_plays=[f"{k['quarter']} {k['clock']}: {k['description']} ({k['impact'] + '; ' if k.get('impact') else ''}offense EPA {k['epa']})" for k in p["key_plays"]],
             )
             for key, value in metrics.items():
                 totals[key] += value

@@ -21,6 +21,7 @@ EDITION_DIR = re.compile(r"(\d{4})-week-(\d{2})")
 SNAP_ABBREVIATIONS = (("offense", "OFF"), ("defense", "DEF"), ("st", "ST"))
 # Display labels where the feed's code differs from the usual shorthand; the data keeps the feed's code.
 POSITION_LABELS = {"SAF": "S"}
+DEFENSIVE_POSITIONS = {"CB", "S", "SAF", "FS", "SS", "DB", "LB", "ILB", "OLB", "MLB", "DE", "DT", "NT", "DL", "EDGE"}
 AVAILABILITY_NOTES = {
     ev.CONFLICT: "Sources disagree. Social posts wait until the owner reviews this.",
     "Inactive for the game": "From the weekly roster. The reason is not inferred.",
@@ -107,6 +108,30 @@ def participation_line(player):
     return "Played " + (parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]) + "."
 
 
+def _the(team_name):
+    """'Cleveland Browns' -> 'the Browns'; a bare abbreviation stays as it is."""
+    return f"the {team_name.split()[-1]}" if " " in team_name else team_name
+
+
+def play_outcome(key_play, player):
+    """What a key play meant, told from the offense's expected points (EPA) in words.
+
+    Editions published before key plays carried a side fall back to the player's position.
+    """
+    side = key_play.get("side") or ("defense" if player["position"] in DEFENSIVE_POSITIONS else "offense")
+    if key_play.get("offense_name"):
+        offense, defense = _the(key_play["offense_name"]), _the(key_play["defense_name"])
+    else:
+        mine, other = player["team_name"], (player.get("game") or {}).get("opponent", "")
+        offense, defense = (_the(mine), other) if side == "offense" else (other, _the(mine))
+    value = round(abs(key_play["epa"]), 1)
+    points = "1 expected point" if value == 1 else f"{value:.1f} expected points"
+    if side == "defense" and key_play["epa"] < 0:
+        return f"Good for {defense} defense: {offense} lost {points}"
+    text = f"{offense} {'lost' if key_play['epa'] < 0 else 'gained'} {points}"
+    return text[0].upper() + text[1:]
+
+
 def player_view(player):
     view = dict(player)
     view.update(
@@ -117,6 +142,7 @@ def player_view(player):
         contribution=contribution(player),
         snap_line=snap_line(player),
         participation=participation_line(player),
+        key_plays=[dict(k, impact=k.get("impact"), outcome=play_outcome(k, player)) for k in player.get("key_plays", [])],
         source_url=player["alumni_source"] if player["alumni_source"].startswith("https://") else "",
     )
     return view

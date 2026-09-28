@@ -133,6 +133,34 @@ class RenderTests(SiteTestCase):
         self.assertEqual((int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")), (1200, 630))
         self.assertTrue((out / "static" / "favicon.svg").exists())
 
+    def test_play_outcome_is_told_from_each_side(self):
+        browns = {"position": "SAF", "team": "CLE", "team_name": "Cleveland Browns", "game": {"opponent": "TB"}}
+        titans = {"position": "WR", "team": "TEN", "team_name": "Tennessee Titans", "game": {"opponent": "PHI"}}
+        names = {"offense": "TB", "defense": "CLE", "offense_name": "Tampa Bay Buccaneers", "defense_name": "Cleveland Browns"}
+        outcome = site.play_outcome
+        self.assertEqual(outcome(dict(names, side="defense", epa=-0.6), browns), "Good for the Browns defense: the Buccaneers lost 0.6 expected points")
+        self.assertEqual(outcome(dict(names, side="defense", epa=0.82), browns), "The Buccaneers gained 0.8 expected points")
+        mine = {"offense": "TEN", "defense": "PHI", "offense_name": "Tennessee Titans", "defense_name": "Philadelphia Eagles"}
+        self.assertEqual(outcome(dict(mine, side="offense", epa=-1.38), titans), "The Titans lost 1.4 expected points")
+        self.assertEqual(outcome(dict(mine, side="offense", epa=1.0), titans), "The Titans gained 1 expected point")
+        # Editions published before key plays carried a side (Week 2) fall back to the player's position.
+        self.assertEqual(outcome({"epa": 2.03}, browns), "TB gained 2.0 expected points")
+        self.assertEqual(outcome({"epa": -1.24}, titans), "The Titans lost 1.2 expected points")
+
+    def test_editions_published_before_play_sides_still_render(self):
+        edition = fixture_data.golden_edition()
+        new_fields = ("side", "impact", "offense", "defense", "offense_name", "defense_name")
+        for p in edition["players"]:
+            p["key_plays"] = [{k: v for k, v in play.items() if k not in new_fields} for play in p["key_plays"]]
+        html = self.read(self.render(edition) / "index.html")
+        self.assertIn("Good for the Browns defense", html)
+
+    def test_key_moments_show_impact_and_outcome(self):
+        html = self.read(self.render() / "index.html")
+        self.assertIn("Sack", html)
+        self.assertIn("Good for the Browns defense", html)
+        self.assertNotIn("EPA -", html)
+
     def test_nav_methodology_heading_and_safety_label(self):
         out = self.render()
         home = self.read(out / "index.html")
