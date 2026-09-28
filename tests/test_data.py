@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 
 from src import data
-from src.data import DataError, load_sources, parse_csv, specifications, week_filter
+from src.data import PLAY_COLUMNS, DataError, load_sources, parse_csv, specifications, week_filter
 from src.errors import NotReady
 
 
@@ -69,6 +69,15 @@ class LoadSourcesTests(unittest.TestCase):
         responses = [release(SCHEDULE_V2), SCHEDULE_V1] * data.DOWNLOAD_ATTEMPTS
         with self.assertRaisesRegex(DataError, "Cannot verify schedule: Upstream checksum mismatch: schedule"):
             self.load(responses)
+
+
+class PlayColumnTests(unittest.TestCase):
+    def test_pbp_requires_every_column_player_pages_read(self):
+        self.assertTrue(set(PLAY_COLUMNS) <= specifications(2026)["pbp"][2])
+
+    def test_stats_and_snaps_require_usage_and_snap_columns(self):
+        self.assertTrue({"targets", "target_share", "receiving_air_yards", "air_yards_share"} <= specifications(2026)["stats"][2])
+        self.assertTrue({"team", "offense_snaps", "defense_snaps", "st_snaps"} <= specifications(2026)["snaps"][2])
 
 
 class ErrorTests(unittest.TestCase):

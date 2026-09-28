@@ -1,8 +1,10 @@
+import csv
 import unittest
 from collections import defaultdict
 
 import fixture_data
 from src import evidence as ev
+from src.data import PLAY_COLUMNS
 
 
 class FixtureTests(unittest.TestCase):
@@ -60,6 +62,20 @@ class FixtureTests(unittest.TestCase):
             if found:
                 break
         self.assertTrue(found)
+
+
+class EdgeCaseFixtureTests(unittest.TestCase):
+    def test_pbp_fixture_has_every_play_column(self):
+        with open(fixture_data.FIXTURES / "pbp.csv", encoding="utf-8") as handle:
+            self.assertTrue(set(PLAY_COLUMNS) <= set(csv.DictReader(handle).fieldnames))
+
+    def test_edge_case_file_has_one_real_row_per_case(self):
+        with open(fixture_data.FIXTURES.parent / "pbp_edge_cases.csv", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(sorted(r["case"] for r in rows), sorted([
+            "interception", "lost_fumble", "lateral", "penalty", "goal_line_td", "sack",
+            "completion", "incompletion", "run_loss", "kneel", "two_point", "punt"]))
+        self.assertTrue(all(set(PLAY_COLUMNS) <= set(r) for r in rows))
 
 
 if __name__ == "__main__":
