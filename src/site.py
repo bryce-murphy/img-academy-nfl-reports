@@ -19,6 +19,8 @@ from .upnext import kickoff_label, matchup_label
 ROOT = Path(__file__).resolve().parents[1]
 EDITION_DIR = re.compile(r"(\d{4})-week-(\d{2})")
 SNAP_ABBREVIATIONS = (("offense", "OFF"), ("defense", "DEF"), ("st", "ST"))
+# Display labels where the feed's code differs from the usual shorthand; the data keeps the feed's code.
+POSITION_LABELS = {"SAF": "S"}
 AVAILABILITY_NOTES = {
     ev.CONFLICT: "Sources disagree. Social posts wait until the owner reviews this.",
     "Inactive for the game": "From the weekly roster. The reason is not inferred.",
@@ -109,6 +111,7 @@ def player_view(player):
     view = dict(player)
     view.update(
         initials=initials(player["name"]),
+        position=POSITION_LABELS.get(player["position"], player["position"]),
         score_line=score_line(player),
         result_line=result_line(player),
         contribution=contribution(player),
