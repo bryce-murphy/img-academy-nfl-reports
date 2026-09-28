@@ -428,7 +428,8 @@ def main(argv=None):
     if not headline_file.exists():
         headline_file.write_bytes(editorial.dumps(editorial.fallback(edition)).encode("utf-8"))
     print(f"Built {directory}: {edition['counts']['played']} of {edition['counts']['followed']} alumni played; "
-          f"missing optional data: {', '.join(report.missing_optional) or 'none'}")
+          f"missing optional data: {', '.join(report.missing_optional) or 'none'}; "
+          f"charting pending: {', '.join(report.pending) or 'none'}")
     return 0
 
 

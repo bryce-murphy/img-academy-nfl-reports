@@ -107,8 +107,8 @@ class GitHub:
     def open_pr(self, branch, title, body, base="main"):
         return self.call("POST", self._repo("/pulls"), {"title": title, "head": branch, "base": base, "body": body})
 
-    def update_pr(self, number, body):
-        self.call("PATCH", self._repo(f"/pulls/{number}"), {"body": body})
+    def update_pr(self, number, body, title=None):
+        self.call("PATCH", self._repo(f"/pulls/{number}"), {"body": body, **({"title": title} if title else {})})
 
     def request_review(self, number, reviewers):
         self.call("POST", self._repo(f"/pulls/{number}/requested_reviewers"), {"reviewers": list(reviewers)})

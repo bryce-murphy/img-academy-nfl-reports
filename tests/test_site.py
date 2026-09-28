@@ -188,6 +188,17 @@ class RenderTests(SiteTestCase):
             self.assertIn("https://creativecommons.org/licenses/by-sa/4.0/", page)
             self.assertIn("Pro Football Reference", page)
 
+    def test_key_moments_are_explained_once_not_on_every_card(self):
+        out = self.render()
+        home = self.read(out / "index.html")
+        self.assertNotIn('<p class="caption">Defenders', home)
+        self.assertEqual(home.count("describe the play, not a grade"), 1)
+        self.assertIn('href="methodology/#key-plays"', home)
+        method = self.read(out / "methodology" / "index.html")
+        self.assertIn('id="key-plays"', method)
+        self.assertIn("sacks, tackles for loss", method)
+        self.assertNotIn("largest expected points added", method)
+
     def test_nav_methodology_heading_and_safety_label(self):
         out = self.render()
         home = self.read(out / "index.html")
@@ -295,7 +306,9 @@ class CheckTests(SiteTestCase):
 
     def test_cli_build_check_and_latest_id(self):
         out = self.render()
-        self.assertEqual(site.main(["build", "--out", str(out), "--editions", str(self.editions), "--check"]), 0)
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(site.main(["build", "--out", str(out), "--editions", str(self.editions), "--check"]), 0)
+        self.assertIn("Rendered ", output.getvalue())
         buffer = io.StringIO()
         with contextlib.redirect_stdout(buffer):
             site.main(["latest-id", "--editions", str(self.editions)])

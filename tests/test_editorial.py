@@ -1,3 +1,5 @@
+import contextlib
+import io
 import tempfile
 import unittest
 
@@ -126,19 +128,40 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(result.problems, [])
         self.assertIn("name not found in the data: Justin Jefferson", result.notes)
 
+    def test_name_check_ignores_sentence_breaks_and_descriptors(self):
+        # Week 2's real false alarms: runs joined across a full stop, and a description before a name.
+        lead = ("Grant Delpit had a sack at Tampa Bay. On the other side, Fellow Brown Grant Delpit kept going. "
+                "Cleveland won. Fifteen IMG Academy alumni played in Week 2.")
+        self.assertEqual(self.review(lead=lead).notes, [])
+
+    def test_unknown_name_in_front_of_a_known_name_is_still_flagged(self):
+        result = self.review(lead="Justin Jefferson Grant Delpit met after the game. Fellow Brown Grant Delpit smiled.")
+        self.assertIn("name not found in the data: Justin Jefferson", result.notes)
+        self.assertFalse(any("Fellow" in note for note in result.notes))
+
+    def test_name_check_keeps_initials_and_still_flags_unknown_names(self):
+        result = self.review(lead="Coach Kevin Stefanski praised Grant Delpit. J.J. Watt watched.")
+        self.assertTrue(any("Kevin Stefanski" in note for note in result.notes))
+        self.assertIn("name not found in the data: J.J. Watt", result.notes)
+
 
 class CheckCommandTests(unittest.TestCase):
     def test_exit_codes(self):
         with tempfile.TemporaryDirectory() as tmp:
             edition = fixture_data.golden_edition()
             directory = fixture_data.write_edition_dir(tmp, edition)
-            self.assertEqual(editorial.main(["check", str(directory)]), 0)
-            (directory / "editorial.toml").write_text(editorial.dumps(dict(editorial.fallback(edition), headline="x" * 90)), encoding="utf-8")
-            self.assertEqual(editorial.main(["check", str(directory)]), 1)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(editorial.main(["check", str(directory)]), 0)
+                (directory / "editorial.toml").write_text(editorial.dumps(dict(editorial.fallback(edition), headline="x" * 90)), encoding="utf-8")
+                self.assertEqual(editorial.main(["check", str(directory)]), 1)
+            self.assertIn("::error file=", output.getvalue())
+            self.assertIn("headline is 90 characters; the limit is 70", output.getvalue())
 
     def test_check_all_without_editions_passes(self):
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(editorial.main(["check", "--all", "--editions", tmp]), 0)
+        self.assertIn("Checked 0 edition(s).", output.getvalue())
 
 
 if __name__ == "__main__":

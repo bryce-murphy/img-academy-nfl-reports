@@ -25,6 +25,7 @@
 {% if played %}
 <section class="section" aria-labelledby="in-action">
   <div class="section-head"><h2 id="in-action">Alumni in action</h2><p>{{ edition.counts.played }} of {{ edition.counts.followed }} alumni played</p></div>
+  <p class="section-note">Key moments lead with a defender's takeaways, sacks, tackles for loss and stops. Expected points describe the play, not a grade for one player. <a href="{{ root }}methodology/#key-plays">How key moments are chosen</a></p>
   <div class="cards">
   {% for p in played %}
     {% include "_card.html" %}
