@@ -305,6 +305,31 @@ def next_gen(wk, pid, team, game):
     return values
 
 
+def team_snaps(rows, team):
+    """Team snaps per phase: the most any player on the team played in that phase of the game."""
+    out = {}
+    for phase, column in (("team_offense", "offense_snaps"), ("team_defense", "defense_snaps"), ("team_st", "st_snaps")):
+        values = [ev.num(r.get(column)) for r in rows if r.get("team") == team]
+        values = [v for v in values if v is not None]
+        out[phase] = int(max(values)) if values and max(values) > 0 else None
+    return out
+
+
+def _whole(value, tolerance=0.05):
+    return int(round(value)) if value is not None and abs(value - round(value)) <= tolerance else None
+
+
+def usage(stat):
+    targets, share = ev.num(stat.get("targets")), ev.num(stat.get("target_share"))
+    air, air_share = ev.num(stat.get("receiving_air_yards")), ev.num(stat.get("air_yards_share"))
+    return {
+        "targets": int(targets) if targets is not None else None,
+        "team_targets": _whole(targets / share) if targets is not None and share else None,
+        "air_yards": int(air) if air is not None else None,
+        "team_air_yards": _whole(air / air_share) if air is not None and air_share else None,
+    }
+
+
 def player_record(alum, wk, warnings):
     pid, name = alum["gsis_id"], alum["name"]
     data = wk.data
@@ -358,7 +383,11 @@ def player_record(alum, wk, warnings):
         "game": game_summary(game, team),
         "metrics": metrics,
         "stats_withheld": bool(mismatches),
-        "snaps": {"offense": ev.clean(snap.get("offense_snaps")), "defense": ev.clean(snap.get("defense_snaps")), "st": ev.clean(snap.get("st_snaps"))},
+        "snaps": {
+            "offense": ev.clean(snap.get("offense_snaps")), "defense": ev.clean(snap.get("defense_snaps")), "st": ev.clean(snap.get("st_snaps")),
+            **team_snaps(wk.snaps_by_team.get((game.get("game_id"), team), []), team),
+        },
+        "usage": usage(stat),
         "key_plays": [
             dict(k, offense_name=wk.team_name(k["offense"]), defense_name=wk.team_name(k["defense"]))
             for k in ev.key_plays(involvement, pid, team)

@@ -183,7 +183,7 @@ def rank(players):
     played = [p for p in players if p["availability"]["label"] == PLAYED]
 
     def key(player):
-        snaps = sum(value or 0 for value in player["snaps"].values())
+        snaps = sum(player["snaps"].get(phase) or 0 for phase in ("offense", "defense", "st"))
         return (-player["score"], -snaps, player["name"])
 
     return [p["id"] for p in sorted(played, key=key)]

@@ -184,7 +184,16 @@
       "snaps": {
         "offense": 0,
         "defense": 65,
-        "st": 5
+        "st": 5,
+        "team_offense": 58,
+        "team_defense": 65,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
       },
       "key_plays": [
         {
@@ -513,7 +522,16 @@
       "snaps": {
         "offense": 0,
         "defense": 59,
-        "st": 7
+        "st": 7,
+        "team_offense": 74,
+        "team_defense": 59,
+        "team_st": 26
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
       },
       "key_plays": [
         {
@@ -912,7 +930,16 @@
       "snaps": {
         "offense": 0,
         "defense": 41,
-        "st": 0
+        "st": 0,
+        "team_offense": 76,
+        "team_defense": 53,
+        "team_st": 19
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
       },
       "key_plays": [
         {
@@ -1161,7 +1188,16 @@
       "snaps": {
         "offense": 40,
         "defense": 0,
-        "st": 0
+        "st": 0,
+        "team_offense": 53,
+        "team_defense": 76,
+        "team_st": 19
+      },
+      "usage": {
+        "targets": 5,
+        "team_targets": 17,
+        "air_yards": 50,
+        "team_air_yards": 140
       },
       "key_plays": [
         {
@@ -1492,7 +1528,16 @@
       "snaps": {
         "offense": 6,
         "defense": 0,
-        "st": 0
+        "st": 0,
+        "team_offense": 71,
+        "team_defense": 55,
+        "team_st": 22
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
       },
       "key_plays": [
         {
@@ -1799,7 +1844,16 @@
       "snaps": {
         "offense": 68,
         "defense": 0,
-        "st": 4
+        "st": 4,
+        "team_offense": 68,
+        "team_defense": 58,
+        "team_st": 19
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -1863,7 +1917,16 @@
       "snaps": {
         "offense": 55,
         "defense": 0,
-        "st": 7
+        "st": 7,
+        "team_offense": 55,
+        "team_defense": 71,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -1937,7 +2000,16 @@
       "snaps": {
         "offense": 0,
         "defense": 8,
-        "st": 11
+        "st": 11,
+        "team_offense": 70,
+        "team_defense": 55,
+        "team_st": 23
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -2011,7 +2083,16 @@
       "snaps": {
         "offense": null,
         "defense": null,
-        "st": null
+        "st": null,
+        "team_offense": 65,
+        "team_defense": 58,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -2085,7 +2166,16 @@
       "snaps": {
         "offense": null,
         "defense": null,
-        "st": null
+        "st": null,
+        "team_offense": 59,
+        "team_defense": 74,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -2152,7 +2242,16 @@
       "snaps": {
         "offense": null,
         "defense": null,
-        "st": null
+        "st": null,
+        "team_offense": 63,
+        "team_defense": 68,
+        "team_st": 23
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -2226,7 +2325,16 @@
       "snaps": {
         "offense": null,
         "defense": null,
-        "st": null
+        "st": null,
+        "team_offense": 52,
+        "team_defense": 74,
+        "team_st": 18
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],
@@ -2293,7 +2401,16 @@
       "snaps": {
         "offense": null,
         "defense": null,
-        "st": null
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
       },
       "key_plays": [],
       "plays": [],

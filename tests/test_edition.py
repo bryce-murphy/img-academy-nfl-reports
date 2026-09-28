@@ -313,5 +313,27 @@ class MainHeadlineTests(unittest.TestCase):
             self.assertIn("Owner headline", headline_path.read_text(encoding="utf-8"))
 
 
+class DenominatorTests(unittest.TestCase):
+    def test_team_snaps_are_the_most_any_teammate_played(self):
+        rows = [{"team": "CLE", "offense_snaps": "60", "defense_snaps": "0", "st_snaps": "3"},
+                {"team": "CLE", "offense_snaps": "0", "defense_snaps": "65", "st_snaps": "22"},
+                {"team": "TB", "offense_snaps": "70", "defense_snaps": "0", "st_snaps": "1"}]
+        self.assertEqual(ed.team_snaps(rows, "CLE"), {"team_offense": 60, "team_defense": 65, "team_st": 22})
+        self.assertEqual(ed.team_snaps([], "CLE"), {"team_offense": None, "team_defense": None, "team_st": None})
+
+    def test_usage_recovers_team_totals_or_stays_null(self):
+        self.assertEqual(ed.usage({"targets": "5", "target_share": "0.29411765", "receiving_air_yards": "50", "air_yards_share": "0.4385965"}),
+                         {"targets": 5, "team_targets": 17, "air_yards": 50, "team_air_yards": 114})
+        self.assertEqual(ed.usage({"targets": "5", "target_share": "0.3", "receiving_air_yards": "", "air_yards_share": "0"}),
+                         {"targets": 5, "team_targets": None, "air_yards": None, "team_air_yards": None})
+        self.assertEqual(ed.usage({}), {"targets": None, "team_targets": None, "air_yards": None, "team_air_yards": None})
+
+    def test_edition_players_carry_denominators(self):
+        delpit = player(build(), "Grant Delpit")
+        self.assertEqual(delpit["snaps"]["defense"], 65)
+        self.assertGreaterEqual(delpit["snaps"]["team_defense"], 65)
+        self.assertIn("usage", delpit)
+
+
 if __name__ == "__main__":
     unittest.main()
