@@ -134,6 +134,11 @@ class ReviewTests(unittest.TestCase):
                 "Cleveland won. Fifteen IMG Academy alumni played in Week 2.")
         self.assertEqual(self.review(lead=lead).notes, [])
 
+    def test_unknown_name_in_front_of_a_known_name_is_still_flagged(self):
+        result = self.review(lead="Justin Jefferson Grant Delpit met after the game. Fellow Brown Grant Delpit smiled.")
+        self.assertIn("name not found in the data: Justin Jefferson", result.notes)
+        self.assertFalse(any("Fellow" in note for note in result.notes))
+
     def test_name_check_keeps_initials_and_still_flags_unknown_names(self):
         result = self.review(lead="Coach Kevin Stefanski praised Grant Delpit. J.J. Watt watched.")
         self.assertTrue(any("Kevin Stefanski" in note for note in result.notes))

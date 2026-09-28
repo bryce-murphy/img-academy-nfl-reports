@@ -113,8 +113,8 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     if week is None:
         return Outcome("skipped", "No NFL week finished in the last seven days.")
     eid = edition_id(season, week)
-    stale = gh.find_issue(f"Edition {season} blocked", BLOCKED_LABEL)
-    if stale:  # opened by an earlier schedule failure, before any week was known
+    stale = None if s.historical else gh.find_issue(f"Edition {season} blocked", BLOCKED_LABEL)
+    if stale:  # opened by an earlier live schedule failure, before any week was known; replays can't vouch for it
         gh.close_issue(stale["number"], f"Resolved: the schedule loaded and edition {eid} is due.")
     if gh.file_exists(f"editions/{eid}/edition.json", "main"):
         issue = gh.find_issue(f"Edition {eid} blocked", BLOCKED_LABEL)

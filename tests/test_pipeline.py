@@ -280,6 +280,13 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(self.attempt(gh).state, "published")
         self.assertEqual(gh.closed[0][0], 10)
 
+    def test_historical_replay_leaves_a_season_level_issue_open(self):
+        # A replay can succeed on relaxed freshness while the live schedule is still failing.
+        gh = FakeGitHub(issue={"number": 10, "title": "Edition 2026 blocked"})
+        settings = Settings(event="workflow_dispatch", season=2026, week=2, historical=True, automation="on", bot_login=BOT)
+        self.attempt(gh, settings)
+        self.assertNotIn(10, [number for number, _ in gh.closed])
+
     def test_published_week_skips_registry_gate(self):
         gh = FakeGitHub(on_main=True)
         outcome = self.attempt(gh, cfg=dict(CFG, registry_reviewed_season=2025))

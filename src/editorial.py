@@ -29,6 +29,12 @@ NAME_ALLOWLIST = {
     "IMG Academy", "Monday Night", "Thursday Night", "Sunday Night", "Monday Night Football",
     "Thursday Night Football", "Sunday Night Football", "Next Gen Stats",
 }
+# Words that may describe a player before his name ("Fellow Eagle Nolan Smith"); team words come from the facts.
+DESCRIPTOR_WORDS = {
+    "Fellow", "Former", "Rookie", "Veteran", "Teammate", "Coach", "Quarterback", "Receiver", "Wideout", "Tight", "End",
+    "Running", "Back", "Linebacker", "Cornerback", "Safety", "Guard", "Tackle", "Center", "Lineman", "Defender", "Edge",
+    "Rusher", "Kicker", "Punter", "Alum", "Alumnus",
+}
 NAME_SUFFIXES = {"Jr.", "Jr", "Sr.", "Sr", "II", "III", "IV", "V"}
 SINGULAR = {
     "solo tackles": "solo tackle", "assists": "assist", "sacks": "sack", "passes defended": "pass defended",
@@ -186,8 +192,16 @@ def _unknown_names(texts, facts_text):
         for words in _name_runs(text):
             while words and (words[0] in LEADING_WORDS or words[0].lower() in NUMBER_WORDS):
                 words = words[1:]
-            if len(words) < 2 or any(known(_clean(words[i:])) for i in range(len(words) - 1)):
+            if len(words) < 2:
                 continue
+            start = next((i for i in range(len(words) - 1) if known(_clean(words[i:]))), None)
+            if start == 0:
+                continue
+            if start is not None:  # a known name: what comes before must be a description, not another name
+                prefix = words[:start]
+                if all(w.rstrip(".,;:!?") in DESCRIPTOR_WORDS or w.rstrip(".,;:!?") in facts_text for w in prefix) or len(prefix) < 2:
+                    continue
+                words = prefix
             phrase = _clean(words)
             if phrase not in unknown:
                 unknown.append(phrase)
