@@ -7,7 +7,7 @@
   <ol class="archive-list">
   {% for e in editions %}
     <li>
-      <p class="eyebrow">{{ e.season }} · Week {{ e.week }}{% if e.data.historical %} · Historical replay{% endif %}</p>
+      <p class="eyebrow">{{ e.season }} Season · Week {{ e.week }} Recap{% if e.data.historical %} · Historical Replay{% endif %}</p>
       <a href="{{ root }}editions/{{ e.id }}/">{{ e.editorial.headline }}</a>
       <p class="caption">{{ e.editorial.dek }}</p>
     </li>
