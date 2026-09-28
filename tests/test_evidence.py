@@ -157,6 +157,24 @@ class RankingTests(unittest.TestCase):
         ]
         self.assertEqual(ev.rank(players), ["a", "b", "ol"])
 
+    def test_rank_tiebreak_uses_real_snap_phases_not_team_denominators(self):
+        # Both players are tied on score. "more" has more actual snaps (offense+defense+st = 10)
+        # than "fewer" (= 5), so real phase totals should rank "more" first. But "fewer" carries
+        # huge team_offense/team_defense/team_st values (new denominator keys on the snaps dict);
+        # summing every value in "snaps" (the old, buggy tiebreak) would make "fewer" look like it
+        # played far more and rank it first instead.
+        more = {
+            "id": "more", "name": "More Snaps", "score": 3.0,
+            "snaps": {"offense": 10, "defense": 0, "st": 0, "team_offense": 20, "team_defense": 20, "team_st": 20},
+            "availability": {"label": ev.PLAYED},
+        }
+        fewer = {
+            "id": "fewer", "name": "Fewer Snaps", "score": 3.0,
+            "snaps": {"offense": 5, "defense": 0, "st": 0, "team_offense": 1000, "team_defense": 1000, "team_st": 1000},
+            "availability": {"label": ev.PLAYED},
+        }
+        self.assertEqual(ev.rank([fewer, more]), ["more", "fewer"])
+
 
 ME = "00-0036282"
 
