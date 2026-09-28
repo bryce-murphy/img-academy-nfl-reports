@@ -1,4 +1,5 @@
 import csv
+import re
 import unittest
 from pathlib import Path
 
@@ -38,6 +39,9 @@ class KindTests(unittest.TestCase):
         self.assertEqual(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=8, yards_after_catch=6, yards_gained=14)), "complete")
         self.assertEqual(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=12, yards_gained=0)), "incomplete")
         self.assertIsNone(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=None, yards_gained=0)))
+
+    def test_pass_with_unknown_completion_is_text_only(self):
+        self.assertIsNone(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=8, complete_pass=None, yards_gained=8)))
 
     def test_real_edge_cases(self):
         cases = edge_cases()
@@ -84,6 +88,10 @@ class GeometryTests(unittest.TestCase):
     def test_text_only_plays_have_no_geometry(self):
         self.assertIsNone(field.geometry(base(penalty=1)))
 
+    def test_touchdown_endpoint_does_not_pass_the_goal_line(self):
+        g = field.geometry(base(yardline_100=5, yards_gained=8))
+        self.assertEqual(g["end"], 100)
+
 
 class TextLineTests(unittest.TestCase):
     def test_spot_line(self):
@@ -107,6 +115,12 @@ class TextLineTests(unittest.TestCase):
         self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=8, yards_gained=0)), "Incomplete")
         self.assertIsNone(field.result_line(base(penalty=1)))
 
+    def test_result_line_sign_aware_wording(self):
+        self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=5, yards_gained=-3)), "Complete for a loss of 3")
+        self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=5, yards_gained=0)), "Complete for no gain")
+        sack = dict(play_type="pass", sack=1, rush_attempt=0, pass_attempt=1)
+        self.assertEqual(field.result_line(base(**sack, yards_gained=2)), "Sacked for no gain")
+
 
 class SvgTests(unittest.TestCase):
     def test_svg_is_labeled_and_sized(self):
@@ -127,3 +141,23 @@ class SvgTests(unittest.TestCase):
 
     def test_no_svg_for_text_only_plays(self):
         self.assertIsNone(field.svg(base(penalty=1), "strip"))
+
+    def test_coordinates_are_clamped_to_the_viewbox(self):
+        play = base(play_type="pass", sack=1, rush_attempt=0, pass_attempt=1, yardline_100=98, yards_gained=-20)
+        width, _ = field.SIZES["medium"]
+        markup = field.svg(play, "medium")
+        coords = [float(v) for v in re.findall(r'(?:x1|x2|cx)="(-?[\d.]+)"', markup)]
+        self.assertTrue(coords, "expected at least one drawn coordinate")
+        self.assertTrue(all(0 <= v <= width for v in coords))
+
+    def test_svg_includes_outcome_in_label(self):
+        markup = field.svg(base(down=1, offense="CLE", defense="TB"), "medium", outcome="4th down stop")
+        self.assertIn('aria-label="1st &amp; 10 at the CLE 35. Run for 4 yards. 4th down stop"', markup)
+
+    def test_team_color_marks_only_the_players_side_end_label(self):
+        own_side = field.svg(base(yardline_100=95, ydstogo=10, yards_gained=-8, offense="CLE", defense="TB"), "large", team_color="#aa0000")
+        self.assertRegex(own_side, r'<text class="endzone-label"[^>]*style="fill:#aa0000"[^>]*>CLE<')
+        self.assertNotIn("stroke:#aa0000", own_side)
+        opp_side = field.svg(base(down=1, ydstogo=3, goal_to_go=1, yardline_100=3, yards_gained=3, offense="CLE", defense="TB", side="defense"), "large", team_color="#aa0000")
+        self.assertRegex(opp_side, r'<text class="endzone-label"[^>]*style="fill:#aa0000"[^>]*>TB<')
+        self.assertNotIn("stroke:#aa0000", opp_side)

@@ -88,5 +88,5 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .field .turf{fill:var(--wash)}.field .endzone{fill:var(--light)}.field .endzone-label{font:700 12px var(--display);fill:var(--navy)}
 .field .yard-minor{stroke:var(--light);stroke-width:1}.field .yard-major{stroke:var(--warm);stroke-width:1.5}
 .field .los{stroke:var(--navy);stroke-width:2}.field .marker{stroke:var(--first-down);stroke-width:2}
-.field .air{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4}.field .run{stroke-width:4;stroke-linecap:round}
+.field .air{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4}.field .run{stroke:var(--navy);stroke-width:4;stroke-linecap:round}
 .field .ball{fill:var(--navy)}.field .target{fill:#fff;stroke:var(--muted);stroke-width:2}

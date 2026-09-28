@@ -30,7 +30,11 @@ def kind(play):
     if play.get("rush_attempt") == 1:
         return "run"
     if play.get("pass_attempt") == 1 and play.get("air_yards") is not None:
-        return "complete" if play.get("complete_pass") == 1 else "incomplete"
+        if play.get("complete_pass") == 1:
+            return "complete"
+        if play.get("complete_pass") == 0:
+            return "incomplete"
+        return None
     return None
 
 
@@ -41,7 +45,7 @@ def geometry(play):
         return None
     x0 = 100 - play["yardline_100"]
     marker = 100 if play.get("goal_to_go") == 1 else min(x0 + play["ydstogo"], 100)
-    end = x0 + play["yards_gained"]
+    end = min(x0 + play["yards_gained"], 100)
     air_end = x0 + play["air_yards"] if shape in ("complete", "incomplete") else None
     points = [x0, marker, end] + ([air_end] if air_end is not None else [])
     lo, hi = min(points) - 10, max(points) + 10
@@ -78,34 +82,39 @@ def _yards(n):
 def result_line(play):
     shape, gained = kind(play), play.get("yards_gained")
     if shape == "sack":
-        return "Sacked for no gain" if gained == 0 else f"Sacked for a loss of {abs(gained)}"
+        return f"Sacked for a loss of {abs(gained)}" if gained < 0 else "Sacked for no gain"
     if shape == "run":
         return "Run for no gain" if gained == 0 else (f"Run for a loss of {abs(gained)}" if gained < 0 else f"Run for {_yards(gained)}")
     if shape == "complete":
-        return f"Complete for {_yards(gained)}"
+        if gained > 0:
+            return f"Complete for {_yards(gained)}"
+        return "Complete for no gain" if gained == 0 else f"Complete for a loss of {abs(gained)}"
     if shape == "incomplete":
         return "Incomplete"
     return None
 
 
-def svg(play, size, team_color="#0057b8"):
+def svg(play, size, team_color="#0057b8", outcome=""):
     g = geometry(play)
     if g is None:
         return None
     width, height = SIZES[size]
     scale = width / (g["hi"] - g["lo"])
-    x = lambda yards: round((yards - g["lo"]) * scale, 1)
+    clamp = lambda yards: max(g["lo"], min(g["hi"], yards))
+    x = lambda yards: round((clamp(yards) - g["lo"]) * scale, 1)
     mid = height / 2
-    label = escape(". ".join(t for t in (spot_line(play), result_line(play)) if t), quote=True)
+    side = play.get("side", "offense")
+    label = escape(". ".join(t for t in (spot_line(play), result_line(play), outcome) if t), quote=True)
     parts = [f'<svg class="field field-{size}" viewBox="0 0 {width} {height}" role="img" aria-label="{label}" xmlns="http://www.w3.org/2000/svg">',
              f'<rect class="turf" x="0" y="0" width="{width}" height="{height}"/>']
-    for goal, lo, hi, team in ((0, g["lo"], 0, play.get("offense", "")), (100, 100, g["hi"], play.get("defense", ""))):
+    for zone_side, goal, lo, hi, team in (("offense", 0, g["lo"], 0, play.get("offense", "")), ("defense", 100, 100, g["hi"], play.get("defense", ""))):
         if g["lo"] < goal < g["hi"] or (goal == 0 and g["lo"] < 0) or (goal == 100 and g["hi"] > 100):
             left, right = x(max(lo, g["lo"])), x(min(hi, g["hi"]))
             if right > left:
                 parts.append(f'<rect class="endzone" x="{left}" y="0" width="{round(right - left, 1)}" height="{height}"/>')
                 if size != "strip":
-                    parts.append(f'<text class="endzone-label" x="{round((left + right) / 2, 1)}" y="{mid + 4}" text-anchor="middle">{escape(team)}</text>')
+                    style = f' style="fill:{escape(team_color)}"' if zone_side == side else ""
+                    parts.append(f'<text class="endzone-label" x="{round((left + right) / 2, 1)}" y="{mid + 4}" text-anchor="middle"{style}>{escape(team)}</text>')
     for yard in range(0, 101, 5):
         if g["lo"] <= yard <= g["hi"]:
             parts.append(f'<line class="{"yard-major" if yard % 10 == 0 else "yard-minor"}" x1="{x(yard)}" y1="0" x2="{x(yard)}" y2="{height}"/>')
@@ -115,11 +124,11 @@ def svg(play, size, team_color="#0057b8"):
         top = max(6, mid - height * 0.35)
         parts.append(f'<path class="air" d="M{x(g["x0"])} {mid} Q{round((x(g["x0"]) + x(g["air_end"])) / 2, 1)} {top} {x(g["air_end"])} {mid}"/>')
         if g["kind"] == "complete":
-            parts.append(f'<line class="run" x1="{x(g["air_end"])}" y1="{mid}" x2="{x(g["end"])}" y2="{mid}" style="stroke:{escape(team_color)}"/>')
+            parts.append(f'<line class="run" x1="{x(g["air_end"])}" y1="{mid}" x2="{x(g["end"])}" y2="{mid}"/>')
         else:
             parts.append(f'<circle class="target" cx="{x(g["air_end"])}" cy="{mid}" r="4"/>')
     else:
-        parts.append(f'<line class="run" x1="{x(g["x0"])}" y1="{mid}" x2="{x(g["end"])}" y2="{mid}" style="stroke:{escape(team_color)}"/>')
+        parts.append(f'<line class="run" x1="{x(g["x0"])}" y1="{mid}" x2="{x(g["end"])}" y2="{mid}"/>')
     if g["kind"] != "incomplete":
         parts.append(f'<circle class="ball" cx="{x(g["end"])}" cy="{mid}" r="4"/>')
     parts.append("</svg>")
