@@ -158,5 +158,67 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(ev.rank(players), ["a", "b", "ol"])
 
 
+ME = "00-0036282"
+
+
+def play(play_id, epa, posteam="TB", defteam="CLE", **roles):
+    row = {"play_id": str(play_id), "epa": str(epa), "posteam": posteam, "defteam": defteam, "play_type": "pass", "qtr": "2", "time": "10:00", "desc": f"play {play_id}"}
+    row.update({key: ME for key in roles if roles[key] is True})
+    row.update({key: value for key, value in roles.items() if value is not True})
+    return row
+
+
+class KeyPlayTests(unittest.TestCase):
+    def ids(self, plays, team="CLE"):
+        return [k["play_id"] for k in ev.key_plays(plays, ME, team)]
+
+    def test_defender_impact_plays_beat_tackles_after_big_gains(self):
+        plays = [
+            play(1, 2.03, solo_tackle_1_player_id=True),            # tackled after a 9-yard scramble
+            play(2, 1.43, solo_tackle_1_player_id=True),            # tackled after a 14-yard catch
+            play(3, -0.4, pass_defense_1_player_id=True),
+            play(4, -1.8, sack_player_id=True),
+        ]
+        self.assertEqual(self.ids(plays), ["4", "3", "2"])
+
+    def test_impact_order_then_defense_friendly_epa(self):
+        plays = [
+            play(1, -0.5, qb_hit_1_player_id=True),
+            play(2, -3.9, interception_player_id=True),
+            play(3, -0.9, tackle_for_loss_1_player_id=True),
+            play(4, -1.2, tackle_for_loss_2_player_id=True),
+        ]
+        self.assertEqual(self.ids(plays), ["2", "4", "3"])
+
+    def test_half_sacks_stops_and_takeaways_are_recognized(self):
+        plays = [
+            play(1, -1.0, half_sack_2_player_id=True),
+            play(2, -2.1, solo_tackle_1_player_id=True, third_down_failed="1"),
+            play(3, 0.3, fumble_recovery_1_player_id=True, fumble_lost="0"),   # offense kept the ball
+            play(4, -4.0, fumble_recovery_1_player_id=True, fumble_lost="1"),
+        ]
+        chosen = ev.key_plays(plays, ME, "CLE")
+        self.assertEqual([(k["play_id"], k["impact"]) for k in chosen], [("4", "Fumble recovery"), ("1", "Sack"), ("2", "Stop")])
+        self.assertTrue(all(k["side"] == "defense" for k in chosen))
+
+    def test_defense_won_plays_come_before_other_tackles(self):
+        plays = [play(1, 0.2, solo_tackle_1_player_id=True), play(2, -0.6, assist_tackle_1_player_id=True), play(3, 1.5, solo_tackle_2_player_id=True)]
+        self.assertEqual(self.ids(plays), ["2", "1", "3"])
+
+    def test_offense_keeps_the_biggest_swings_and_marks_touchdowns(self):
+        plays = [
+            play(1, 0.4, posteam="CLE", defteam="TB", receiver_player_id=True),
+            play(2, -2.5, posteam="CLE", defteam="TB", receiver_player_id=True),
+            play(3, 3.1, posteam="CLE", defteam="TB", receiver_player_id=True, td_player_id=True),
+        ]
+        chosen = ev.key_plays(plays, ME, "CLE")
+        self.assertEqual([k["play_id"] for k in chosen], ["3", "2", "1"])
+        self.assertEqual(chosen[0]["impact"], "Touchdown")
+        self.assertEqual(chosen[0]["side"], "offense")
+
+    def test_plays_without_epa_are_skipped(self):
+        self.assertEqual(self.ids([play(1, "", sack_player_id=True), play(2, "NA", sack_player_id=True)]), [])
+
+
 if __name__ == "__main__":
     unittest.main()

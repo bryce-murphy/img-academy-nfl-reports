@@ -187,3 +187,61 @@ def rank(players):
         return (-player["score"], -snaps, player["name"])
 
     return [p["id"] for p in sorted(played, key=key)]
+
+
+# A defender's key moments start with what the defense did, not the tackles that end the offense's
+# biggest gains: highest-ranked impact first, then the play that cost the offense the most.
+DEFENSIVE_IMPACT = (
+    ("Interception", ("interception_player_id", "lateral_interception_player_id")),
+    ("Fumble recovery", ("fumble_recovery_1_player_id", "fumble_recovery_2_player_id")),
+    ("Forced fumble", ("forced_fumble_player_1_player_id", "forced_fumble_player_2_player_id")),
+    ("Safety", ("safety_player_id",)),
+    ("Sack", ("sack_player_id", "half_sack_1_player_id", "half_sack_2_player_id")),
+    ("Tackle for loss", ("tackle_for_loss_1_player_id", "tackle_for_loss_2_player_id")),
+    ("Pass defended", ("pass_defense_1_player_id", "pass_defense_2_player_id")),
+    ("QB hit", ("qb_hit_1_player_id", "qb_hit_2_player_id")),
+)
+TACKLE_ROLES = (
+    "solo_tackle_1_player_id", "solo_tackle_2_player_id", "assist_tackle_1_player_id", "assist_tackle_2_player_id",
+    "assist_tackle_3_player_id", "assist_tackle_4_player_id", "tackle_with_assist_1_player_id", "tackle_with_assist_2_player_id",
+)
+
+
+def _defensive_impact(play, pid):
+    for rank_, (label, roles) in enumerate(DEFENSIVE_IMPACT):
+        if any(play.get(role) == pid for role in roles):
+            if label == "Fumble recovery" and play.get("fumble_lost") != "1":
+                continue
+            return rank_, label
+    stopped = play.get("third_down_failed") == "1" or play.get("fourth_down_failed") == "1"
+    if stopped and any(play.get(role) == pid for role in TACKLE_ROLES):
+        return len(DEFENSIVE_IMPACT), "Stop"
+    return None, None
+
+
+def key_plays(plays, pid, team, limit=3):
+    """Up to `limit` plays for one player, each tagged with the side of the ball and what happened.
+
+    Defense: impact plays first (takeaways, sacks, tackles for loss, passes defended, QB hits, stops),
+    then plays the defense won, then other tackles, each ordered by the offense's EPA (lowest first).
+    Offense: the largest EPA swings, good or bad, as before.
+    """
+    chosen = []
+    for play in plays:
+        epa = num(play.get("epa"))
+        if epa is None:
+            continue
+        if play.get("defteam") == team:
+            rank_, impact = _defensive_impact(play, pid)
+            tier = rank_ if rank_ is not None else len(DEFENSIVE_IMPACT) + (1 if epa < 0 else 2)
+            chosen.append(((tier, epa), play, "defense", impact))
+        else:
+            impact = "Touchdown" if play.get("td_player_id") == pid else None
+            chosen.append(((0, -abs(epa)), play, "offense", impact))
+    chosen.sort(key=lambda item: item[0])
+    return [
+        {"play_id": play["play_id"], "quarter": quarter_label(play.get("qtr")), "clock": play.get("time", ""),
+         "description": play["desc"], "epa": round(num(play["epa"]), 2), "side": side, "impact": impact,
+         "offense": play.get("posteam", ""), "defense": play.get("defteam", "")}
+        for _, play, side, impact in chosen[:limit]
+    ]

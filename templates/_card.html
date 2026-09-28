@@ -13,8 +13,8 @@
   {% if p.key_plays %}
   <details>
     <summary>Key moments · {{ p.key_plays | length }}</summary>
-    <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }} · EPA {{ k.epa }}</span>{{ k.description }}</li>{% endfor %}</ol>
-    <p class="caption">Chosen by the size of each play's expected points added (EPA). EPA belongs to the offense on the play; it is not a player grade.</p>
+    <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }}{% if k.impact %} · {{ k.impact }}{% endif %}</span>{{ k.description }}<span class="play-outcome">{{ k.outcome }}</span></li>{% endfor %}</ol>
+    <p class="caption">Defenders' moments lead with takeaways, sacks, tackles for loss and stops. Expected points show how much a play changed the offense's chances of scoring: they describe the play, not a grade for one player.</p>
   </details>
   {% endif %}
   <footer>{{ p.context }}{% if p.context and p.source_url %} · {% endif %}{% if p.source_url %}<a href="{{ p.source_url }}" rel="noopener">IMG Academy affiliation source</a>{% endif %}</footer>
