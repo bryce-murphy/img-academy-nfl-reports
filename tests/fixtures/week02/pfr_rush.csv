@@ -1,0 +1,2 @@
+game_id,pfr_game_id,season,week,game_type,team,opponent,pfr_player_name,pfr_player_id,carries,rushing_yards_before_contact,rushing_yards_before_contact_avg,rushing_yards_after_contact,rushing_yards_after_contact_avg,rushing_broken_tackles,receiving_broken_tackles
+2026_02_WAS_DAL,202609200dal,2026,2,REG,WAS,DAL,Kaytron Allen,AlleKa01,5,16,3.2,8,1.6,0,

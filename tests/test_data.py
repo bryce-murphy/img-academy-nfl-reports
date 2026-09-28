@@ -63,7 +63,7 @@ class LoadSourcesTests(unittest.TestCase):
         self.assertEqual(len(datasets["schedule"]), 2)
         self.assertEqual(manifest["schedule"]["sha256"], hashlib.sha256(SCHEDULE_V2).hexdigest())
         self.assertEqual(len(calls), 4)
-        pause.assert_called_once()
+        pause.assert_called_once_with(data.RETRY_SECONDS)
 
     def test_persistent_checksum_mismatch_fails_closed(self):
         responses = [release(SCHEDULE_V2), SCHEDULE_V1] * data.DOWNLOAD_ATTEMPTS

@@ -106,6 +106,15 @@ class _Week:
         self.snaps_by_team = defaultdict(list)
         for row in data.get("snaps", []):
             self.snaps_by_team[(row["game_id"], row["team"])].append(row)
+        # Charting is optional: malformed rows are skipped and duplicate join keys are ambiguous, never guessed.
+        self.ftn, self.ftn_ambiguous = _index(
+            ((r["nflverse_game_id"], play_key(r.get("nflverse_play_id"))), r) for r in data.get("ftn", []) if ev.num(r.get("week")) == week
+        )
+        self.ftn_games = {game_id for game_id, _ in self.ftn}
+        self.pfr = {
+            name: _index(((r["game_id"], r["pfr_player_id"]), r) for r in data.get(name, []) if ev.num(r.get("week")) == week)
+            for name in ("pfr_def", "pfr_rec", "pfr_rush")
+        }
 
     def team_name(self, team):
         return self.teams.get(team, {}).get("team_name", team)
@@ -115,6 +124,119 @@ class _Week:
 
     def this_week(self, rows, id_key, pid):
         return [r for r in rows if r[id_key] == pid and int(r["season"]) == self.season and int(r["week"]) == self.week]
+
+
+def play_key(value):
+    """'40', '40.0' -> '40': play ids differ in format between play-by-play and FTN. None when not a whole number."""
+    number = ev.num(value)
+    return str(int(number)) if number is not None and number == int(number) else None
+
+
+def _index(pairs):
+    """Map join key -> row, dropping keys that appear more than once (returned separately as ambiguous)."""
+    index, ambiguous = {}, set()
+    for key, row in pairs:
+        if None in key:
+            continue
+        if key in index:
+            ambiguous.add(key)
+        index[key] = row
+    for key in ambiguous:
+        index.pop(key)
+    return index, ambiguous
+
+
+def _flag(value):
+    """FTN booleans: True/False only when explicitly charted; anything else is unknown (None)."""
+    text = str(value).strip().upper()
+    return True if text in ("TRUE", "1") else False if text in ("FALSE", "0") else None
+
+
+def _counts(row, fields):
+    """Whole-number counts for a group of fields, or None if any is missing: a blank is never a zero."""
+    values = {key: ev.num(row.get(column)) for key, column in fields}
+    return None if any(v is None for v in values.values()) else {k: int(v) for k, v in values.items()}
+
+
+COVERAGE_FIELDS = (("targets", "def_targets"), ("completions", "def_completions_allowed"), ("yards", "def_yards_allowed"), ("touchdowns", "def_receiving_td_allowed"), ("interceptions", "def_ints"))
+PASS_RUSH_FIELDS = (("pressures", "def_pressures"), ("hurries", "def_times_hurried"), ("qb_hits", "def_times_hitqb"), ("sacks", "def_sacks"), ("blitzes", "def_times_blitzed"))
+TACKLING_FIELDS = (("missed", "def_missed_tackles"), ("combined", "def_tackles_combined"))
+RUSHING_FIELDS = (("carries", "carries"), ("before_contact", "rushing_yards_before_contact"), ("after_contact", "rushing_yards_after_contact"), ("broken_tackles", "rushing_broken_tackles"))
+
+
+def _pfr_row(wk, source, game_id, pfr, team, name, warnings):
+    if not pfr:
+        return None
+    index, ambiguous = wk.pfr[source]
+    if (game_id, pfr) in ambiguous:
+        warnings.append(f"{name}: duplicate {source} charting rows withheld")
+        return None
+    row = index.get((game_id, pfr))
+    if row and row.get("team") != team:
+        warnings.append(f"{name}: {source} charting withheld (row team {row.get('team')} is not {team})")
+        return None
+    return row
+
+
+def _target_counts(wk, pid, game_id, plays):
+    charted = []
+    for p in plays:
+        if p.get("receiver_player_id") != pid or p.get("play_type") != "pass":
+            continue
+        key = (game_id, play_key(p.get("play_id")))
+        row = wk.ftn.get(key)
+        flags = {k: _flag(row.get(k)) for k in ("is_catchable_ball", "is_contested_ball", "is_drop")} if row else None
+        if flags and None not in flags.values():
+            charted.append((p, flags))
+    if not charted:
+        return None
+    return {
+        "charted": len(charted),
+        "catchable": sum(f["is_catchable_ball"] for _, f in charted),
+        "contested": sum(f["is_contested_ball"] for _, f in charted),
+        "contested_catches": sum(f["is_contested_ball"] and p.get("complete_pass") == "1" for p, f in charted),
+        "drops": sum(f["is_drop"] for _, f in charted),
+    }
+
+
+def charting(wk, pid, pfr, team, game, plays, stat, name, warnings):
+    """Hand-charted extras (FTN Data; Pro Football Reference), as counts. None when nothing was charted."""
+    if not game:
+        return None
+    game_id = game["game_id"]
+    found = {"targets": None, "coverage": None, "pass_rush": None, "tackling": None, "rushing": None, "broken_tackles": None}
+    if game_id in wk.ftn_games:
+        found["targets"] = _target_counts(wk, pid, game_id, plays)
+    defense = _pfr_row(wk, "pfr_def", game_id, pfr, team, name, warnings)
+    if defense:
+        cover = _counts(defense, COVERAGE_FIELDS)
+        problem = cover and ev.coverage_problem(**cover)
+        if problem:
+            warnings.append(f"{name}: charted coverage withheld ({problem})")
+        elif cover and cover["targets"]:
+            found["coverage"] = cover
+        rush = _counts(defense, PASS_RUSH_FIELDS)
+        if rush and any(rush.values()):
+            found["pass_rush"] = rush
+        tackles = _counts(defense, TACKLING_FIELDS)
+        if tackles and tackles["missed"] + tackles["combined"]:
+            found["tackling"] = {"missed": tackles["missed"], "attempts": tackles["missed"] + tackles["combined"]}
+    carries = _pfr_row(wk, "pfr_rush", game_id, pfr, team, name, warnings)
+    rushing = _counts(carries, RUSHING_FIELDS) if carries else None
+    if rushing and rushing["carries"]:
+        box_carries, box_yards = ev.num(stat.get("carries")), ev.num(stat.get("rushing_yards"))
+        charted_yards = rushing["before_contact"] + rushing["after_contact"]
+        if box_carries is None or box_yards is None:
+            warnings.append(f"{name}: charted contact yards withheld (no box-score rushing line)")
+        elif (box_carries, box_yards) != (rushing["carries"], charted_yards):
+            warnings.append(f"{name}: charted contact yards withheld ({charted_yards} yards on {rushing['carries']} carries; box score {box_yards:g} on {box_carries:g})")
+        else:
+            found["rushing"] = rushing
+    catches = _pfr_row(wk, "pfr_rec", game_id, pfr, team, name, warnings)
+    broken = ev.num(catches.get("receiving_broken_tackles")) if catches else None
+    if broken:
+        found["broken_tackles"] = int(broken)
+    return found if any(v is not None for v in found.values()) else None
 
 
 def next_gen(wk, pid, team, game):
@@ -188,6 +310,7 @@ def player_record(alum, wk, warnings):
             for k in ev.key_plays(involvement, pid, team)
         ],
         "next_gen": next_gen(wk, pid, team, game),
+        "charting": charting(wk, pid, pfr, team, game, plays, stat, name, warnings),
         "injury_report": {"designation": injury.get("report_status", ""), "primary_injury": injury.get("report_primary_injury", "")}
         if injury.get("report_status") or injury.get("report_primary_injury") else None,
         "current": {

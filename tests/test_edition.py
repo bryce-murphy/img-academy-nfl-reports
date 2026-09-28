@@ -53,6 +53,83 @@ class GoldenTests(unittest.TestCase):
         self.assertEqual(edition, json.loads(path.read_text(encoding="utf-8")))
 
 
+class ChartingTests(unittest.TestCase):
+    """FTN and PFR charting are optional extras shown as counts; bad rows are withheld, never guessed."""
+
+    def test_receiver_targets_from_ftn(self):
+        self.assertEqual(player(build(), "Carnell Tate")["charting"]["targets"], {"charted": 5, "catchable": 3, "contested": 0, "contested_catches": 0, "drops": 0})
+
+    def test_defender_coverage_pass_rush_and_tackling_from_pfr(self):
+        delpit = player(build(), "Grant Delpit")["charting"]
+        self.assertEqual(delpit["coverage"], {"targets": 4, "completions": 2, "yards": 17, "touchdowns": 0, "interceptions": 0})
+        self.assertEqual(delpit["pass_rush"], {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 2})
+        self.assertEqual(delpit["tackling"], {"missed": 0, "attempts": 5})
+
+    def test_inconsistent_coverage_row_is_withheld_with_a_warning(self):
+        edition = build()
+        cisco = player(edition, "Andre Cisco")["charting"]
+        self.assertIsNone(cisco["coverage"])
+        self.assertEqual(cisco["tackling"], {"missed": 1, "attempts": 6})
+        self.assertTrue(any("Andre Cisco" in w and "coverage" in w for w in edition["warnings"]))
+
+    def test_rusher_contact_yards_from_pfr(self):
+        allen = player(build(), "Kaytron Allen")["charting"]
+        self.assertEqual(allen["rushing"], {"carries": 5, "before_contact": 16, "after_contact": 8, "broken_tackles": 0})
+
+    def mutate(self, name, key, match, **changes):
+        data, _, _ = fixture_data.load()
+        for row in data[name]:
+            if row[key] == match:
+                row.update(changes)
+        return data
+
+    def test_malformed_optional_rows_do_not_abort_the_edition(self):
+        data, _, _ = fixture_data.load()
+        data["ftn"].append(dict(data["ftn"][0], nflverse_play_id="NA"))
+        data["ftn"].append(dict(data["ftn"][0], week=""))
+        self.assertEqual(player(build(data), "Carnell Tate")["charting"]["targets"]["charted"], 5)
+
+    def test_blank_pfr_fields_withhold_the_line_instead_of_reading_zero(self):
+        edition = build(self.mutate("pfr_def", "pfr_player_name", "Grant Delpit", def_missed_tackles="NA", def_completions_allowed=""))
+        delpit = player(edition, "Grant Delpit")["charting"]
+        self.assertIsNone(delpit["coverage"])
+        self.assertIsNone(delpit["tackling"])
+        self.assertEqual(delpit["pass_rush"]["sacks"], 1)
+
+    def test_unknown_ftn_flags_are_not_counted_as_no(self):
+        data, _, _ = fixture_data.load()
+        tate_plays = {(p["game_id"], p["play_id"]) for p in data["pbp"] if p.get("receiver_player_id") == alum("Carnell Tate")["gsis_id"]}
+        first = next(r for r in data["ftn"] if (r["nflverse_game_id"], r["nflverse_play_id"]) in tate_plays)
+        first["is_drop"] = "NA"
+        self.assertEqual(player(build(data), "Carnell Tate")["charting"]["targets"]["charted"], 4)
+
+    def test_pfr_row_for_another_team_is_withheld(self):
+        edition = build(self.mutate("pfr_def", "pfr_player_name", "Grant Delpit", team="TB"))
+        self.assertIsNone(player(edition, "Grant Delpit")["charting"])  # his only PFR row, so nothing is charted
+        self.assertTrue(any("Grant Delpit" in w and "team" in w for w in edition["warnings"]))
+
+    def test_contact_yards_that_disagree_with_the_box_score_are_withheld(self):
+        edition = build(self.mutate("pfr_rush", "pfr_player_name", "Kaytron Allen", rushing_yards_after_contact="20"))
+        self.assertIsNone(player(edition, "Kaytron Allen")["charting"])
+        self.assertTrue(any("Kaytron Allen" in w and "contact" in w for w in edition["warnings"]))
+
+    def test_duplicate_charting_rows_are_ambiguous_and_withheld(self):
+        data, _, _ = fixture_data.load()
+        delpit = next(r for r in data["pfr_def"] if r["pfr_player_name"] == "Grant Delpit")
+        data["pfr_def"].append(dict(delpit, def_targets="9"))
+        edition = build(data)
+        charting = player(edition, "Grant Delpit")["charting"]
+        self.assertTrue(charting is None or charting["coverage"] is None)
+        self.assertTrue(any("Grant Delpit" in w and "duplicate" in w for w in edition["warnings"]))
+
+    def test_missing_charting_sources_leave_charting_empty(self):
+        data, _, _ = fixture_data.load()
+        for name in ("ftn", "pfr_def", "pfr_rec", "pfr_rush"):
+            data[name] = []
+        tate = player(build(data), "Carnell Tate")
+        self.assertIsNone(tate["charting"])
+
+
 class EditionTests(unittest.TestCase):
     def test_availability_labels(self):
         self.assertEqual({p["name"]: p["availability"]["label"] for p in build()["players"]}, EXPECTED_LABELS)
