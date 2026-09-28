@@ -64,12 +64,12 @@ def specifications(season):
         "ngs_rushing": ("nextgen_stats", "ngs_rushing.csv.gz", {"season", "week", "player_gsis_id", "team_abbr"}),
         "ftn": ("ftn_charting", f"ftn_charting_{season}.csv", {"nflverse_game_id", "nflverse_play_id", "week", "is_catchable_ball", "is_contested_ball", "is_drop"}),
         "pfr_def": ("pfr_advstats", f"advstats_week_def_{season}.csv", {
-            "game_id", "week", "pfr_player_id", "def_targets", "def_completions_allowed", "def_yards_allowed", "def_receiving_td_allowed",
+            "game_id", "week", "team", "pfr_player_id", "def_targets", "def_completions_allowed", "def_yards_allowed", "def_receiving_td_allowed",
             "def_ints", "def_pressures", "def_times_hurried", "def_times_hitqb", "def_sacks", "def_times_blitzed", "def_missed_tackles", "def_tackles_combined",
         }),
-        "pfr_rec": ("pfr_advstats", f"advstats_week_rec_{season}.csv", {"game_id", "week", "pfr_player_id", "receiving_broken_tackles"}),
+        "pfr_rec": ("pfr_advstats", f"advstats_week_rec_{season}.csv", {"game_id", "week", "team", "pfr_player_id", "receiving_broken_tackles"}),
         "pfr_rush": ("pfr_advstats", f"advstats_week_rush_{season}.csv", {
-            "game_id", "week", "pfr_player_id", "carries", "rushing_yards_before_contact", "rushing_yards_after_contact", "rushing_broken_tackles",
+            "game_id", "week", "team", "pfr_player_id", "carries", "rushing_yards_before_contact", "rushing_yards_after_contact", "rushing_broken_tackles",
         }),
     }
 
