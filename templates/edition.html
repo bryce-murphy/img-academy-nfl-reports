@@ -7,6 +7,7 @@
 {% endblock %}
 {% block content %}
 <p class="eyebrow edition-line">{{ edition.season }} Season · Week {{ edition.week }} Recap{% if up_next %} · What's Next{% endif %}{% if edition.historical %} · Historical Replay{% endif %}</p>
+<p class="as-of">Data as of {{ data_as_of }}. The NFL can correct statistics later in the week.</p>
 <section class="hero" aria-labelledby="headline">
   <div class="hero-copy">
     <h1 id="headline">{{ editorial.headline }}</h1>

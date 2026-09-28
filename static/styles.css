@@ -30,6 +30,7 @@ a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-off
 .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:18px}
 .section-head h2,.method h2{font:800 34px/1.05 var(--display);margin:0;color:var(--navy)}
 .section-head p{margin:0;font-size:13px;color:var(--muted);text-align:right}
+.as-of{margin:-4px 0 12px;font-size:12px;color:var(--muted)}
 .section-note{margin:-8px 0 18px;font-size:13px;color:var(--muted)}
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--team,var(--brand));padding:20px;display:flex;flex-direction:column;gap:8px;min-width:0}
