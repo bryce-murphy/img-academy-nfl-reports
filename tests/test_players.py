@@ -122,3 +122,39 @@ class SeasonLineTests(unittest.TestCase):
         week3 = edition_with(3, **{"Grant Delpit": {"team": "NYJ", "team_name": "New York Jets"}})
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([edition_with(2), week3], "00-0036282"), "SAF")}
         self.assertIn("130 defensive snaps", lines["Snaps"])
+
+    def test_receiver_with_no_recorded_targets_has_no_targets_line(self):
+        e = edition_with(2, **{"Carnell Tate": {"usage": {"targets": None, "team_targets": None, "air_yards": None, "team_air_yards": None}}})
+        tate = next(p for p in e["players"] if p["name"] == "Carnell Tate")["id"]
+        lines = players.season_lines(players.appearances([e], tate), "WR")
+        self.assertNotIn("Targets", [l["label"] for l in lines])
+        self.assertNotIn("0 targets", " ".join(l["text"] for l in lines))
+
+    def test_rb_lines_note_partial_play_data(self):
+        week2, week3 = edition_with(2), edition_with(3)
+        for p in week3["players"]:
+            if p["name"] == "Kaytron Allen":
+                p.pop("plays", None)
+        allen = next(p for p in week2["players"] if p["name"] == "Kaytron Allen")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], allen), "RB")}
+        self.assertIn("(based on 1 of 2 weeks)", lines["Carries"])
+
+    def test_defense_lines_note_partial_play_data(self):
+        week2 = edition_with(2)
+        week3 = edition_with(3, **{"Grant Delpit": {"team": "NYJ", "team_name": "New York Jets"}})
+        for p in week3["players"]:
+            if p["name"] == "Grant Delpit":
+                p.pop("plays", None)
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], "00-0036282"), "SAF")}
+        self.assertIn("(based on 1 of 2 weeks)", lines["Impact plays"])
+
+    def test_rb_lines_absent_without_any_play_data(self):
+        week2 = edition_with(2)
+        for p in week2["players"]:
+            if p["name"] == "Kaytron Allen":
+                p.pop("plays", None)
+        allen = next(p for p in week2["players"] if p["name"] == "Kaytron Allen")["id"]
+        lines = players.season_lines(players.appearances([week2], allen), "RB")
+        self.assertNotIn("Carries", [l["label"] for l in lines])
+        self.assertNotIn("Receiving", [l["label"] for l in lines])
+        self.assertNotIn("0 carries", " ".join(l["text"] for l in lines))

@@ -86,6 +86,11 @@ def _pct(part, whole):
     return f"{round(100 * part / whole)}%" if part is not None and whole else None
 
 
+def _based_on_note(n, m):
+    """Spec §9: note when a play- or usage-derived line only covers some of the played weeks."""
+    return f" (based on {n} of {m} weeks)" if 0 < n < m else ""
+
+
 def season_lines(apps, position):
     played = [(e, p) for e, p in apps if p["availability"]["label"] == ev.PLAYED]
     lines = [{"label": "Games", "text": f"Played in {_n(len(played), 'game', 'games')} of {len(apps)}."}]
@@ -99,15 +104,19 @@ def season_lines(apps, position):
     if snap_parts:
         lines.append({"label": "Snaps", "text": "; ".join(snap_parts) + "."})
     group = group_of(position)
-    plays = [q for _, p in played for q in p.get("plays", [])]
+    plays_weeks = [(e, p) for e, p in played if "plays" in p]
+    plays = [q for _, p in plays_weeks for q in p.get("plays", [])]
+    note = _based_on_note(len(plays_weeks), len(played))
     if group == "Quarterbacks":
-        lines += _qb_lines(plays)
+        if plays_weeks:
+            lines += _qb_lines(plays, note)
     elif group == "Running backs":
-        lines += _rush_lines(plays)
+        if plays_weeks:
+            lines += _rush_lines(plays, note)
     elif group == "Receivers":
-        lines += _receiver_lines(played, plays)
+        lines += _receiver_lines(played, plays, plays_weeks, note)
     elif group in ("Defensive line", "Linebackers", "Defensive backs"):
-        lines += _defense_lines(played, plays)
+        lines += _defense_lines(played, plays, plays_weeks, note)
     return lines
 
 
@@ -119,59 +128,69 @@ def _efficiency(rows, key, noun, threshold):
     return f"Expected points per {noun} {sum(values) / len(values):+.2f}; success rate {round(100 * success / len(values))}%."
 
 
-def _qb_lines(plays):
+def _qb_lines(plays, note):
     drops = [q for q in plays if "passer" in q.get("roles", []) and q.get("qb_dropback") == 1 and q.get("qb_kneel") != 1 and q.get("qb_spike") != 1]
-    lines = [{"label": "Dropbacks", "text": f"{_n(len(drops), 'dropback', 'dropbacks')}." + (" " + _efficiency(drops, "qb_epa", "dropback", 50) if _efficiency(drops, "qb_epa", "dropback", 50) else "")}]
+    eff = _efficiency(drops, "qb_epa", "dropback", 50)
+    lines = [{"label": "Dropbacks", "text": f"{_n(len(drops), 'dropback', 'dropbacks')}{note}." + (f" {eff}" if eff else "")}]
     with_cp = [q for q in drops if q.get("cp") is not None and q.get("complete_pass") is not None]
     if len(with_cp) >= 50:
         cpoe = 100 * sum(q["complete_pass"] - q["cp"] for q in with_cp) / len(with_cp)
-        lines.append({"label": "Completion over expected", "text": f"{cpoe:+.1f} percentage points on {len(with_cp)} throws."})
+        lines.append({"label": "Completion over expected", "text": f"{cpoe:+.1f} percentage points on {len(with_cp)} throws{note}."})
     return lines
 
 
-def _rush_lines(plays):
+def _rush_lines(plays, note):
     carries = [q for q in plays if "rusher" in q.get("roles", []) and q.get("rush_attempt") == 1]
     targets = [q for q in plays if "receiver" in q.get("roles", [])]
     catches = sum(1 for q in targets if q.get("complete_pass") == 1)
     rate = _efficiency(carries, "epa", "carry", 30)
-    return [{"label": "Carries", "text": f"{_n(len(carries), 'carry', 'carries')}." + (f" {rate}" if rate else "")},
-            {"label": "Receiving", "text": f"{_n(len(targets), 'target', 'targets')}, {_n(catches, 'catch', 'catches')}."}]
+    return [{"label": "Carries", "text": f"{_n(len(carries), 'carry', 'carries')}{note}." + (f" {rate}" if rate else "")},
+            {"label": "Receiving", "text": f"{_n(len(targets), 'target', 'targets')}, {_n(catches, 'catch', 'catches')}{note}."}]
 
 
-def _receiver_lines(played, plays):
-    usage = [p.get("usage") or {} for _, p in played]
-    targets, team_targets = _sum(u.get("targets") for u in usage), _sum(u.get("team_targets") for u in usage if u.get("team_targets"))
-    air, team_air = _sum(u.get("air_yards") for u in usage), _sum(u.get("team_air_yards") for u in usage if u.get("team_air_yards"))
-    text = f"{_n(targets or 0, 'target', 'targets')}"
-    if targets and team_targets:
-        text += f", {_pct(targets, team_targets)} of team targets"
-    if air is not None and team_air:
-        text += f"; {_pct(air, team_air)} of team air yards"
-    lines = [{"label": "Targets", "text": text + "."}]
+def _receiver_lines(played, plays, plays_weeks, note):
+    lines = []
+    usage_weeks = [(e, p) for e, p in played if (p.get("usage") or {}).get("targets") is not None]
+    if usage_weeks:
+        usage = [p.get("usage") or {} for _, p in usage_weeks]
+        targets = _sum(u.get("targets") for u in usage)
+        team_targets = _sum(u.get("team_targets") for u in usage if u.get("team_targets"))
+        air = _sum(u.get("air_yards") for u in usage)
+        team_air = _sum(u.get("team_air_yards") for u in usage if u.get("team_air_yards"))
+        usage_note = _based_on_note(len(usage_weeks), len(played))
+        text = f"{_n(targets, 'target', 'targets')}"
+        if targets and team_targets:
+            text += f", {_pct(targets, team_targets)} of team targets"
+        if air is not None and team_air:
+            text += f"; {_pct(air, team_air)} of team air yards"
+        lines.append({"label": "Targets", "text": text + usage_note + "."})
     charted = [(p.get("charting") or {}).get("targets") for _, p in played]
     charted = [c for c in charted if c]
     if charted:
         lines.append({"label": "Charted targets", "text": f"{sum(c['catchable'] for c in charted)} of {sum(c['charted'] for c in charted)} catchable, {_n(sum(c['drops'] for c in charted), 'drop', 'drops')}."})
-    targeted = [q for q in plays if "receiver" in q.get("roles", [])]
-    if len(targeted) >= 15:
-        values = [q["epa"] for q in targeted if q.get("epa") is not None]
-        if values:
-            lines.append({"label": "When targeted", "text": f"Team expected points when targeted {sum(values) / len(values):+.2f} per target."})
+    if plays_weeks:
+        targeted = [q for q in plays if "receiver" in q.get("roles", [])]
+        if len(targeted) >= 15:
+            values = [q["epa"] for q in targeted if q.get("epa") is not None]
+            if values:
+                lines.append({"label": "When targeted", "text": f"Team expected points when targeted {sum(values) / len(values):+.2f} per target{note}."})
     return lines
 
 
-def _defense_lines(played, plays):
-    counts = {}
-    for q in plays:
-        if q.get("side") == "defense" and q.get("impact"):
-            counts[q["impact"]] = counts.get(q["impact"], 0) + 1
-    total = sum(counts.values())
-    parts = [_n(n, *IMPACT_WORDS.get(kind, (kind.lower(), kind.lower()))) for kind, n in sorted(counts.items(), key=lambda kv: -kv[1])]
-    snaps = _sum((p.get("snaps") or {}).get("defense") for _, p in played) or 0
-    text = f"{_n(total, 'impact play', 'impact plays')}" + (f" ({', '.join(parts)})" if parts else "")
-    if snaps >= 100:
-        text += f"; {100 * total / snaps:.1f} per 100 defensive snaps"
-    lines = [{"label": "Impact plays", "text": text + "."}]
+def _defense_lines(played, plays, plays_weeks, note):
+    lines = []
+    if plays_weeks:
+        counts = {}
+        for q in plays:
+            if q.get("side") == "defense" and q.get("impact"):
+                counts[q["impact"]] = counts.get(q["impact"], 0) + 1
+        total = sum(counts.values())
+        parts = [_n(n, *IMPACT_WORDS.get(kind, (kind.lower(), kind.lower()))) for kind, n in sorted(counts.items(), key=lambda kv: -kv[1])]
+        snaps = _sum((p.get("snaps") or {}).get("defense") for _, p in played) or 0
+        text = f"{_n(total, 'impact play', 'impact plays')}" + (f" ({', '.join(parts)})" if parts else "")
+        if snaps >= 100:
+            text += f"; {100 * total / snaps:.1f} per 100 defensive snaps"
+        lines.append({"label": "Impact plays", "text": text + note + "."})
     charting = [p.get("charting") or {} for _, p in played]
     cover = [c["coverage"] for c in charting if c.get("coverage")]
     if cover:
