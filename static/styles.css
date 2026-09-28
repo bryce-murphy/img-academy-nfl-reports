@@ -84,3 +84,9 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 @media (max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
 @media (max-width:640px){.masthead,main,.site-footer{padding-left:16px;padding-right:16px}.masthead{grid-template-columns:1fr}.masthead nav{grid-column:1;grid-row:2;justify-self:start;gap:16px}.independent{grid-row:3}.brand svg{height:40px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{flex-direction:column}.section-head p{text-align:left}.availability>div{grid-template-columns:1fr}.availability dd.note{grid-column:1}.method{padding:20px}.monogram{font-size:96px}}
 @media print{details{display:block}.card{break-inside:avoid}}
+.field{display:block;width:100%;height:auto;margin:6px 0}
+.field .turf{fill:#f5f5f5}.field .endzone{fill:#dde3eb}.field .endzone-label{font:700 12px var(--display);fill:#002d54}
+.field .yard-minor{stroke:#dde3eb;stroke-width:1}.field .yard-major{stroke:#cecac8;stroke-width:1.5}
+.field .los{stroke:#002d54;stroke-width:2}.field .marker{stroke:#e4c200;stroke-width:2}
+.field .air{fill:none;stroke:#587089;stroke-width:2;stroke-dasharray:4 4}.field .run{stroke-width:4;stroke-linecap:round}
+.field .ball{fill:#002d54}.field .target{fill:#fff;stroke:#587089;stroke-width:2}

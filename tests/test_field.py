@@ -83,3 +83,44 @@ class GeometryTests(unittest.TestCase):
 
     def test_text_only_plays_have_no_geometry(self):
         self.assertIsNone(field.geometry(base(penalty=1)))
+
+
+class TextLineTests(unittest.TestCase):
+    def test_spot_line(self):
+        self.assertEqual(field.spot_line(base(down=3, ydstogo=7, yardline_100=35, offense="CLE", defense="TB")), "3rd & 7 at the TB 35")
+        self.assertEqual(field.spot_line(base(down=2, ydstogo=10, yardline_100=80, offense="CLE", defense="TB")), "2nd & 10 at the CLE 20")
+        self.assertEqual(field.spot_line(base(down=1, ydstogo=4, goal_to_go=1, yardline_100=4, offense="CLE", defense="TB")), "1st & goal at the TB 4")
+        self.assertEqual(field.spot_line(base(down=1, ydstogo=10, yardline_100=50, offense="CLE", defense="TB")), "1st & 10 at midfield")
+        self.assertEqual(field.spot_line(base(down=None, offense="CLE", defense="TB")), "")
+
+    def test_result_line(self):
+        sack = dict(play_type="pass", sack=1, rush_attempt=0, pass_attempt=1)
+        self.assertEqual(field.result_line(base(**sack, yards_gained=-5)), "Sacked for a loss of 5")
+        self.assertEqual(field.result_line(base(**sack, yards_gained=0)), "Sacked for no gain")
+        self.assertEqual(field.result_line(base(yards_gained=1)), "Run for 1 yard")
+        self.assertEqual(field.result_line(base(yards_gained=-2)), "Run for a loss of 2")
+        self.assertEqual(field.result_line(base(yards_gained=0)), "Run for no gain")
+        self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=8, yards_gained=14)), "Complete for 14 yards")
+        self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=8, yards_gained=0)), "Incomplete")
+        self.assertIsNone(field.result_line(base(penalty=1)))
+
+
+class SvgTests(unittest.TestCase):
+    def test_svg_is_labeled_and_sized(self):
+        markup = field.svg(base(down=1, offense="CLE", defense="TB"), "medium")
+        self.assertTrue(markup.startswith('<svg class="field field-medium" viewBox="0 0 480 90"'))
+        self.assertIn('role="img"', markup)
+        self.assertIn('aria-label="1st &amp; 10 at the CLE 35. Run for 4 yards"', markup)
+        self.assertEqual(markup.count("<svg"), 1)
+
+    def test_svg_draws_both_end_zones_near_a_goal_line(self):
+        markup = field.svg(base(down=1, ydstogo=3, goal_to_go=1, yardline_100=3, yards_gained=3, offense="CLE", defense="TB"), "large")
+        self.assertIn('class="endzone"', markup)
+        self.assertIn(">TB<", markup)
+
+    def test_text_is_escaped(self):
+        markup = field.svg(base(down=1, offense='<b>', defense="TB"), "strip")
+        self.assertNotIn("<b>", markup)
+
+    def test_no_svg_for_text_only_plays(self):
+        self.assertIsNone(field.svg(base(penalty=1), "strip"))
