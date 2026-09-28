@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from .errors import DataError, NotReady  # noqa: F401  (re-exported)
+from .evidence import RECORDED_ROLES
 
 RELEASES = "https://api.github.com/repos/nflverse/nflverse-data/releases/tags/"
 DOWNLOADS = "https://github.com/nflverse/nflverse-data/releases/download/"
@@ -65,7 +66,11 @@ def specifications(season):
             "player_id", "week", "season", "game_id", "team",
             "targets", "target_share", "receiving_air_yards", "air_yards_share",
         }),
-        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {"game_id", "play_id", "week", "desc", "epa", "wpa", *PLAY_COLUMNS}),
+        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {
+            "game_id", "play_id", "week", "desc", "epa", "wpa", *PLAY_COLUMNS,
+            "qtr", "time", "play_type", "fumble_lost", "third_down_failed", "fourth_down_failed",
+            *(f"{role}_player_id" for role in RECORDED_ROLES),
+        }),
         "snaps": ("snap_counts", f"snap_counts_{season}.csv", {"game_id", "pfr_player_id", "team", "offense_snaps", "defense_snaps", "st_snaps"}),
         "injuries": ("injuries", f"injuries_{season}.csv", {"gsis_id", "week", "report_status", "report_primary_injury"}),
         "teams": ("teams", "teams_colors_logos.csv", {"team_abbr", "team_name", "team_logo_espn"}),
