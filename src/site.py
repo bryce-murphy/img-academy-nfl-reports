@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
 import sys
 from dataclasses import dataclass
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
@@ -14,7 +16,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoes
 from . import editorial
 from . import evidence as ev
 from .edition import load_config
-from .upnext import kickoff_label, matchup_label
+from .upnext import DAYS, MONTHS, kickoff_label, matchup_label
 
 ROOT = Path(__file__).resolve().parents[1]
 EDITION_DIR = re.compile(r"(\d{4})-week-(\d{2})")
@@ -169,6 +171,31 @@ def charting_lines(player):
     return lines
 
 
+def _sunday_on_or_after(day):
+    return day + timedelta(days=(6 - day.weekday()) % 7)
+
+
+def to_eastern(moment):
+    """US Eastern time without a tz database: daylight time runs from 2 a.m. on the second Sunday of
+    March to 2 a.m. on the first Sunday of November."""
+    moment = moment.astimezone(timezone.utc)
+    starts = datetime.combine(_sunday_on_or_after(date(moment.year, 3, 8)), datetime.min.time(), timezone.utc) + timedelta(hours=7)
+    ends = datetime.combine(_sunday_on_or_after(date(moment.year, 11, 1)), datetime.min.time(), timezone.utc) + timedelta(hours=6)
+    return moment + timedelta(hours=-4 if starts <= moment < ends else -5)
+
+
+def eastern_label(timestamp):
+    """'2026-09-28T13:52:10+00:00' -> 'Mon, Sep 28, 9:52 a.m. ET'."""
+    local = to_eastern(datetime.fromisoformat(timestamp.replace("Z", "+00:00")))
+    suffix = "a.m." if local.hour < 12 else "p.m."
+    return f"{DAYS[local.weekday()]}, {MONTHS[local.month - 1]} {local.day}, {local.hour % 12 or 12}:{local.minute:02d} {suffix} ET"
+
+
+def asset_version(path):
+    """A short content fingerprint for cache-busting URLs: a changed file gets a new URL."""
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:10]
+
+
 def player_view(player):
     view = dict(player)
     view.update(
@@ -230,6 +257,7 @@ def edition_context(edition, *, root, data_path):
         "up_next": up_next_groups(players),
         "sources": sorted(edition.sources.items()),
         "root": root,
+        "data_as_of": eastern_label(edition.data["generated_at"]),
         "data_path": data_path,
     }
 
@@ -258,6 +286,7 @@ def environment():
         keep_trailing_newline=True,
     )
     env.filters["num"] = ev.fmt
+    env.globals["asset_version"] = asset_version(ROOT / "static" / "styles.css")
     return env
 
 

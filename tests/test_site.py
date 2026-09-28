@@ -199,6 +199,32 @@ class RenderTests(SiteTestCase):
         self.assertIn("sacks, tackles for loss", method)
         self.assertNotIn("largest expected points added", method)
 
+    def test_eastern_time_label_follows_daylight_saving(self):
+        label = site.eastern_label
+        self.assertEqual(label("2026-09-28T13:52:10+00:00"), "Mon, Sep 28, 9:52 a.m. ET")
+        self.assertEqual(label("2026-11-01T05:59:00+00:00"), "Sun, Nov 1, 1:59 a.m. ET")  # still daylight time
+        self.assertEqual(label("2026-11-01T06:00:00+00:00"), "Sun, Nov 1, 1:00 a.m. ET")  # standard time from here
+        self.assertEqual(label("2026-12-15T17:00:00+00:00"), "Tue, Dec 15, 12:00 p.m. ET")
+        self.assertEqual(label("2027-03-14T07:00:00+00:00"), "Sun, Mar 14, 3:00 a.m. ET")  # daylight time begins
+        self.assertEqual(label("2026-09-23T12:00:00+00:00"), "Wed, Sep 23, 8:00 a.m. ET")
+
+    def test_edition_page_shows_when_its_data_was_pulled(self):
+        html = self.read(self.render() / "index.html")
+        self.assertIn("Data as of Wed, Sep 23, 8:00 a.m. ET", html)
+        self.assertIn("The NFL can correct statistics later in the week.", html)
+
+    def test_stylesheet_url_changes_with_its_content(self):
+        out = self.render()
+        version = site.asset_version(site.ROOT / "static" / "styles.css")
+        self.assertRegex(version, r"^[0-9a-f]{10}$")
+        for page in out.rglob("*.html"):
+            self.assertIn(f'static/styles.css?v={version}"', self.read(page), page)
+        with tempfile.TemporaryDirectory() as tmp:
+            a, b = Path(tmp) / "a.css", Path(tmp) / "b.css"
+            a.write_text("body{color:red}", encoding="utf-8")
+            b.write_text("body{color:blue}", encoding="utf-8")
+            self.assertNotEqual(site.asset_version(a), site.asset_version(b))
+
     def test_nav_methodology_heading_and_safety_label(self):
         out = self.render()
         home = self.read(out / "index.html")
