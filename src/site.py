@@ -175,7 +175,7 @@ def social_drafts(edition, copy, url):
         f"{copy['headline']}\n\n{copy['dek']}\n\n"
         f"Every week I track the IMG Academy football alumni in the NFL: results, how much each one played "
         f"and what's next. Every number is checked against the data. Here's Week {week}:\n\n{url}\n\n"
-        "Independent project. Not affiliated with IMG Academy or the NFL."
+        "A personal project, not an official IMG Academy or NFL publication."
     )
     x = f"{copy['headline']}\n\nIMG Academy → NFL, Week {week}: {url}"
     return {"state": "draft", "edition": edition["id"], "url": url, "linkedin": linkedin, "x": x}

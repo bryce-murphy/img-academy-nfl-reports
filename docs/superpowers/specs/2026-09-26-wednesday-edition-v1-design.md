@@ -233,7 +233,7 @@ Content checks (reject the draft in the pipeline; **warn only** in CI so owner e
 
 Pages: `/` (latest edition), `/editions/<id>/` (permanent), `/archive/` (sorted by season, then week, numerically), `/methodology/`, `404.html`, `sitemap.xml`, `robots.txt`. Each edition page links its `edition.json` and `sources.json`.
 
-Homepage sections, following the mockup: masthead (wordmark, path graphic, "Independent · not affiliated with IMG Academy or the NFL") → edition eyebrow → headline, dek, lead and featured card (monogram, score) → "Alumni in action" cards for Played players in ranking order → weekly box score table → availability section grouped by label → "Up next" strip grouped by team → sources table, warnings, disclaimer, data license.
+Homepage sections, following the mockup: masthead (wordmark, path graphic, "Independent coverage by Bryce Murphy · Not an official IMG Academy or NFL publication" (revised 2026-09-27: the author works at IMG Academy)) → edition eyebrow → headline, dek, lead and featured card (monogram, score) → "Alumni in action" cards for Played players in ranking order → weekly box score table → availability section grouped by label → "Up next" strip grouped by team → sources table, warnings, disclaimer, data license.
 
 Rules: Jinja2 autoescape on; team colors validated as `#RRGGBB`; no third-party images; Open Graph and Twitter meta from headline/dek; `<meta name="edition-id">` on every edition page for deploy verification. Brand graphic: original SVG path motif (Bradenton → league) using site colors; concepts are reviewed by the owner in the implementation PR. Existing fonts (Barlow Condensed, Inter via Google Fonts) and palette carry over. Layout verified at 375 px and 1280 px.
 

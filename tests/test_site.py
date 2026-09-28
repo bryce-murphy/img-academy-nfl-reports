@@ -40,7 +40,7 @@ class RenderTests(SiteTestCase):
         html = self.read(self.render() / "index.html")
         self.assertIn('<meta name="edition-id" content="2026-week-02">', html)
         self.assertIn("IMG Academy → NFL", html)
-        self.assertIn("Not affiliated with IMG Academy or the NFL", html)
+        self.assertIn("Not an official IMG Academy or NFL publication", html)
 
     def test_headline_markup_is_escaped(self):
         edition = fixture_data.golden_edition()
@@ -133,6 +133,20 @@ class RenderTests(SiteTestCase):
         self.assertEqual((int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")), (1200, 630))
         self.assertTrue((out / "static" / "favicon.svg").exists())
 
+    def test_no_page_or_draft_claims_to_be_unaffiliated(self):
+        # The author works at IMG Academy: the accurate claim is "not an official publication".
+        out = self.render()
+        for page in [*out.rglob("*.html"), *out.rglob("social-drafts.json")]:
+            text = self.read(page).lower()
+            self.assertNotIn("not affiliated", text, page)
+            self.assertNotIn("works at img academy", text, page)
+        footer = self.read(out / "index.html").split('<footer class="site-footer">')[1]
+        self.assertIn("personal project", footer)
+        self.assertIn("not an official IMG Academy publication", footer)
+        card = (Path(site.ROOT) / "scripts" / "share_card.html").read_text(encoding="utf-8")
+        self.assertIn("Not an official IMG Academy or NFL publication", card)
+        self.assertIn("2026 Season · Weekly Recap", card)
+
     def test_cards_say_how_much_a_player_played_in_words(self):
         html = self.read(self.render() / "index.html")
         delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
@@ -158,7 +172,7 @@ class RenderTests(SiteTestCase):
     def test_linkedin_draft_is_first_person_and_states_independence(self):
         drafts = json.loads(self.read(self.render() / "editions" / "2026-week-02" / "social-drafts.json"))
         self.assertIn("Every week I track", drafts["linkedin"])
-        self.assertIn("Not affiliated with IMG Academy or the NFL", drafts["linkedin"])
+        self.assertIn("A personal project, not an official IMG Academy or NFL publication.", drafts["linkedin"])
         self.assertNotIn("participation evidence", drafts["linkedin"])
 
     def test_helpers(self):

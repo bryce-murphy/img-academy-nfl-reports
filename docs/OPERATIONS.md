@@ -48,4 +48,5 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
 ## Each season
 
 - Review `data/alumni.json` (rookies, transfers, undrafted signings), with a source for every entry, then set `registry_reviewed_season` in `config.json`. Scheduled editions refuse to run until the two match.
+- Update the season on the share card (`scripts/share_card.html`, "2026 Season · Weekly Recap"), then run `scripts/make_share_card.py`.
 - Public repositories lose scheduled workflows after 60 days without activity. In late August, open Actions and re-enable **Weekly edition** if needed.
