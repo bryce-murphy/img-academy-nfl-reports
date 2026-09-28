@@ -106,6 +106,12 @@ class _Week:
         self.snaps_by_team = defaultdict(list)
         for row in data.get("snaps", []):
             self.snaps_by_team[(row["game_id"], row["team"])].append(row)
+        self.ftn = {(r["nflverse_game_id"], play_key(r["nflverse_play_id"])): r for r in data.get("ftn", []) if int(r["week"]) == week}
+        self.ftn_games = {game_id for game_id, _ in self.ftn}
+        self.pfr = {
+            name: {(r["game_id"], r["pfr_player_id"]): r for r in data.get(name, []) if int(r["week"]) == week}
+            for name in ("pfr_def", "pfr_rec", "pfr_rush")
+        }
 
     def team_name(self, team):
         return self.teams.get(team, {}).get("team_name", team)
@@ -115,6 +121,66 @@ class _Week:
 
     def this_week(self, rows, id_key, pid):
         return [r for r in rows if r[id_key] == pid and int(r["season"]) == self.season and int(r["week"]) == self.week]
+
+
+def play_key(value):
+    """'40', '40.0' -> '40': play ids differ in format between play-by-play and FTN."""
+    return str(int(float(value)))
+
+
+def _yes(value):
+    return str(value).strip().upper() in ("TRUE", "1")
+
+
+def _count(row, key):
+    return int(ev.num(row.get(key)) or 0)
+
+
+def charting(wk, pid, pfr, game, plays, name, warnings):
+    """Hand-charted extras (FTN Data; Pro Football Reference), as counts. None when nothing was charted."""
+    if not game:
+        return None
+    game_id = game["game_id"]
+    found = {"targets": None, "coverage": None, "pass_rush": None, "tackling": None, "rushing": None, "broken_tackles": None}
+    if game_id in wk.ftn_games:
+        targets = [p for p in plays if p.get("receiver_player_id") == pid and p.get("play_type") == "pass"]
+        rows = [(p, wk.ftn.get((game_id, play_key(p["play_id"])))) for p in targets]
+        rows = [(p, r) for p, r in rows if r]
+        if rows:
+            found["targets"] = {
+                "charted": len(rows),
+                "catchable": sum(_yes(r["is_catchable_ball"]) for _, r in rows),
+                "contested": sum(_yes(r["is_contested_ball"]) for _, r in rows),
+                "contested_catches": sum(_yes(r["is_contested_ball"]) and p.get("complete_pass") == "1" for p, r in rows),
+                "drops": sum(_yes(r["is_drop"]) for _, r in rows),
+            }
+    defense = wk.pfr["pfr_def"].get((game_id, pfr)) if pfr else None
+    if defense:
+        cover = {k: _count(defense, c) for k, c in (("targets", "def_targets"), ("completions", "def_completions_allowed"), ("yards", "def_yards_allowed"), ("touchdowns", "def_receiving_td_allowed"), ("interceptions", "def_ints"))}
+        problem = ev.coverage_problem(**cover)
+        if problem:
+            warnings.append(f"{name}: charted coverage withheld ({problem})")
+        elif cover["targets"]:
+            found["coverage"] = cover
+        rush = {k: _count(defense, c) for k, c in (("pressures", "def_pressures"), ("hurries", "def_times_hurried"), ("qb_hits", "def_times_hitqb"), ("sacks", "def_sacks"), ("blitzes", "def_times_blitzed"))}
+        if any(rush.values()):
+            found["pass_rush"] = rush
+        missed = _count(defense, "def_missed_tackles")
+        attempts = missed + _count(defense, "def_tackles_combined")
+        if attempts:
+            found["tackling"] = {"missed": missed, "attempts": attempts}
+    carries = wk.pfr["pfr_rush"].get((game_id, pfr)) if pfr else None
+    if carries and _count(carries, "carries"):
+        found["rushing"] = {
+            "carries": _count(carries, "carries"),
+            "before_contact": _count(carries, "rushing_yards_before_contact"),
+            "after_contact": _count(carries, "rushing_yards_after_contact"),
+            "broken_tackles": _count(carries, "rushing_broken_tackles"),
+        }
+    catches = wk.pfr["pfr_rec"].get((game_id, pfr)) if pfr else None
+    if catches and _count(catches, "receiving_broken_tackles"):
+        found["broken_tackles"] = _count(catches, "receiving_broken_tackles")
+    return found if any(v is not None for v in found.values()) else None
 
 
 def next_gen(wk, pid, team, game):
@@ -188,6 +254,7 @@ def player_record(alum, wk, warnings):
             for k in ev.key_plays(involvement, pid, team)
         ],
         "next_gen": next_gen(wk, pid, team, game),
+        "charting": charting(wk, pid, pfr, game, plays, name, warnings),
         "injury_report": {"designation": injury.get("report_status", ""), "primary_injury": injury.get("report_primary_injury", "")}
         if injury.get("report_status") or injury.get("report_primary_injury") else None,
         "current": {

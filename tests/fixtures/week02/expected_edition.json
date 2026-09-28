@@ -228,6 +228,29 @@
         }
       ],
       "next_gen": [],
+      "charting": {
+        "targets": null,
+        "coverage": {
+          "targets": 4,
+          "completions": 2,
+          "yards": 17,
+          "touchdowns": 0,
+          "interceptions": 0
+        },
+        "pass_rush": {
+          "pressures": 1,
+          "hurries": 0,
+          "qb_hits": 0,
+          "sacks": 1,
+          "blitzes": 2
+        },
+        "tackling": {
+          "missed": 0,
+          "attempts": 5
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "CLE",
@@ -340,6 +363,23 @@
         }
       ],
       "next_gen": [],
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": {
+          "pressures": 1,
+          "hurries": 0,
+          "qb_hits": 1,
+          "sacks": 0,
+          "blitzes": 1
+        },
+        "tackling": {
+          "missed": 1,
+          "attempts": 6
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "NYJ",
@@ -444,7 +484,7 @@
           "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith).",
           "epa": 0.3,
           "side": "defense",
-          "impact": "Stop",
+          "impact": "3rd-down stop",
           "offense": "TEN",
           "defense": "PHI",
           "offense_name": "Tennessee Titans",
@@ -452,6 +492,23 @@
         }
       ],
       "next_gen": [],
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": {
+          "pressures": 1,
+          "hurries": 0,
+          "qb_hits": 0,
+          "sacks": 1,
+          "blitzes": 0
+        },
+        "tackling": {
+          "missed": 0,
+          "attempts": 3
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "PHI",
@@ -577,6 +634,20 @@
           "source": "ngs_receiving"
         }
       ],
+      "charting": {
+        "targets": {
+          "charted": 5,
+          "catchable": 3,
+          "contested": 0,
+          "contested_catches": 0,
+          "drops": 0
+        },
+        "coverage": null,
+        "pass_rush": null,
+        "tackling": null,
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "TEN",
@@ -689,6 +760,19 @@
         }
       ],
       "next_gen": [],
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": null,
+        "tackling": null,
+        "rushing": {
+          "carries": 5,
+          "before_contact": 16,
+          "after_contact": 8,
+          "broken_tackles": 0
+        },
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "WAS",
@@ -751,6 +835,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "NO",
@@ -813,6 +898,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "DAL",
@@ -885,6 +971,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "PIT",
@@ -957,6 +1044,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "TB",
@@ -1029,6 +1117,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": {
         "designation": "Out",
         "primary_injury": "Calf"
@@ -1094,6 +1183,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "LV",
@@ -1166,6 +1256,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "MIN",
@@ -1231,6 +1322,7 @@
       },
       "key_plays": [],
       "next_gen": [],
+      "charting": null,
       "injury_report": null,
       "current": {
         "team": "",
@@ -1269,7 +1361,9 @@
       "Practice squad": 1
     }
   },
-  "warnings": [],
+  "warnings": [
+    "Andre Cisco: charted coverage withheld (18 yards on 0 completions)"
+  ],
   "validation": {
     "passed": true,
     "checks": [

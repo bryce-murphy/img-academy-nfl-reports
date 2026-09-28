@@ -213,9 +213,9 @@ def _defensive_impact(play, pid):
             if label == "Fumble recovery" and play.get("fumble_lost") != "1":
                 continue
             return rank_, label
-    stopped = play.get("third_down_failed") == "1" or play.get("fourth_down_failed") == "1"
-    if stopped and any(play.get(role) == pid for role in TACKLE_ROLES):
-        return len(DEFENSIVE_IMPACT), "Stop"
+    stop = "3rd-down stop" if play.get("third_down_failed") == "1" else "4th-down stop" if play.get("fourth_down_failed") == "1" else None
+    if stop and any(play.get(role) == pid for role in TACKLE_ROLES):
+        return len(DEFENSIVE_IMPACT), stop
     return None, None
 
 
@@ -245,3 +245,16 @@ def key_plays(plays, pid, team, limit=3):
          "offense": play.get("posteam", ""), "defense": play.get("defteam", "")}
         for _, play, side, impact in chosen[:limit]
     ]
+
+
+def coverage_problem(targets, completions, yards, touchdowns, interceptions):
+    """Why a charted coverage line is internally inconsistent, or None. Such lines are withheld, not repaired."""
+    if min(targets, completions, touchdowns, interceptions) < 0:
+        return "negative counts"
+    if completions + interceptions > targets:
+        return f"{completions} completions and {interceptions} interceptions on {targets} targets"
+    if touchdowns > completions:
+        return f"{touchdowns} touchdowns on {completions} completions"
+    if completions == 0 and yards != 0:
+        return f"{yards:g} yards on 0 completions"
+    return None

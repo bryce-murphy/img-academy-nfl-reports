@@ -161,6 +161,33 @@ class RenderTests(SiteTestCase):
         self.assertIn("Good for the Browns defense", html)
         self.assertNotIn("EPA -", html)
 
+    def test_charting_lines_are_counts_in_plain_words(self):
+        lines = site.charting_lines
+        self.assertEqual(lines({"charting": None}), [])
+        self.assertEqual(lines({"charting": {"targets": {"charted": 5, "catchable": 3, "contested": 1, "contested_catches": 1, "drops": 0}}}),
+                         ["Targets: 3 of 5 catchable, 0 drops, 1 of 1 contested caught"])
+        self.assertEqual(lines({"charting": {"coverage": {"targets": 4, "completions": 2, "yards": 17, "touchdowns": 1, "interceptions": 0}}}),
+                         ["Charted in coverage: 4 targets, 2 completions, 17 yards, 1 touchdown"])
+        self.assertEqual(lines({"charting": {"pass_rush": {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 2}}}),
+                         ["Pass rush: 1 pressure (1 sack), blitzed 2 times"])
+        self.assertEqual(lines({"charting": {"pass_rush": {"pressures": 0, "hurries": 0, "qb_hits": 0, "sacks": 0, "blitzes": 1}}}),
+                         ["Pass rush: 0 pressures, blitzed 1 time"])
+        self.assertEqual(lines({"charting": {"tackling": {"missed": 1, "attempts": 6}}}), ["Tackling: 1 missed in 6 attempts"])
+        self.assertEqual(lines({"charting": {"rushing": {"carries": 5, "before_contact": 16, "after_contact": 8, "broken_tackles": 0}}}),
+                         ["Rushing: 8 of 24 yards after contact, 0 broken tackles"])
+        self.assertEqual(lines({"charting": {"broken_tackles": 2}}), ["Broken tackles after the catch: 2"])
+
+    def test_cards_show_charting_and_pages_credit_the_charting_sources(self):
+        out = self.render()
+        html = self.read(out / "index.html")
+        self.assertIn("Charted in coverage: 4 targets, 2 completions, 17 yards", html)
+        self.assertIn("Targets: 3 of 5 catchable, 0 drops", html)
+        self.assertNotIn(" allowed", html.split('<footer class="site-footer">')[0].split("<main")[1])
+        for page in (html, self.read(out / "methodology" / "index.html")):
+            self.assertIn("FTN Data via nflverse", page)
+            self.assertIn("https://creativecommons.org/licenses/by-sa/4.0/", page)
+            self.assertIn("Pro Football Reference", page)
+
     def test_nav_methodology_heading_and_safety_label(self):
         out = self.render()
         home = self.read(out / "index.html")

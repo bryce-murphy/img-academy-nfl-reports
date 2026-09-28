@@ -17,3 +17,8 @@ Upstream photo/logo URLs can remain as provenance metadata; they are not display
 ## Wordmark
 
 The site's name, IMG Academy → NFL, is set as plain text beside an original path graphic. It uses no IMG Academy or NFL logo, typeface or trade dress, and the masthead states that it is not an official IMG Academy or NFL publication. The author works at IMG Academy, so the site never claims to be unaffiliated; it is a personal project, not an official publication. Using an official IMG Academy mark requires written permission recorded here first: the grantor, scope, permitted web and social uses, attribution and any expiry. The site's colors follow the official IMG Academy Brand Guidelines (v1.2, May 2024); colors alone do not imply endorsement, and the independence label stays in the masthead.
+
+## Data rights
+
+Decision (owner, 2026-09-28): the site uses nflverse-distributed data, including Pro Football Reference snap counts and advanced stats, NFL Next Gen Stats and FTN charting, as a free hobby site, and accepts the risk that a provider objects. Sports Reference's [data use policy](https://www.sports-reference.com/data_use.html) and the [NFL's terms](https://www.nfl.com/legal/terms/) restrict republishing their data; if a provider asks, remove that source or take the site down. FTN charting is used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) with the credit "FTN Data via nflverse" in the footer and on the methodology page. Every source is credited.
+

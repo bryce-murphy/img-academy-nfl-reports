@@ -53,6 +53,37 @@ class GoldenTests(unittest.TestCase):
         self.assertEqual(edition, json.loads(path.read_text(encoding="utf-8")))
 
 
+class ChartingTests(unittest.TestCase):
+    """FTN and PFR charting are optional extras shown as counts; bad rows are withheld, never guessed."""
+
+    def test_receiver_targets_from_ftn(self):
+        self.assertEqual(player(build(), "Carnell Tate")["charting"]["targets"], {"charted": 5, "catchable": 3, "contested": 0, "contested_catches": 0, "drops": 0})
+
+    def test_defender_coverage_pass_rush_and_tackling_from_pfr(self):
+        delpit = player(build(), "Grant Delpit")["charting"]
+        self.assertEqual(delpit["coverage"], {"targets": 4, "completions": 2, "yards": 17, "touchdowns": 0, "interceptions": 0})
+        self.assertEqual(delpit["pass_rush"], {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 2})
+        self.assertEqual(delpit["tackling"], {"missed": 0, "attempts": 5})
+
+    def test_inconsistent_coverage_row_is_withheld_with_a_warning(self):
+        edition = build()
+        cisco = player(edition, "Andre Cisco")["charting"]
+        self.assertIsNone(cisco["coverage"])
+        self.assertEqual(cisco["tackling"], {"missed": 1, "attempts": 6})
+        self.assertTrue(any("Andre Cisco" in w and "coverage" in w for w in edition["warnings"]))
+
+    def test_rusher_contact_yards_from_pfr(self):
+        allen = player(build(), "Kaytron Allen")["charting"]
+        self.assertEqual(allen["rushing"], {"carries": 5, "before_contact": 16, "after_contact": 8, "broken_tackles": 0})
+
+    def test_missing_charting_sources_leave_charting_empty(self):
+        data, _, _ = fixture_data.load()
+        for name in ("ftn", "pfr_def", "pfr_rec", "pfr_rush"):
+            data[name] = []
+        tate = player(build(data), "Carnell Tate")
+        self.assertIsNone(tate["charting"])
+
+
 class EditionTests(unittest.TestCase):
     def test_availability_labels(self):
         self.assertEqual({p["name"]: p["availability"]["label"] for p in build()["players"]}, EXPECTED_LABELS)

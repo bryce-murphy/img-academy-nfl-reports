@@ -7,7 +7,7 @@ from pathlib import Path
 FIXTURES = Path(__file__).parent / "fixtures" / "week02"
 DATASETS = (
     "schedule", "rosters", "current_rosters", "players", "stats", "pbp", "snaps", "injuries",
-    "teams", "ngs_passing", "ngs_receiving", "ngs_rushing",
+    "teams", "ngs_passing", "ngs_receiving", "ngs_rushing", "ftn", "pfr_def", "pfr_rec", "pfr_rush",
 )
 GENERATED_AT = "2026-09-23T12:00:00+00:00"
 TODAY = date(2026, 9, 23)

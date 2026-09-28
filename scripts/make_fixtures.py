@@ -34,6 +34,10 @@ PBP_BASE = [
 ]
 PLAYER_COLUMNS = ["gsis_id", "display_name", "pfr_id", "position", "college_name", "draft_year", "draft_round"]
 TEAM_COLUMNS = ["team_abbr", "team_name", "team_color", "team_logo_espn"]
+FTN_COLUMNS = [
+    "nflverse_game_id", "nflverse_play_id", "season", "week", "is_catchable_ball", "is_contested_ball", "is_drop",
+    "is_created_reception", "n_defense_box", "is_qb_fault_sack",
+]
 ROSTER_SAMPLE_COLUMNS = ["gsis_id", "full_name", "team", "week", "status", "status_description_abbr", "pfr_id"]
 
 
@@ -83,6 +87,12 @@ def main():
     for name in ("ngs_passing", "ngs_receiving", "ngs_rushing"):
         rows = [r for r in data[name] if r["season"] == str(SEASON) and r["week"] == week and r["player_gsis_id"] in ids]
         write(name, rows, columns_of(data[name], name))
+    fixture_plays = {(p["game_id"], str(int(float(p["play_id"])))) for p in plays}
+    ftn = [r for r in data["ftn"] if r["week"] == week and (r["nflverse_game_id"], str(int(float(r["nflverse_play_id"])))) in fixture_plays]
+    write("ftn", ftn, FTN_COLUMNS)
+    pfr_ids = {p["pfr_id"] for p in data["players"] if p["gsis_id"] in ids and p.get("pfr_id")}
+    for name in ("pfr_def", "pfr_rec", "pfr_rush"):
+        write(name, [r for r in data[name] if r["week"] == week and r["pfr_player_id"] in pfr_ids], columns_of(data[name], name))
     week_rosters = [r for r in data["rosters"] if r["week"] == week]
     reserved = sorted((r for r in week_rosters if r["status"] == "RES"), key=lambda r: r["gsis_id"])[:10]
     elevated = [

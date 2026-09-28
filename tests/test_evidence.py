@@ -198,8 +198,10 @@ class KeyPlayTests(unittest.TestCase):
             play(4, -4.0, fumble_recovery_1_player_id=True, fumble_lost="1"),
         ]
         chosen = ev.key_plays(plays, ME, "CLE")
-        self.assertEqual([(k["play_id"], k["impact"]) for k in chosen], [("4", "Fumble recovery"), ("1", "Sack"), ("2", "Stop")])
+        self.assertEqual([(k["play_id"], k["impact"]) for k in chosen], [("4", "Fumble recovery"), ("1", "Sack"), ("2", "3rd-down stop")])
         self.assertTrue(all(k["side"] == "defense" for k in chosen))
+        fourth = ev.key_plays([play(5, -1.0, assist_tackle_1_player_id=True, fourth_down_failed="1")], ME, "CLE")
+        self.assertEqual(fourth[0]["impact"], "4th-down stop")
 
     def test_defense_won_plays_come_before_other_tackles(self):
         plays = [play(1, 0.2, solo_tackle_1_player_id=True), play(2, -0.6, assist_tackle_1_player_id=True), play(3, 1.5, solo_tackle_2_player_id=True)]

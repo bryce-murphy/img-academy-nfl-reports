@@ -62,6 +62,15 @@ def specifications(season):
         "ngs_passing": ("nextgen_stats", "ngs_passing.csv.gz", {"season", "week", "player_gsis_id", "team_abbr"}),
         "ngs_receiving": ("nextgen_stats", "ngs_receiving.csv.gz", {"season", "week", "player_gsis_id", "team_abbr"}),
         "ngs_rushing": ("nextgen_stats", "ngs_rushing.csv.gz", {"season", "week", "player_gsis_id", "team_abbr"}),
+        "ftn": ("ftn_charting", f"ftn_charting_{season}.csv", {"nflverse_game_id", "nflverse_play_id", "week", "is_catchable_ball", "is_contested_ball", "is_drop"}),
+        "pfr_def": ("pfr_advstats", f"advstats_week_def_{season}.csv", {
+            "game_id", "week", "pfr_player_id", "def_targets", "def_completions_allowed", "def_yards_allowed", "def_receiving_td_allowed",
+            "def_ints", "def_pressures", "def_times_hurried", "def_times_hitqb", "def_sacks", "def_times_blitzed", "def_missed_tackles", "def_tackles_combined",
+        }),
+        "pfr_rec": ("pfr_advstats", f"advstats_week_rec_{season}.csv", {"game_id", "week", "pfr_player_id", "receiving_broken_tackles"}),
+        "pfr_rush": ("pfr_advstats", f"advstats_week_rush_{season}.csv", {
+            "game_id", "week", "pfr_player_id", "carries", "rushing_yards_before_contact", "rushing_yards_after_contact", "rushing_broken_tackles",
+        }),
     }
 
 
@@ -119,7 +128,8 @@ def load_sources(season, cache, max_age_hours=48, historical=False, only=None, w
     cache = Path(cache)
     cache.mkdir(parents=True, exist_ok=True)
     datasets, manifest, warnings = {}, {}, []
-    optional = {"snaps", "injuries", "ngs_passing", "ngs_receiving", "ngs_rushing"}
+    # Charting (FTN, PFR advanced) is an extra: a missing or late file never holds up an edition.
+    optional = {"snaps", "injuries", "ngs_passing", "ngs_receiving", "ngs_rushing", "ftn", "pfr_def", "pfr_rec", "pfr_rush"}
     for name, (tag, filename, required) in specifications(season).items():
         if only is not None and name not in only:
             continue
