@@ -58,7 +58,10 @@ def spot_line(play):
     down, spot = play.get("down"), play.get("yardline_100")
     if down not in ORDINALS or spot is None:
         return ""
-    distance = "goal" if play.get("goal_to_go") == 1 else play.get("ydstogo")
+    goal_to_go = play.get("goal_to_go") == 1
+    if not goal_to_go and play.get("ydstogo") is None:
+        return ""
+    distance = "goal" if goal_to_go else play.get("ydstogo")
     if spot == 50:
         where = "midfield"
     elif spot < 50:

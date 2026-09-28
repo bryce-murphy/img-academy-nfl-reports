@@ -93,6 +93,9 @@ class TextLineTests(unittest.TestCase):
         self.assertEqual(field.spot_line(base(down=1, ydstogo=10, yardline_100=50, offense="CLE", defense="TB")), "1st & 10 at midfield")
         self.assertEqual(field.spot_line(base(down=None, offense="CLE", defense="TB")), "")
 
+    def test_spot_line_missing_distance_is_blank(self):
+        self.assertEqual(field.spot_line(base(down=1, ydstogo=None, goal_to_go=0, yardline_100=35, offense="CLE", defense="TB")), "")
+
     def test_result_line(self):
         sack = dict(play_type="pass", sack=1, rush_attempt=0, pass_attempt=1)
         self.assertEqual(field.result_line(base(**sack, yards_gained=-5)), "Sacked for a loss of 5")
