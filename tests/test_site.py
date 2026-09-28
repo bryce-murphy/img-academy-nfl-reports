@@ -133,6 +133,15 @@ class RenderTests(SiteTestCase):
         self.assertEqual((int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")), (1200, 630))
         self.assertTrue((out / "static" / "favicon.svg").exists())
 
+    def test_eyebrows_match_the_share_card_style(self):
+        edition = dict(fixture_data.golden_edition(), historical=True)
+        out = self.render(edition)
+        home = self.read(out / "index.html")
+        self.assertIn("2026 Season · Week 2 Recap", home)
+        self.assertIn("· Historical Replay", home)
+        self.assertNotIn("Wednesday edition", home)
+        self.assertIn("2026 Season · Week 2 Recap · Historical Replay", self.read(out / "archive" / "index.html"))
+
     def test_no_page_or_draft_claims_to_be_unaffiliated(self):
         # The author works at IMG Academy: the accurate claim is "not an official publication".
         out = self.render()
