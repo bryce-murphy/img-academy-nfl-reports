@@ -133,6 +133,16 @@ class RenderTests(SiteTestCase):
         self.assertEqual((int.from_bytes(header[16:20], "big"), int.from_bytes(header[20:24], "big")), (1200, 630))
         self.assertTrue((out / "static" / "favicon.svg").exists())
 
+    def test_nav_methodology_heading_and_safety_label(self):
+        out = self.render()
+        home = self.read(out / "index.html")
+        self.assertIn(">This Week</a>", home)
+        self.assertIn("CLE / S</p>", home)
+        self.assertNotIn("/ SAF", home)
+        self.assertIn("<h1>Methodology</h1>", self.read(out / "methodology" / "index.html"))
+        delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
+        self.assertEqual(delpit["position"], "SAF")  # the data keeps the feed's code; only the display changes
+
     def test_eyebrows_match_the_share_card_style(self):
         edition = dict(fixture_data.golden_edition(), historical=True)
         out = self.render(edition)
