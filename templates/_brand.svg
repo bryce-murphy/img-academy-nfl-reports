@@ -2,7 +2,7 @@
   <title id="brand-title">IMG Academy to the NFL</title>
   <text x="0" y="44" textLength="206" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">IMG ACADEMY</text>
   <circle cx="224" cy="28.5" r="5" fill="currentColor"/>
-  <path d="M236 28.5 C 258 2, 300 2, 326 25" pathLength="11" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2"/>
-  <path d="M322.5 12.7 L326.7 24.0 L314.9 26.1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M230.4 22.1 C 247.3 5.2, 302.0 0.0, 326.0 25.0" pathLength="11" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 2"/>
+  <path d="M322.7 12.3 L327.0 23.5 L315.2 25.8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="340" y="44" textLength="72" lengthAdjust="spacingAndGlyphs" font-family="'Barlow Condensed','Arial Narrow',sans-serif" font-weight="800" font-size="44" fill="currentColor">NFL</text>
 </svg>
