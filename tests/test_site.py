@@ -472,6 +472,8 @@ class CardStripTests(SiteTestCase):
         self.assertIn('class="field field-strip"', delpit)
         self.assertIn('href="players/grant-delpit/2026-week-02/#play-', delpit)
         self.assertIn("See every play", delpit)
+        strip_fragment = delpit.split('class="strip" href="')[1].split('"')[0]
+        self.assertIn(f'<h3><a href="{strip_fragment}">Grant Delpit</a></h3>', delpit)
 
     def test_cards_without_drawable_plays_have_no_strip(self):
         home = self.read(self.render() / "index.html")
