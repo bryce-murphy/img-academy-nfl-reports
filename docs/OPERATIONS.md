@@ -30,6 +30,7 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
 - **Rebuild an open edition PR with fresher data:** run the workflow with `refresh` checked. Your headline edits are kept.
 - **Manual fallback, if automation is broken:** in a Claude Code session, run `.venv/Scripts/python -m src.edition --season 2026 --week N`. Optionally run `.venv/Scripts/python -m src.editorial draft editions/2026-week-NN` (needs `ANTHROPIC_API_KEY` locally). Then commit on a branch named `edition/2026-week-NN`, push, open a PR and merge it as usual.
 - **"Site deployment not verified" issue:** re-run **Deploy site** from the Actions tab. If it keeps failing, check Settings → Pages.
+- **To rebuild a published edition with new code:** `.venv/Scripts/python -m src.edition --season 2026 --week N --historical`, keep the published `current` roster notes, review the diff, open a PR.
 
 ## One-time owner setup
 

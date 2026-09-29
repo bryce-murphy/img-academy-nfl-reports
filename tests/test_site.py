@@ -200,6 +200,12 @@ class RenderTests(SiteTestCase):
         self.assertIn("sacks, tackles for loss", method)
         self.assertNotIn("largest expected points added", method)
 
+    def test_methodology_explains_player_pages(self):
+        page = self.read(self.render() / "methodology" / "index.html")
+        self.assertIn('id="player-pages"', page)
+        self.assertIn("not a tracking diagram", page)
+        self.assertIn("rarely named in play-by-play", page)
+
     def test_eastern_time_label_follows_daylight_saving(self):
         label = site.eastern_label
         self.assertEqual(label("2026-09-28T13:52:10+00:00"), "Mon, Sep 28, 9:52 a.m. ET")
