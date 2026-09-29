@@ -582,5 +582,16 @@ class CheckTests(SiteTestCase):
         self.assertEqual(buffer.getvalue().strip(), "2026-week-02")
 
 
+class OperationsDocTests(unittest.TestCase):
+    def test_rebuild_and_registry_steps_are_accurate(self):
+        text = (site.ROOT / "docs" / "OPERATIONS.md").read_text(encoding="utf-8")
+        rebuild = next(line for line in text.splitlines() if "rebuild a published edition" in line)
+        self.assertIn("only for editions published as historical replays (Weeks 1–2)", rebuild)
+        self.assertIn("without it", rebuild)
+        season = text.split("## Each season")[1]
+        self.assertIn('lowercase `slug`', season)
+        self.assertIn("refuses", season)
+
+
 if __name__ == "__main__":
     unittest.main()
