@@ -403,6 +403,11 @@ class PlayerPageTests(SiteTestCase):
         self.assertIn('<div class="monogram" aria-hidden="true">GD</div>', page)
         self.assertIn("LSU · 2020 draft, round 2", page)
 
+    def test_explorer_markup_contract(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        for needle in ('class="explorer-filters" hidden', 'data-filter="impact"', 'id="play-stage"', '<template class="play-large">', 'static/explorer.js?v='):
+            self.assertIn(needle, page)
+
     def test_week_page_for_a_week_not_played_shows_status_not_explorer(self):
         page = self.read(self.render() / "players" / "warren-brinson" / "2026-week-02" / "index.html")
         self.assertNotIn("Recorded plays", page)

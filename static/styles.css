@@ -91,3 +91,8 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .field .los{stroke:var(--navy);stroke-width:2}.field .marker{stroke:var(--first-down);stroke-width:2}
 .field .air{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4}.field .run{stroke:var(--navy);stroke-width:4;stroke-linecap:round}
 .field .ball{fill:var(--navy)}.field .target{fill:#fff;stroke:var(--muted);stroke-width:2}
+.js-explorer .explorer-list .field{display:none}
+.play[aria-current="true"]{background:var(--wash);border-left:3px solid var(--brand)}
+.explorer-filters button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.play-pick{all:unset;cursor:pointer;display:block}
+.play-result{display:block;font-size:12px}
