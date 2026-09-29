@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ alum.name }} · {{ site.title }}{% endblock %}
+{% block description %}{{ alum.name }}'s season: game log, season lines and every recorded play.{% endblock %}
+{% block content %}
+{% if player %}
+{% set eyebrow_suffix = "Latest: Week " ~ latest_edition.week %}
+{% include "_player_head.html" %}
+{% if top_play and top_play.svg_medium %}<figure class="top-play">{{ top_play.svg_medium }}<figcaption>{{ top_play.result }} {{ top_play.outcome }}</figcaption></figure>{% endif %}
+<p><a href="{{ latest_edition.id }}/">See all {{ recorded }} recorded plays from Week {{ latest_edition.week }} →</a></p>
+{% if next_text %}<section class="section"><h2>Up next</h2><p>{{ next_text }}</p></section>{% endif %}
+<section class="section"><h2>Season</h2><dl class="season">{% for line in season %}<dt>{{ line.label }}</dt><dd>{{ line.text }}</dd>{% endfor %}</dl></section>
+<section class="section"><h2>Game log</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">Week</th><th scope="col">Team</th><th scope="col">Opp.</th><th scope="col">Result</th><th scope="col">Status</th><th scope="col">Snaps</th><th scope="col">Contribution</th></tr></thead>
+<tbody>{% for r in log %}<tr><td><a href="{{ r.edition_id }}/">{{ r.week }}</a></td><td>{{ r.team }}</td><td>{{ r.opponent }}</td><td>{{ r.result }}</td><td>{{ r.status }}</td><td>{{ r.snaps if r.snaps is not none else "—" }}{% if r.snap_share %} ({{ (r.snap_share * 100) | round | int }}%){% endif %}</td><td>{{ r.contribution }}</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<p class="as-of">Data as of {{ data_as_of }}. The NFL can correct statistics later in the week.</p>
+{% else %}
+<h1>{{ alum.name }}</h1><p>No published edition includes {{ alum.name }} yet.</p>
+{% endif %}
+{% endblock %}

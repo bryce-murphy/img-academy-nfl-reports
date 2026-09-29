@@ -1,0 +1,10 @@
+<li class="play {% if p.key %}key {% endif %}{% if p.impact %}impact{% endif %}" id="play-{{ p.play_id }}" data-positive="{{ '1' if p.positive else ('0' if p.positive == False else '') }}">
+  <button type="button" class="play-pick" aria-controls="play-stage">
+    <span class="play-meta">{{ p.quarter }} · {{ p.clock }}{% if p.spot %} · {{ p.spot }}{% endif %}{% if p.impact %} · {{ p.impact }}{% endif %}</span>
+    {{ p.description }}
+  </button>
+  {% if p.svg_medium %}{{ p.svg_medium }}{% endif %}
+  {% if p.result %}<span class="play-result">{{ p.result }}</span>{% endif %}
+  {% if p.outcome %}<span class="play-outcome">{{ p.outcome }}</span>{% endif %}
+  {% if p.svg_large %}<template class="play-large">{{ p.svg_large }}</template>{% endif %}
+</li>
