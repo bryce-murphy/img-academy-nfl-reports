@@ -459,6 +459,22 @@ class PlayerPageTests(SiteTestCase):
         self.assertIn("players/grant-delpit/", self.read(out / "sitemap.xml"))
 
 
+class CardStripTests(SiteTestCase):
+    def test_card_strip_links_to_the_play(self):
+        home = self.read(self.render() / "index.html")
+        delpit = home.split('id="player-00-0036282"')[1].split("</article>")[0]
+        self.assertIn('class="field field-strip"', delpit)
+        self.assertIn('href="players/grant-delpit/2026-week-02/#play-', delpit)
+        self.assertIn("See every play", delpit)
+
+    def test_cards_without_drawable_plays_have_no_strip(self):
+        home = self.read(self.render() / "index.html")
+        cards = home.split('<article class="card"')[1:]
+        booker = next(c.split("</article>")[0] for c in cards if "Tyler Booker" in c)
+        self.assertNotIn("field-strip", booker)
+        self.assertIn("See every play", booker)
+
+
 class CheckTests(SiteTestCase):
     def test_rendered_site_passes_its_checks(self):
         out = self.render()

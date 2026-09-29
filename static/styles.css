@@ -48,6 +48,10 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .plays li{margin:10px 0}
 .play-meta{display:block;font-size:10px;font-weight:700;letter-spacing:.3px;color:var(--brand)}
 .play-outcome{display:block;margin-top:2px;font-size:11px;font-weight:600;color:var(--ink)}
+.strip{display:block;text-decoration:none;margin:4px 0;color:inherit}
+.strip:hover .field{opacity:.85}
+.see-plays{margin:0;font-size:12px}
+.see-plays a{font-weight:600;color:var(--brand)}
 .card footer{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
 .table-wrap{overflow-x:auto}
 .box{width:100%;border-collapse:collapse;font-size:14px}

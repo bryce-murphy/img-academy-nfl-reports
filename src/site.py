@@ -278,8 +278,29 @@ def up_next_groups(players):
     return sorted(rendered, key=lambda g: (g["info"].get("date", "9999-12-31"), g["team"]))
 
 
-def edition_context(edition, *, root, data_path):
+def top_drawable_play(player):
+    """The first key moment, in key-moment order, that is present in the player's recorded plays (schema 2)
+    and has a field diagram. Schema-1 editions have no `plays`, so they never yield a drawable play."""
+    plays_by_id = {q["play_id"]: q for q in player.get("plays") or []}
+    for k in player.get("key_plays", []):
+        play = plays_by_id.get(k["play_id"])
+        if play is not None and field.geometry(play) is not None:
+            return play
+    return None
+
+
+def edition_context(edition, *, root, data_path, slugs):
     players = [player_view(p) for p in edition.data["players"]]
+    for raw, view in zip(edition.data["players"], players):
+        slug = slugs.get(raw["id"])
+        view["page"] = f"{root}players/{slug}/{edition.id}/" if slug else None
+        top = top_drawable_play(raw)
+        view["strip"] = None
+        if top is not None:
+            outcome = play_outcome(top, raw) if top.get("epa") is not None else ""
+            view["strip"] = Markup(field.svg(top, "strip", raw.get("team_color", "#0057b8"), outcome=outcome))
+            view["strip_play_id"] = top["play_id"]
+            view["strip_outcome"] = outcome
     by_id = {p["id"]: p for p in players}
     featured = by_id.get(edition.editorial.get("featured_player_id", ""))
     if featured and featured["availability"]["label"] != ev.PLAYED:
@@ -352,6 +373,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         shutil.copy2(asset, out / "static" / asset.name)
     (out / ".nojekyll").write_text("", encoding="utf-8")
     site_url = config["site_url"]
+    slugs = {alum["gsis_id"]: alum["slug"] for alum in registry}
     written = []
 
     def page(template, path, **context):
@@ -363,14 +385,14 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
     urls = [site_url, site_url + "archive/", site_url + "methodology/"] + [f"{site_url}editions/{e.id}/" for e in editions]
     for e in editions:
         folder = f"editions/{e.id}/"
-        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path=""))
+        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path="", slugs=slugs))
         _write_json(out / folder / "edition.json", e.data)
         _write_json(out / folder / "sources.json", e.sources, sort_keys=True)
         _write_json(out / folder / "social-drafts.json", social_drafts(e.data, e.editorial, site_url + folder))
     if editions:
         latest = editions[-1]
         page("edition.html", "index.html", canonical=f"{site_url}editions/{latest.id}/",
-             **edition_context(latest, root="", data_path=f"editions/{latest.id}/"))
+             **edition_context(latest, root="", data_path=f"editions/{latest.id}/", slugs=slugs))
     else:
         page("empty.html", "index.html", canonical=site_url, root="")
     page("archive.html", "archive/index.html", canonical=site_url + "archive/", root="../", editions=list(reversed(editions)))
