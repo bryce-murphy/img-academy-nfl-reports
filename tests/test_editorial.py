@@ -108,6 +108,14 @@ class ReviewTests(unittest.TestCase):
     def test_spelled_totals_are_allowed(self):
         self.assertEqual(self.review(headline="Two sacks. Two winning sides.").problems, [])
 
+    def test_team_snap_totals_are_not_allowed_numbers(self):
+        player = next(p for p in self.edition["players"] if p["availability"]["label"] == ev.PLAYED)
+        player["snaps"] = {"offense": 0, "defense": 47, "st": 2, "team_offense": 61, "team_defense": 973, "team_st": 29}
+        facts = editorial.fact_sheet(self.edition)
+        entry = next(e for e in facts["players"] if e["id"] == player["id"])
+        self.assertEqual(entry["snaps"], {"offense": 0, "defense": 47, "st": 2})
+        self.assertNotIn(973.0, editorial.allowed_numbers(facts))
+
     def test_naming_a_player_who_did_not_play_is_a_problem(self):
         problems = self.review(lead="Warren Brinson watched the win from the sideline.").problems
         self.assertTrue(any("Warren Brinson" in p for p in problems))

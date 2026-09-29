@@ -87,7 +87,7 @@ def fact_sheet(edition):
             metrics = {} if p["stats_withheld"] else {m["label"]: m["value"] for m in p["metrics"] if m["value"] is not None}
             entry.update(
                 metrics=metrics,
-                snaps=p["snaps"],
+                snaps={phase: p["snaps"].get(phase) for phase in ("offense", "defense", "st")},
                 key_plays=[f"{k['quarter']} {k['clock']}: {k['description']} ({k['impact'] + '; ' if k.get('impact') else ''}offense EPA {k['epa']})" for k in p["key_plays"]],
             )
             for key, value in metrics.items():
