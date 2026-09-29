@@ -31,6 +31,16 @@
     if (!button) return;
     filters.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b === button)); });
     items.forEach(function (i) { i.hidden = !matches(i, button.getAttribute("data-filter")); });
+    var current = items.find(function (i) { return i.getAttribute("aria-current") === "true"; });
+    if (!current || current.hidden) {
+      var visible = items.find(function (i) { return !i.hidden; });
+      if (visible) {
+        select(visible, false);
+      } else {
+        items.forEach(function (i) { i.removeAttribute("aria-current"); });
+        stage.innerHTML = "";
+      }
+    }
   });
 
   list.addEventListener("click", function (event) {
