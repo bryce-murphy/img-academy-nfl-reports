@@ -70,7 +70,19 @@ class GameLogTests(unittest.TestCase):
         self.assertEqual([r["team"] for r in rows], ["CLE", "NYJ"])
         self.assertEqual(rows[0]["status"], "Played")
         delpit = next(p for p in week2["players"] if p["name"] == "Grant Delpit")
-        self.assertAlmostEqual(rows[0]["snap_share"], 65 / delpit["snaps"]["team_defense"], places=3)
+        self.assertAlmostEqual(rows[0]["snaps"][0]["share"], 65 / delpit["snaps"]["team_defense"], places=3)
+
+    def test_snaps_show_every_phase_labeled_with_its_share(self):
+        week2 = edition_with(2)
+        everette = next(p for p in week2["players"] if p["name"] == "Daylen Everette")
+        row = players.game_log(players.appearances([week2], everette["id"]))[0]
+        self.assertEqual([(s["abbr"], s["count"]) for s in row["snaps"]], [("DEF", 8), ("ST", 11)])
+        self.assertEqual(row["snaps_text"], "8 DEF (15%) · 11 ST (48%)")
+        everette["snaps"]["team_st"] = None
+        row = players.game_log(players.appearances([week2], everette["id"]))[0]
+        self.assertEqual(row["snaps_text"], "8 DEF (15%) · 11 ST")
+        capehart = next(p for p in week2["players"] if p["name"] == "DeMonte Capehart")
+        self.assertEqual(players.game_log(players.appearances([week2], capehart["id"]))[0]["snaps_text"], "—")
 
     def test_player_missing_from_an_edition_is_skipped(self):
         week2 = edition_with(2)

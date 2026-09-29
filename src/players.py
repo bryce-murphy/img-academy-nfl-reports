@@ -54,22 +54,35 @@ def appearances(editions, pid):
     return [(e, p) for e in ordered for p in e["players"] if p["id"] == pid]
 
 
-def _main_phase(player):
+PHASE_ABBREVIATIONS = {"offense": "OFF", "defense": "DEF", "st": "ST"}
+
+
+def snap_phases(player):
+    """Every phase the player took a snap in, labeled like the card's snap line, with its share where the team total exists."""
     snaps = player.get("snaps") or {}
-    return max(PHASES, key=lambda ph: snaps.get(ph[0]) or 0)
+    phases = []
+    for phase, team_key, _ in PHASES:
+        count, team = snaps.get(phase), snaps.get(team_key)
+        if count:
+            phases.append({"abbr": PHASE_ABBREVIATIONS[phase], "count": count, "share": count / team if team else None})
+    return phases
+
+
+def snaps_text(phases):
+    """'8 DEF (15%) · 11 ST (48%)'; a phase without a team total shows no share; '—' when none."""
+    parts = [f"{ev.fmt(s['count'])} {s['abbr']}" + (f" ({round(100 * s['share'])}%)" if s["share"] is not None else "") for s in phases]
+    return " · ".join(parts) if parts else "—"
 
 
 def game_log(apps):
     rows = []
     for e, p in apps:
-        phase, team_key, _ = _main_phase(p)
-        snaps, team = (p.get("snaps") or {}).get(phase), (p.get("snaps") or {}).get(team_key)
+        phases = snap_phases(p)
         game = p.get("game") or {}
         rows.append({
             "edition_id": e["id"], "week": e["week"], "team": p["team"], "opponent": game.get("opponent", ""),
             "result": f"{game['result']} {game['team_score']}–{game['opp_score']}" if game else "",
-            "status": p["availability"]["label"], "snaps": snaps,
-            "snap_share": snaps / team if snaps and team else None,
+            "status": p["availability"]["label"], "snaps": phases, "snaps_text": snaps_text(phases),
             "contribution": "",
         })
     return rows

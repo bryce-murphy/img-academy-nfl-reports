@@ -420,9 +420,71 @@ class PlayerPageTests(SiteTestCase):
             p.pop("plays", None)
         out = self.render(edition)
         week = self.read(out / "players" / "grant-delpit" / "2026-week-02" / "index.html")
-        count = re.search(r"Recorded plays \((\d+)\)", week)[1]
+        # Only key moments were saved, so the week page must not call them every recorded play.
+        self.assertNotIn("Recorded plays", week)
+        count = re.search(r"Key moments \((\d+)\)", week)[1]
         self.assertNotEqual(count, "0")
-        self.assertIn(f"See all {count} recorded plays", self.read(out / "players" / "grant-delpit" / "index.html"))
+        evergreen = self.read(out / "players" / "grant-delpit" / "index.html")
+        self.assertNotIn("See all", evergreen)
+        self.assertIn('<a href="2026-week-02/">See Week 2 →</a>', evergreen)
+
+    def test_evergreen_count_matches_week_page_when_plays_are_saved(self):
+        out = self.render()
+        week = self.read(out / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        count = re.search(r"Recorded plays \((\d+)\)", week)[1]
+        self.assertIn(f"See all {count} recorded plays from Week 2 →", self.read(out / "players" / "grant-delpit" / "index.html"))
+
+    def test_no_page_says_see_all_zero(self):
+        out = self.render()
+        booker = self.read(out / "players" / "tyler-booker" / "index.html")
+        self.assertIn('<a href="2026-week-02/">See Week 2 →</a>', booker)
+        for page in (out / "players").rglob("*.html"):
+            self.assertNotIn("See all 0", self.read(page), page)
+
+    def test_game_log_labels_every_phase_with_its_share(self):
+        page = self.read(self.render() / "players" / "daylen-everette" / "index.html")
+        self.assertIn("<td>8 DEF (15%) · 11 ST (48%)</td>", page)
+        capehart = self.read(self.render() / "players" / "demonte-capehart" / "index.html")
+        self.assertIn("<td>—</td>", capehart.split("Game log")[1])
+
+    def test_near_zero_epa_is_neutral(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        for epa in (0.03, -0.04):
+            play = dict(tate["plays"][0], epa=epa)
+            self.assertIsNone(site.play_view(play, tate)["positive"], epa)
+        self.assertTrue(site.play_view(dict(tate["plays"][0], epa=0.2, side="offense"), tate)["positive"])
+
+    def test_explorer_hash_selects_only_play_items(self):
+        script = (Path(site.ROOT) / "static" / "explorer.js").read_text(encoding="utf-8")
+        self.assertNotIn("document.getElementById(location.hash", script)
+        self.assertIn("items.find(function (i) { return i.id === location.hash.slice(1); })", script)
+
+    def test_evergreen_top_play_is_the_cards_drawable_choice(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        first_key = delpit["key_plays"][0]["play_id"]
+        next(q for q in delpit["plays"] if q["play_id"] == first_key)["yardline_100"] = None  # no diagram
+        top = site.top_drawable_play(delpit)
+        self.assertIsNotNone(top)
+        self.assertNotEqual(top["play_id"], first_key)
+        view = site.play_view(top, delpit)
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
+        self.assertIn('class="top-play"', page)
+        caption = page.split('class="top-play"')[1].split("<figcaption>")[1].split("</figcaption>")[0]
+        self.assertEqual(caption, f"{view['result']} · {view['outcome']}")
+
+    def test_key_moments_missing_from_plays_are_still_listed(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        missing = delpit["key_plays"][1]["play_id"]
+        delpit["plays"] = [q for q in delpit["plays"] if q["play_id"] != missing]
+        saved, plays = site.week_plays(delpit)
+        self.assertTrue(saved)
+        self.assertEqual([q["play_id"] for q in plays[:3]], [k["play_id"] for k in delpit["key_plays"]])
+        self.assertEqual(len(plays), len(delpit["plays"]) + 1)
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        self.assertIn(f'id="play-{missing}"', page)
 
     def test_evergreen_header_has_monogram_and_college_line(self):
         page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
@@ -493,6 +555,16 @@ class CheckTests(SiteTestCase):
         page = out / "archive" / "index.html"
         page.write_text(page.read_text(encoding="utf-8") + '<a href="../missing/">x</a>', encoding="utf-8")
         self.assertTrue(any("missing" in p for p in site.check_site(out, site.load_editions(self.editions))))
+
+    def test_broken_play_fragment_is_reported(self):
+        out = self.render()
+        week = out / "players" / "grant-delpit" / "2026-week-02" / "index.html"
+        week.write_text(self.read(week) + '<a href="#play-999999">x</a>', encoding="utf-8")
+        archive = out / "archive" / "index.html"
+        archive.write_text(self.read(archive) + '<a href="../players/grant-delpit/2026-week-02/#play-888888">x</a>', encoding="utf-8")
+        problems = site.check_site(out, site.load_editions(self.editions))
+        self.assertTrue(any("#play-999999" in p for p in problems), problems)
+        self.assertTrue(any("#play-888888" in p for p in problems), problems)
 
     def test_missing_edition_id_is_reported(self):
         out = self.render()

@@ -48,6 +48,6 @@
     if (pick) select(pick.closest("li.play"), true);
   });
 
-  var initial = (location.hash && document.getElementById(location.hash.slice(1))) || items[0];
+  var initial = (location.hash && items.find(function (i) { return i.id === location.hash.slice(1); })) || items[0];
   if (initial) select(initial, false);
 })();

@@ -228,10 +228,10 @@ def next_line(player):
 
 
 def play_view(play, player, key_ids=()):
-    """`positive` is three-way: True, False, or None (unknown epa or exactly 0, i.e. neutral)."""
+    """`positive` is three-way: True, False, or None (unknown epa, or neutral: it rounds to 0.0 as shown)."""
     epa = play.get("epa")
     side = play.get("side") or ("defense" if player["position"] in DEFENSIVE_POSITIONS else "offense")
-    positive = None if epa is None or epa == 0 else (epa > 0 if side == "offense" else epa < 0)
+    positive = None if epa is None or round(abs(epa), 1) == 0 else (epa > 0 if side == "offense" else epa < 0)
     outcome = play_outcome(play, player) if epa is not None else ""
     color = player.get("team_color", "#0057b8")
     medium, large = field.svg(play, "medium", color, outcome=outcome), field.svg(play, "large", color, outcome=outcome)
@@ -245,11 +245,19 @@ def play_view(play, player, key_ids=()):
 
 
 def week_plays(player):
-    """Recorded plays for a week page: key moments first, then game order. Schema-1 editions have only key moments."""
-    key_ids = [k["play_id"] for k in player.get("key_plays", [])]
+    """Recorded plays for a week page: key moments first, then game order. Schema-1 editions have only key moments.
+
+    A key moment can be missing from `plays` (credited through a role outside the recorded-play roles, or on a
+    deleted play); it is appended so the explorer lists every key moment the card shows."""
+    key_plays = player.get("key_plays", [])
+    key_ids = [k["play_id"] for k in key_plays]
     plays = player.get("plays")
     saved = plays is not None
-    source = plays if saved else player.get("key_plays", [])
+    if saved:
+        present = {q["play_id"] for q in plays}
+        source = list(plays) + [k for k in key_plays if k["play_id"] not in present]
+    else:
+        source = key_plays
     ordered = sorted(source, key=lambda q: (q["play_id"] not in key_ids, key_ids.index(q["play_id"]) if q["play_id"] in key_ids else 0, float(q["play_id"])))
     return saved, [play_view(q, player, set(key_ids)) for q in ordered]
 
@@ -416,12 +424,13 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         for row, (_, p) in zip(log, apps):
             row["contribution"] = contribution(p)
         latest_edition = apps[-1][0] if apps else None
-        latest_plays = week_plays(latest)[1] if latest else []
+        latest_saved, latest_plays = week_plays(latest) if latest else (False, [])
+        top = top_drawable_play(latest) if latest else None
         page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
              player=player_view(latest) if latest else None, latest_edition=latest_edition,
              played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
              season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
-             top_play=latest_plays[0] if latest_plays else None, recorded=len(latest_plays),
+             top_play=play_view(top, latest) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,
              next_text=next_line(latest) if latest and not latest_edition.get("historical") else "",
              data_as_of=eastern_label(latest_edition["generated_at"]) if apps else "")
         urls.append(site_url + base_url)
@@ -435,6 +444,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
 
 
 LINK = re.compile(r'(?:href|src)="([^"#?]*)[^"]*"')
+PLAY_FRAGMENT = re.compile(r'href="([^"#?]*)(?:\?[^"#]*)?#(play-[^"]+)"')
 
 
 def check_site(out, editions):
@@ -459,6 +469,14 @@ def check_site(out, editions):
                 resolved = resolved / "index.html"
             if not resolved.exists():
                 problems.append(f"{name} links to missing {target}")
+        for target, fragment in PLAY_FRAGMENT.findall(text):
+            if target.startswith(("http://", "https://", "mailto:")):
+                continue
+            resolved = page if not target else (page.parent / target).resolve()
+            if target.endswith("/") or resolved.is_dir():
+                resolved = resolved / "index.html"
+            if resolved.exists() and f'id="{fragment}"' not in resolved.read_text(encoding="utf-8"):
+                problems.append(f"{name} links to missing {target}#{fragment}")
     return problems
 
 
