@@ -6,6 +6,7 @@
 {% set eyebrow_suffix = edition.season ~ " Season · Week " ~ edition.week %}
 {% include "_player_head.html" %}
 <p class="as-of">Data as of {{ data_as_of }}. The NFL can correct statistics later in the week.</p>
+{% if played %}
 <section class="section explorer" aria-labelledby="plays-head">
   <div class="section-head"><h2 id="plays-head">Recorded plays ({{ plays | length }})</h2></div>
   <p class="section-note">The play-by-play names a player only when he throws, runs, is targeted, makes a tackle or a charted defensive play. Most snaps never appear here; see his snaps above.{% if lineman %} Offensive linemen are rarely named in play-by-play; their snaps and team results tell more.{% endif %}</p>
@@ -22,6 +23,9 @@
   <ol class="plays explorer-list">{% for p in plays %}{% include "_play.html" %}{% endfor %}</ol>
   {% endif %}
 </section>
+{% else %}
+<section class="section status" aria-labelledby="status-head"><h2 id="status-head">Week {{ edition.week }} status</h2><p><strong>{{ player.availability.label }}</strong></p><p class="evidence">{{ player.availability.evidence }}</p></section>
+{% endif %}
 {% if next_text %}<section class="section"><h2>Up next, as of Week {{ edition.week }}</h2><p>{{ next_text }}</p></section>{% endif %}
-<script src="{{ root }}static/explorer.js?v={{ explorer_version }}" defer></script>
+{% if played and plays %}<script src="{{ root }}static/explorer.js?v={{ explorer_version }}" defer></script>{% endif %}
 {% endblock %}

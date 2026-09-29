@@ -383,6 +383,49 @@ class PlayerPageTests(SiteTestCase):
         page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
         self.assertIn("Up next", page)
         self.assertIn("CLE at PIT · Sun, Oct 4 · 1:00 p.m. ET", page)
+        edition["historical"] = True
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
+        self.assertNotIn("Up next", page)  # a historical replay's next game is long past
+
+    def test_evergreen_count_matches_week_page_on_schema_one(self):
+        edition = fixture_data.golden_edition()
+        edition["schema_version"] = 1
+        for p in edition["players"]:
+            p.pop("plays", None)
+        out = self.render(edition)
+        week = self.read(out / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        count = re.search(r"Recorded plays \((\d+)\)", week)[1]
+        self.assertNotEqual(count, "0")
+        self.assertIn(f"See all {count} recorded plays", self.read(out / "players" / "grant-delpit" / "index.html"))
+
+    def test_evergreen_header_has_monogram_and_college_line(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
+        self.assertIn('<div class="monogram" aria-hidden="true">GD</div>', page)
+        self.assertIn("LSU · 2020 draft, round 2", page)
+
+    def test_week_page_for_a_week_not_played_shows_status_not_explorer(self):
+        page = self.read(self.render() / "players" / "warren-brinson" / "2026-week-02" / "index.html")
+        self.assertNotIn("Recorded plays", page)
+        self.assertNotIn("explorer", page)
+        self.assertIn("Inactive for the game", page)
+        self.assertIn("Weekly roster status: inactive", page)
+
+    def test_evergreen_latest_week_not_played_shows_status(self):
+        page = self.read(self.render() / "players" / "jj-mccarthy" / "index.html")
+        self.assertNotIn("See all", page)
+        self.assertNotIn('class="top-play"', page)
+        self.assertIn("No snaps recorded", page)
+        self.assertIn("Reason not established by snap counts", page)
+
+    def test_play_description_is_escaped_but_diagram_is_markup(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        tate["plays"][1]["description"] = '<script>alert("x")</script>'
+        page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        self.assertNotIn("<script>alert", page)
+        self.assertIn("&lt;script&gt;", page)
+        self.assertIn('<svg class="field field-medium"', page)
+        self.assertNotIn("&lt;svg", page)
 
     def test_nav_links_players_and_the_site_passes_its_checks(self):
         out = self.render()

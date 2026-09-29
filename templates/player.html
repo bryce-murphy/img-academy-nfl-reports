@@ -4,9 +4,14 @@
 {% block content %}
 {% if player %}
 {% set eyebrow_suffix = "Latest: Week " ~ latest_edition.week %}
+{% set show_monogram = True %}
 {% include "_player_head.html" %}
+{% if played %}
 {% if top_play and top_play.svg_medium %}<figure class="top-play">{{ top_play.svg_medium }}<figcaption>{{ top_play.result }} {{ top_play.outcome }}</figcaption></figure>{% endif %}
 <p><a href="{{ latest_edition.id }}/">See all {{ recorded }} recorded plays from Week {{ latest_edition.week }} →</a></p>
+{% else %}
+<section class="section status"><h2>Week {{ latest_edition.week }} status</h2><p><strong>{{ player.availability.label }}</strong></p><p class="evidence">{{ player.availability.evidence }}</p><p><a href="{{ latest_edition.id }}/">Week {{ latest_edition.week }} page →</a></p></section>
+{% endif %}
 {% if next_text %}<section class="section"><h2>Up next</h2><p>{{ next_text }}</p></section>{% endif %}
 <section class="section"><h2>Season</h2><dl class="season">{% for line in season %}<dt>{{ line.label }}</dt><dd>{{ line.text }}</dd>{% endfor %}</dl></section>
 <section class="section"><h2>Game log</h2>

@@ -1,5 +1,6 @@
 <header class="player-head" style="--team: {{ player.team_color }}">
   <p class="eyebrow">{{ player.team }} / {{ player.position }}{% if eyebrow_suffix %} · {{ eyebrow_suffix }}{% endif %}</p>
+  {% if show_monogram is defined and show_monogram %}<div class="player-mark"><div class="monogram" aria-hidden="true">{{ player.initials }}</div></div>{% endif %}
   <h1>{{ player.name }}</h1>
   <p class="score">{{ player.score_line }}</p>
   {% if player.participation %}<p class="evidence">{{ player.participation }}</p>{% endif %}

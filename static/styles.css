@@ -26,6 +26,7 @@ a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-off
 .scorebug{justify-self:end;margin:0;background:var(--navy);color:#fff;font-weight:700;font-size:13px;letter-spacing:1px;padding:6px 12px}
 .monogram{font:800 120px/1 var(--display);color:var(--navy);text-align:center;align-self:center}
 .featured-name{margin:0;font-size:13px;color:var(--muted)}
+.player-mark{width:140px;background:var(--wash);border:1px solid var(--line);border-top:8px solid var(--team,var(--brand));padding:12px 0;margin:8px 0}.player-mark .monogram{font-size:64px}
 .section{padding:36px 0;border-bottom:1px solid var(--line)}
 .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:18px}
 .section-head h2,.method h2{font:800 34px/1.05 var(--display);margin:0;color:var(--navy)}

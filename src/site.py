@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import hashlib
 import json
 import re
@@ -314,7 +315,9 @@ def social_drafts(edition, copy, url):
     return {"state": "draft", "edition": edition["id"], "url": url, "linkedin": linkedin, "x": x}
 
 
+@functools.cache
 def environment():
+    """One shared Jinja environment per process; templates and asset fingerprints do not change during a build."""
     env = Environment(
         loader=FileSystemLoader(str(ROOT / "templates")),
         autoescape=select_autoescape(["html", "xml"]),
@@ -335,7 +338,8 @@ def _write_json(path, value, **options):
 
 def build_site(out, editions_root=ROOT / "editions", config=None, registry=None):
     config = config or load_config()
-    registry = registry or load_registry()
+    if registry is None:
+        registry = load_registry()
     env = environment()
     editions = load_editions(editions_root)
     out = Path(out)
@@ -380,19 +384,22 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
             view = player_view(p)
             saved, plays = week_plays(p)
             page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
-                 player=view, edition=e_data, plays=plays, plays_saved=saved, lineman=pl.group_of(p["position"]) == "Offensive line",
+                 player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
                  nickname=pl.nickname(p["team_name"]), caption=field.CAPTION, data_as_of=eastern_label(e_data["generated_at"]),
                  next_text=next_line(p))
             urls.append(f"{site_url}{base_url}{e_data['id']}/")
         log = pl.game_log(apps)
         for row, (_, p) in zip(log, apps):
             row["contribution"] = contribution(p)
-        top = week_plays(latest)[1][:1] if latest else []
+        latest_edition = apps[-1][0] if apps else None
+        latest_plays = week_plays(latest)[1] if latest else []
         page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
-             player=player_view(latest) if latest else None, latest_edition=apps[-1][0] if apps else None,
-             season=pl.season_lines(apps, latest["position"]) if latest else [], log=log, top_play=top[0] if top else None,
-             recorded=len((latest or {}).get("plays", []) or []), next_text=next_line(latest) if latest else "",
-             data_as_of=eastern_label(apps[-1][0]["generated_at"]) if apps else "")
+             player=player_view(latest) if latest else None, latest_edition=latest_edition,
+             played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
+             season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
+             top_play=latest_plays[0] if latest_plays else None, recorded=len(latest_plays),
+             next_text=next_line(latest) if latest and not latest_edition.get("historical") else "",
+             data_as_of=eastern_label(latest_edition["generated_at"]) if apps else "")
         urls.append(site_url + base_url)
         listing.append({"alum": alum, "player": latest, "group": pl.group_of(latest["position"]) if latest else "Other"})
     page("players.html", "players/index.html", canonical=site_url + "players/", root="../",
