@@ -37,6 +37,8 @@ IMPACT_WORDS = {"Sack": ("sack", "sacks"), "Tackle for loss": ("tackle for loss"
                 "Forced fumble": ("forced fumble", "forced fumbles"), "Fumble recovery": ("fumble recovery", "fumble recoveries"),
                 "QB hit": ("QB hit", "QB hits"), "3rd-down stop": ("3rd-down stop", "3rd-down stops"),
                 "4th-down stop": ("4th-down stop", "4th-down stops"), "Safety": ("safety", "safeties")}
+TACKLE_ROLES = ("solo_tackle_1", "solo_tackle_2", "assist_tackle_1", "assist_tackle_2",
+                 "assist_tackle_3", "assist_tackle_4", "tackle_with_assist_1", "tackle_with_assist_2")
 
 
 def group_of(position):
@@ -91,16 +93,28 @@ def _based_on_note(n, m):
     return f" (based on {n} of {m} weeks)" if 0 < n < m else ""
 
 
+def _share_note(n, m):
+    """Spec §6: a ratio-of-sums line notes when its own numerator/denominator pairing is only partly matched."""
+    return f" (share based on {n} of {m} weeks)" if 0 < n < m else ""
+
+
 def season_lines(apps, position):
     played = [(e, p) for e, p in apps if p["availability"]["label"] == ev.PLAYED]
     lines = [{"label": "Games", "text": f"Played in {_n(len(played), 'game', 'games')} of {len(apps)}."}]
     snap_parts = []
     for phase, team_key, word in PHASES:
-        mine = _sum((p.get("snaps") or {}).get(phase) for _, p in apps)
-        team = _sum((p.get("snaps") or {}).get(team_key) for _, p in apps if (p.get("snaps") or {}).get(phase))
-        if mine:
-            share = _pct(mine, team)
-            snap_parts.append(f"{mine} {word} snaps" + (f", {share} of the team's" if share else ""))
+        rows = [((p.get("snaps") or {}).get(phase), (p.get("snaps") or {}).get(team_key)) for _, p in apps]
+        weeks_with_mine = [(m, t) for m, t in rows if m is not None]
+        mine = _sum(m for m, _ in rows)
+        if not mine:
+            continue
+        text = f"{mine} {word} snaps"
+        matched = [(m, t) for m, t in weeks_with_mine if t is not None]
+        if matched:
+            share = _pct(sum(m for m, _ in matched), sum(t for _, t in matched))
+            if share:
+                text += f", {share} of the team's" + _share_note(len(matched), len(weeks_with_mine))
+        snap_parts.append(text)
     if snap_parts:
         lines.append({"label": "Snaps", "text": "; ".join(snap_parts) + "."})
     group = group_of(position)
@@ -121,8 +135,9 @@ def season_lines(apps, position):
 
 
 def _efficiency(rows, key, noun, threshold):
+    """The rate's population is rows with a non-null `key`, not all rows: a missing EPA is not a zero."""
     values = [r[key] for r in rows if r.get(key) is not None]
-    if len(rows) < threshold or not values:
+    if len(values) < threshold:
         return None
     success = sum(1 for v in values if v > 0)
     return f"Expected points per {noun} {sum(values) / len(values):+.2f}; success rate {round(100 * success / len(values))}%."
@@ -142,10 +157,12 @@ def _qb_lines(plays, note):
 def _rush_lines(plays, note):
     carries = [q for q in plays if "rusher" in q.get("roles", []) and q.get("rush_attempt") == 1]
     targets = [q for q in plays if "receiver" in q.get("roles", [])]
-    catches = sum(1 for q in targets if q.get("complete_pass") == 1)
+    known = [q for q in targets if q.get("complete_pass") is not None]
+    catches = sum(1 for q in known if q["complete_pass"] == 1)
+    catch_note = f" (catches known for {len(known)} of {len(targets)} targets)" if 0 < len(known) < len(targets) else ""
     rate = _efficiency(carries, "epa", "carry", 30)
     return [{"label": "Carries", "text": f"{_n(len(carries), 'carry', 'carries')}{note}." + (f" {rate}" if rate else "")},
-            {"label": "Receiving", "text": f"{_n(len(targets), 'target', 'targets')}, {_n(catches, 'catch', 'catches')}{note}."}]
+            {"label": "Receiving", "text": f"{_n(len(targets), 'target', 'targets')}, {_n(catches, 'catch', 'catches')}{catch_note}{note}."}]
 
 
 def _receiver_lines(played, plays, plays_weeks, note):
@@ -154,26 +171,32 @@ def _receiver_lines(played, plays, plays_weeks, note):
     if usage_weeks:
         usage = [p.get("usage") or {} for _, p in usage_weeks]
         targets = _sum(u.get("targets") for u in usage)
-        team_targets = _sum(u.get("team_targets") for u in usage if u.get("team_targets"))
-        air = _sum(u.get("air_yards") for u in usage)
-        team_air = _sum(u.get("team_air_yards") for u in usage if u.get("team_air_yards"))
-        usage_note = _based_on_note(len(usage_weeks), len(played))
-        text = f"{_n(targets, 'target', 'targets')}"
-        if targets and team_targets:
-            text += f", {_pct(targets, team_targets)} of team targets"
-        if air is not None and team_air:
-            text += f"; {_pct(air, team_air)} of team air yards"
-        lines.append({"label": "Targets", "text": text + usage_note + "."})
+        text = f"{_n(targets, 'target', 'targets')}" + _based_on_note(len(usage_weeks), len(played))
+
+        target_matched = [u for u in usage if u.get("team_targets") is not None]
+        if target_matched:
+            share = _pct(sum(u["targets"] for u in target_matched), sum(u["team_targets"] for u in target_matched))
+            if share:
+                text += f", {share} of team targets" + _share_note(len(target_matched), len(usage_weeks))
+
+        air_weeks = [u for u in usage if u.get("air_yards") is not None]
+        air_matched = [u for u in air_weeks if u.get("team_air_yards") is not None]
+        if air_matched:
+            share = _pct(sum(u["air_yards"] for u in air_matched), sum(u["team_air_yards"] for u in air_matched))
+            if share:
+                text += f"; {share} of team air yards" + _share_note(len(air_matched), len(air_weeks))
+
+        lines.append({"label": "Targets", "text": text + "."})
     charted = [(p.get("charting") or {}).get("targets") for _, p in played]
     charted = [c for c in charted if c]
     if charted:
-        lines.append({"label": "Charted targets", "text": f"{sum(c['catchable'] for c in charted)} of {sum(c['charted'] for c in charted)} catchable, {_n(sum(c['drops'] for c in charted), 'drop', 'drops')}."})
+        text = f"{sum(c['catchable'] for c in charted)} of {sum(c['charted'] for c in charted)} catchable, {_n(sum(c['drops'] for c in charted), 'drop', 'drops')}"
+        lines.append({"label": "Charted targets", "text": text + _based_on_note(len(charted), len(played)) + "."})
     if plays_weeks:
         targeted = [q for q in plays if "receiver" in q.get("roles", [])]
-        if len(targeted) >= 15:
-            values = [q["epa"] for q in targeted if q.get("epa") is not None]
-            if values:
-                lines.append({"label": "When targeted", "text": f"Team expected points when targeted {sum(values) / len(values):+.2f} per target{note}."})
+        values = [q["epa"] for q in targeted if q.get("epa") is not None]
+        if len(values) >= 15:
+            lines.append({"label": "When targeted", "text": f"Team expected points when targeted {sum(values) / len(values):+.2f} per target{note}."})
     return lines
 
 
@@ -186,19 +209,24 @@ def _defense_lines(played, plays, plays_weeks, note):
                 counts[q["impact"]] = counts.get(q["impact"], 0) + 1
         total = sum(counts.values())
         parts = [_n(n, *IMPACT_WORDS.get(kind, (kind.lower(), kind.lower()))) for kind, n in sorted(counts.items(), key=lambda kv: -kv[1])]
-        snaps = _sum((p.get("snaps") or {}).get("defense") for _, p in played) or 0
+        snaps = _sum((p.get("snaps") or {}).get("defense") for _, p in plays_weeks) or 0
         text = f"{_n(total, 'impact play', 'impact plays')}" + (f" ({', '.join(parts)})" if parts else "")
         if snaps >= 100:
             text += f"; {100 * total / snaps:.1f} per 100 defensive snaps"
         lines.append({"label": "Impact plays", "text": text + note + "."})
+        tackles = sum(1 for q in plays if any(role in q.get("roles", []) for role in TACKLE_ROLES))
+        lines.append({"label": "Tackles", "text": f"{_n(tackles, 'tackle', 'tackles')}{note}."})
     charting = [p.get("charting") or {} for _, p in played]
     cover = [c["coverage"] for c in charting if c.get("coverage")]
     if cover:
-        lines.append({"label": "Coverage", "text": f"Charted in coverage: {_n(sum(c['targets'] for c in cover), 'target', 'targets')}, {_n(sum(c['completions'] for c in cover), 'completion', 'completions')}, {_n(sum(c['yards'] for c in cover), 'yard', 'yards')}."})
+        text = f"Charted in coverage: {_n(sum(c['targets'] for c in cover), 'target', 'targets')}, {_n(sum(c['completions'] for c in cover), 'completion', 'completions')}, {_n(sum(c['yards'] for c in cover), 'yard', 'yards')}"
+        lines.append({"label": "Coverage", "text": text + _based_on_note(len(cover), len(played)) + "."})
     rush = [c["pass_rush"] for c in charting if c.get("pass_rush")]
     if rush:
-        lines.append({"label": "Pass rush", "text": f"{_n(sum(r['pressures'] for r in rush), 'pressure', 'pressures')}."})
+        text = f"{_n(sum(r['pressures'] for r in rush), 'pressure', 'pressures')}"
+        lines.append({"label": "Pass rush", "text": text + _based_on_note(len(rush), len(played)) + "."})
     tackling = [c["tackling"] for c in charting if c.get("tackling")]
     if tackling:
-        lines.append({"label": "Tackling", "text": f"{sum(t['missed'] for t in tackling)} missed in {_n(sum(t['attempts'] for t in tackling), 'attempt', 'attempts')}."})
+        text = f"{sum(t['missed'] for t in tackling)} missed in {_n(sum(t['attempts'] for t in tackling), 'attempt', 'attempts')}"
+        lines.append({"label": "Tackling", "text": text + _based_on_note(len(tackling), len(played)) + "."})
     return lines

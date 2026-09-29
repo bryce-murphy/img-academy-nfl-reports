@@ -158,3 +158,110 @@ class SeasonLineTests(unittest.TestCase):
         self.assertNotIn("Carries", [l["label"] for l in lines])
         self.assertNotIn("Receiving", [l["label"] for l in lines])
         self.assertNotIn("0 carries", " ".join(l["text"] for l in lines))
+
+    def test_snap_share_uses_matched_pairs_not_mismatched_totals(self):
+        week2 = edition_with(2, **{"Grant Delpit": {"snaps": {"offense": 0, "defense": 50, "st": 0, "team_offense": 0, "team_defense": None, "team_st": 0}}})
+        week3 = edition_with(3, **{"Grant Delpit": {"snaps": {"offense": 0, "defense": 10, "st": 0, "team_offense": 0, "team_defense": 20, "team_st": 0}}})
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], "00-0036282"), "SAF")}
+        self.assertIn("60 defensive snaps", lines["Snaps"])
+        self.assertIn("50% of the team's", lines["Snaps"])
+        self.assertNotIn("300%", lines["Snaps"])
+        self.assertIn("(share based on 1 of 2 weeks)", lines["Snaps"])
+
+    def test_defensive_impact_rate_uses_snaps_from_plays_weeks_only(self):
+        week2 = edition_with(2)
+        week3 = edition_with(3, **{"Grant Delpit": {
+            "team": "NYJ", "team_name": "New York Jets",
+            "snaps": {"offense": 0, "defense": 200, "st": 0, "team_offense": 0, "team_defense": 200, "team_st": 0},
+        }})
+        for p in week3["players"]:
+            if p["name"] == "Grant Delpit":
+                p.pop("plays", None)
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], "00-0036282"), "SAF")}
+        # Only week 2's 65 defensive snaps count (its `plays` supplied the 1 sack); week 3's 200 snaps
+        # have no matching play data and must not pad the denominator past the 100-snap threshold.
+        self.assertNotIn("per 100", lines["Impact plays"])
+
+    def test_qb_efficiency_threshold_counts_only_rows_with_epa(self):
+        plays = [{"roles": ["passer"], "qb_dropback": 1, "qb_kneel": 0, "qb_spike": 0, "qb_epa": 0.1, "epa": 0.1, "complete_pass": 1, "cp": 0.6}] * 40
+        plays += [{"roles": ["passer"], "qb_dropback": 1, "qb_kneel": 0, "qb_spike": 0, "qb_epa": None, "epa": None, "complete_pass": None, "cp": None}] * 20
+        e = edition_with(2, **{"J.J. McCarthy": {"plays": plays, "availability": {"label": "Played", "evidence": "x"}}})
+        qb = next(p for p in e["players"] if p["name"] == "J.J. McCarthy")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], qb), "QB")}
+        self.assertIn("60 dropbacks", lines["Dropbacks"])
+        self.assertNotIn("Expected points per dropback", lines["Dropbacks"])
+
+    def test_rb_efficiency_threshold_counts_only_rows_with_epa(self):
+        carries = [{"roles": ["rusher"], "rush_attempt": 1, "epa": 0.1}] * 20
+        carries += [{"roles": ["rusher"], "rush_attempt": 1, "epa": None}] * 15
+        e = edition_with(2, **{"Kaytron Allen": {"plays": carries}})
+        allen = next(p for p in e["players"] if p["name"] == "Kaytron Allen")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], allen), "RB")}
+        self.assertIn("35 carries", lines["Carries"])
+        self.assertNotIn("Expected points per carry", lines["Carries"])
+
+    def test_wr_when_targeted_threshold_counts_only_rows_with_epa(self):
+        targets = [{"roles": ["receiver"], "epa": 0.2}] * 10
+        targets += [{"roles": ["receiver"], "epa": None}] * 10
+        e = edition_with(2, **{"Carnell Tate": {"plays": targets}})
+        tate = next(p for p in e["players"] if p["name"] == "Carnell Tate")["id"]
+        lines = players.season_lines(players.appearances([e], tate), "WR")
+        self.assertNotIn("When targeted", [l["label"] for l in lines])
+
+    def test_rb_catches_known_only_over_targets_with_known_completion(self):
+        targets = [{"roles": ["receiver"], "complete_pass": 1}] * 3
+        targets += [{"roles": ["receiver"], "complete_pass": 0}] * 2
+        targets += [{"roles": ["receiver"], "complete_pass": None}] * 5
+        e = edition_with(2, **{"Kaytron Allen": {"plays": targets}})
+        allen = next(p for p in e["players"] if p["name"] == "Kaytron Allen")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], allen), "RB")}
+        self.assertIn("10 targets, 3 catches", lines["Receiving"])
+        self.assertIn("(catches known for 5 of 10 targets)", lines["Receiving"])
+
+    def test_receiver_shares_use_matched_pairs_with_their_own_notes(self):
+        a = edition_with(2, **{"Carnell Tate": {"usage": {"targets": 5, "team_targets": None, "air_yards": 50, "team_air_yards": 100}}})
+        b = edition_with(3, **{"Carnell Tate": {"usage": {"targets": 10, "team_targets": 40, "air_yards": 100, "team_air_yards": 300}}})
+        tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([a, b], tate), "WR")}
+        self.assertIn("15 targets", lines["Targets"])
+        self.assertIn("25% of team targets", lines["Targets"])  # 10/40 only: the week without team_targets is excluded
+        self.assertIn("38% of team air yards", lines["Targets"])  # (50+100)/(100+300), both weeks matched
+        self.assertEqual(lines["Targets"].count("(share based on 1 of 2 weeks)"), 1)
+
+    def test_defense_charting_lines_note_partial_weeks(self):
+        week2 = edition_with(2, **{"Grant Delpit": {"charting": {
+            "targets": None,
+            "coverage": {"targets": 4, "completions": 2, "yards": 17, "touchdowns": 0, "interceptions": 0},
+            "pass_rush": {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 2},
+            "tackling": None, "rushing": None, "broken_tackles": None,
+        }}})
+        week3 = edition_with(3, **{"Grant Delpit": {"charting": {
+            "targets": None, "coverage": None,
+            "pass_rush": {"pressures": 2, "hurries": 1, "qb_hits": 0, "sacks": 0, "blitzes": 1},
+            "tackling": {"missed": 1, "attempts": 4}, "rushing": None, "broken_tackles": None,
+        }}})
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], "00-0036282"), "SAF")}
+        self.assertIn("(based on 1 of 2 weeks)", lines["Coverage"])
+        self.assertIn("(based on 1 of 2 weeks)", lines["Tackling"])
+        self.assertNotIn("(based on", lines["Pass rush"])
+
+    def test_receiver_charted_targets_note_partial_weeks(self):
+        a = edition_with(2, **{"Carnell Tate": {"charting": {
+            "targets": {"charted": 5, "catchable": 3, "contested": 0, "contested_catches": 0, "drops": 0},
+            "coverage": None, "pass_rush": None, "tackling": None, "rushing": None, "broken_tackles": None,
+        }}})
+        b = edition_with(3, **{"Carnell Tate": {"charting": {
+            "targets": None, "coverage": None, "pass_rush": None, "tackling": None, "rushing": None, "broken_tackles": None,
+        }}})
+        tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([a, b], tate), "WR")}
+        self.assertIn("(based on 1 of 2 weeks)", lines["Charted targets"])
+
+    def test_defense_tackles_line(self):
+        plays = [{"roles": ["solo_tackle_1"], "side": "defense", "impact": None}] * 3
+        plays += [{"roles": ["assist_tackle_1", "qb_hit_1"], "side": "defense", "impact": "QB hit"}] * 1
+        plays += [{"roles": ["passer"], "side": "offense", "impact": None}] * 1
+        e = edition_with(2, **{"Grant Delpit": {"plays": plays}})
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], "00-0036282"), "SAF")}
+        self.assertIn("Tackles", lines)
+        self.assertIn("4 tackles", lines["Tackles"])

@@ -228,8 +228,10 @@ def next_line(player):
 
 
 def play_view(play, player, key_ids=()):
+    """`positive` is three-way: True, False, or None (unknown epa or exactly 0, i.e. neutral)."""
     epa = play.get("epa")
-    positive = None if epa is None else (epa > 0 if play.get("side", "offense") == "offense" else epa < 0)
+    side = play.get("side") or ("defense" if player["position"] in DEFENSIVE_POSITIONS else "offense")
+    positive = None if epa is None or epa == 0 else (epa > 0 if side == "offense" else epa < 0)
     outcome = play_outcome(play, player) if epa is not None else ""
     color = player.get("team_color", "#0057b8")
     medium, large = field.svg(play, "medium", color, outcome=outcome), field.svg(play, "large", color, outcome=outcome)

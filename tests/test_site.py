@@ -351,6 +351,26 @@ class PlayerPageTests(SiteTestCase):
         self.assertIn('data-positive=""', first)
         self.assertNotIn("expected point", first)
 
+    def test_play_with_zero_epa_is_neutral_not_negative(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        first_key = tate["key_plays"][0]["play_id"]
+        next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = 0
+        page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        first = page.split('class="play ')[1].split("</li>")[0]
+        self.assertIn('data-positive=""', first)
+
+    def test_play_side_falls_back_to_position_when_missing(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        first_key = delpit["key_plays"][0]["play_id"]
+        play = next(q for q in delpit["plays"] if q["play_id"] == first_key)
+        play.pop("side", None)
+        play["epa"] = -0.6  # good for the defense; a schema-1-shaped play with no `side` must still mark positive
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        first = page.split('class="play ')[1].split("</li>")[0]
+        self.assertIn('data-positive="1"', first)
+
     def test_schema_one_edition_renders_from_key_moments(self):
         edition = fixture_data.golden_edition()
         edition["schema_version"] = 1
