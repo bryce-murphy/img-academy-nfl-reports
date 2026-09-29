@@ -1,0 +1,2071 @@
+{
+  "schema_version": 1,
+  "id": "2026-week-03",
+  "season": 2026,
+  "week": 3,
+  "season_type": "REG",
+  "generated_at": "2026-09-29T22:28:27+00:00",
+  "label": "Verified source snapshot",
+  "historical": false,
+  "games": [
+    {
+      "game_id": "2026_03_ATL_GB",
+      "gameday": "2026-09-24",
+      "away_team": "ATL",
+      "away_score": 35,
+      "home_team": "GB",
+      "home_score": 14
+    },
+    {
+      "game_id": "2026_03_ARI_SF",
+      "gameday": "2026-09-27",
+      "away_team": "ARI",
+      "away_score": 30,
+      "home_team": "SF",
+      "home_score": 36
+    },
+    {
+      "game_id": "2026_03_BAL_DAL",
+      "gameday": "2026-09-27",
+      "away_team": "BAL",
+      "away_score": 34,
+      "home_team": "DAL",
+      "home_score": 31
+    },
+    {
+      "game_id": "2026_03_CAR_CLE",
+      "gameday": "2026-09-27",
+      "away_team": "CAR",
+      "away_score": 18,
+      "home_team": "CLE",
+      "home_score": 21
+    },
+    {
+      "game_id": "2026_03_CIN_PIT",
+      "gameday": "2026-09-27",
+      "away_team": "CIN",
+      "away_score": 27,
+      "home_team": "PIT",
+      "home_score": 30
+    },
+    {
+      "game_id": "2026_03_HOU_IND",
+      "gameday": "2026-09-27",
+      "away_team": "HOU",
+      "away_score": 17,
+      "home_team": "IND",
+      "home_score": 19
+    },
+    {
+      "game_id": "2026_03_KC_MIA",
+      "gameday": "2026-09-27",
+      "away_team": "KC",
+      "away_score": 24,
+      "home_team": "MIA",
+      "home_score": 10
+    },
+    {
+      "game_id": "2026_03_LAC_BUF",
+      "gameday": "2026-09-27",
+      "away_team": "LAC",
+      "away_score": 16,
+      "home_team": "BUF",
+      "home_score": 24
+    },
+    {
+      "game_id": "2026_03_LA_DEN",
+      "gameday": "2026-09-27",
+      "away_team": "LA",
+      "away_score": 26,
+      "home_team": "DEN",
+      "home_score": 30
+    },
+    {
+      "game_id": "2026_03_LV_NO",
+      "gameday": "2026-09-27",
+      "away_team": "LV",
+      "away_score": 35,
+      "home_team": "NO",
+      "home_score": 27
+    },
+    {
+      "game_id": "2026_03_MIN_TB",
+      "gameday": "2026-09-27",
+      "away_team": "MIN",
+      "away_score": 23,
+      "home_team": "TB",
+      "home_score": 16
+    },
+    {
+      "game_id": "2026_03_NE_JAX",
+      "gameday": "2026-09-27",
+      "away_team": "NE",
+      "away_score": 6,
+      "home_team": "JAX",
+      "home_score": 35
+    },
+    {
+      "game_id": "2026_03_NYJ_DET",
+      "gameday": "2026-09-27",
+      "away_team": "NYJ",
+      "away_score": 24,
+      "home_team": "DET",
+      "home_score": 31
+    },
+    {
+      "game_id": "2026_03_SEA_WAS",
+      "gameday": "2026-09-27",
+      "away_team": "SEA",
+      "away_score": 31,
+      "home_team": "WAS",
+      "home_score": 33
+    },
+    {
+      "game_id": "2026_03_TEN_NYG",
+      "gameday": "2026-09-27",
+      "away_team": "TEN",
+      "away_score": 7,
+      "home_team": "NYG",
+      "home_score": 12
+    },
+    {
+      "game_id": "2026_03_PHI_CHI",
+      "gameday": "2026-09-28",
+      "away_team": "PHI",
+      "away_score": 7,
+      "home_team": "CHI",
+      "home_score": 27
+    }
+  ],
+  "players": [
+    {
+      "id": "00-0036941",
+      "name": "Andre Cisco",
+      "position": "SAF",
+      "team": "NYJ",
+      "team_name": "New York Jets",
+      "team_color": "#003F2D",
+      "context": "Syracuse · 2021 draft, round 3",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_NYJ_DET",
+        "opponent": "DET",
+        "home_away": "away",
+        "team_score": 24,
+        "opp_score": 31,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 5
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 1
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 1
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 65,
+        "st": 3
+      },
+      "key_plays": [
+        {
+          "play_id": "384",
+          "quarter": "Q1",
+          "clock": "08:54",
+          "description": "(8:54) (Shotgun) 16-J.Goff sacked at DET 48 for -10 yards (8-A.Cisco).",
+          "epa": -2.46,
+          "side": "defense",
+          "impact": "Sack",
+          "offense": "DET",
+          "defense": "NYJ",
+          "offense_name": "Detroit Lions",
+          "defense_name": "New York Jets"
+        },
+        {
+          "play_id": "2554",
+          "quarter": "Q3",
+          "clock": "06:16",
+          "description": "(6:16) (Shotgun) 16-J.Goff pass short left to 89-B.Wright to DET 40 for 2 yards (8-A.Cisco).",
+          "epa": -0.47,
+          "side": "defense",
+          "impact": null,
+          "offense": "DET",
+          "defense": "NYJ",
+          "offense_name": "Detroit Lions",
+          "defense_name": "New York Jets"
+        },
+        {
+          "play_id": "2825",
+          "quarter": "Q3",
+          "clock": "01:14",
+          "description": "(1:14) 0-J.Gibbs up the middle to NYJ 4 for 8 yards (6-D.Belton; 8-A.Cisco).",
+          "epa": 0.52,
+          "side": "defense",
+          "impact": null,
+          "offense": "DET",
+          "defense": "NYJ",
+          "offense_name": "Detroit Lions",
+          "defense_name": "New York Jets"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYJ",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "CHI",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Soldier Field",
+        "team": "NYJ",
+        "team_name": "New York Jets",
+        "team_color": "#003F2D"
+      },
+      "score": 7.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0040708",
+      "name": "Jihaad Campbell",
+      "position": "LB",
+      "team": "PHI",
+      "team_name": "Philadelphia Eagles",
+      "team_color": "#004C54",
+      "context": "Alabama · 2025 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_PHI_CHI",
+        "opponent": "CHI",
+        "home_away": "away",
+        "team_score": 7,
+        "opp_score": 27,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 4
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 5
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 70,
+        "st": 0
+      },
+      "key_plays": [
+        {
+          "play_id": "1733",
+          "quarter": "Q2",
+          "clock": "02:30",
+          "description": "(2:30) 25-K.Monangai left tackle to PHI 9 for -2 yards (53-Z.Baun, 11-J.Campbell).",
+          "epa": -0.94,
+          "side": "defense",
+          "impact": null,
+          "offense": "CHI",
+          "defense": "PHI",
+          "offense_name": "Chicago Bears",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "3360",
+          "quarter": "Q4",
+          "clock": "10:31",
+          "description": "(10:31) 25-K.Monangai right guard to PHI 17 for 2 yards (11-J.Campbell).",
+          "epa": -0.37,
+          "side": "defense",
+          "impact": null,
+          "offense": "CHI",
+          "defense": "PHI",
+          "offense_name": "Chicago Bears",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "3462",
+          "quarter": "Q4",
+          "clock": "08:53",
+          "description": "(8:53) (Shotgun) 4-D.Swift left tackle to PHI 5 for 4 yards (53-Z.Baun; 11-J.Campbell).",
+          "epa": 0.18,
+          "side": "defense",
+          "impact": null,
+          "offense": "CHI",
+          "defense": "PHI",
+          "offense_name": "Chicago Bears",
+          "defense_name": "Philadelphia Eagles"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PHI",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "LA",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Lincoln Financial Field",
+        "team": "PHI",
+        "team_name": "Philadelphia Eagles",
+        "team_color": "#004C54"
+      },
+      "score": 4.5,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0036996",
+      "name": "Greg Newsome II",
+      "position": "CB",
+      "team": "NYG",
+      "team_name": "New York Giants",
+      "team_color": "#0B2265",
+      "context": "Northwestern · 2021 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_TEN_NYG",
+        "opponent": "TEN",
+        "home_away": "home",
+        "team_score": 12,
+        "opp_score": 7,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 1
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 2
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 2
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 60,
+        "st": 2
+      },
+      "key_plays": [
+        {
+          "play_id": "310",
+          "quarter": "Q1",
+          "clock": "11:03",
+          "description": "(11:03) (Shotgun) 1-C.Ward pass incomplete short right to 4-W.Robinson (20-G.Newsome).",
+          "epa": -1.31,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "3720",
+          "quarter": "Q4",
+          "clock": "02:22",
+          "description": "(2:22) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 5-E.Ayomanor (20-G.Newsome).",
+          "epa": -0.44,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "580",
+          "quarter": "Q1",
+          "clock": "06:34",
+          "description": "(6:34) 1-C.Ward pass short right to 17-C.Dike to TEN 38 for 3 yards (20-G.Newsome).",
+          "epa": -0.21,
+          "side": "defense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "ARI",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 3.5,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0041438",
+      "name": "Carnell Tate",
+      "position": "WR",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Ohio State · 2026 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_TEN_NYG",
+        "opponent": "NYG",
+        "home_away": "away",
+        "team_score": 7,
+        "opp_score": 12,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": 58
+        },
+        {
+          "key": "receptions",
+          "label": "catches",
+          "value": 6
+        },
+        {
+          "key": "targets",
+          "label": "targets",
+          "value": 9
+        },
+        {
+          "key": "receiving_tds",
+          "label": "TD",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 53,
+        "defense": 0,
+        "st": 0
+      },
+      "key_plays": [
+        {
+          "play_id": "2687",
+          "quarter": "Q3",
+          "clock": "03:50",
+          "description": "(3:50) 1-C.Ward pass short left to 14-C.Tate pushed ob at NYG 28 for 20 yards (12-C.Hood).",
+          "epa": 1.44,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "2809",
+          "quarter": "Q3",
+          "clock": "01:16",
+          "description": "(1:16) (Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate.",
+          "epa": -1.37,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "2662",
+          "quarter": "Q3",
+          "clock": "04:27",
+          "description": "(4:27) (Shotgun) 1-C.Ward pass short right to 14-C.Tate to NYG 48 for 6 yards (22-A.Phillips).",
+          "epa": 1.31,
+          "side": "offense",
+          "impact": null,
+          "offense": "TEN",
+          "defense": "NYG",
+          "offense_name": "Tennessee Titans",
+          "defense_name": "New York Giants"
+        }
+      ],
+      "next_gen": [
+        {
+          "label": "Average separation",
+          "value": 3.16,
+          "unit": "yards",
+          "source": "ngs_receiving"
+        },
+        {
+          "label": "YAC above expectation per catch",
+          "value": -1.41,
+          "unit": "yards",
+          "source": "ngs_receiving"
+        }
+      ],
+      "charting": {
+        "targets": {
+          "charted": 9,
+          "catchable": 6,
+          "contested": 0,
+          "contested_catches": 0,
+          "drops": 0
+        },
+        "coverage": null,
+        "pass_rush": null,
+        "tackling": null,
+        "rushing": null,
+        "broken_tackles": null
+      },
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "BAL",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "M&T Bank Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 2.32,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+    },
+    {
+      "id": "00-0036282",
+      "name": "Grant Delpit",
+      "position": "SAF",
+      "team": "CLE",
+      "team_name": "Cleveland Browns",
+      "team_color": "#FF3C00",
+      "context": "LSU · 2020 draft, round 2",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_CAR_CLE",
+        "opponent": "CAR",
+        "home_away": "home",
+        "team_score": 21,
+        "opp_score": 18,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 2
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 2
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 77,
+        "st": 4
+      },
+      "key_plays": [
+        {
+          "play_id": "2378",
+          "quarter": "Q3",
+          "clock": "14:49",
+          "description": "(14:49) 9-B.Young pass short left to 30-C.Hubbard pushed ob at CLE 28 for 2 yards (9-G.Delpit). ** Injury Update: CAR-68-D.Lewis has returned to the game.",
+          "epa": -0.25,
+          "side": "defense",
+          "impact": null,
+          "offense": "CAR",
+          "defense": "CLE",
+          "offense_name": "Carolina Panthers",
+          "defense_name": "Cleveland Browns"
+        },
+        {
+          "play_id": "3345",
+          "quarter": "Q3",
+          "clock": "00:52",
+          "description": "(:52) (Shotgun) 9-B.Young pass short right to 84-M.Evans to CAR 34 for 6 yards (9-G.Delpit; 49-C.Schwesinger).",
+          "epa": 0.03,
+          "side": "defense",
+          "impact": null,
+          "offense": "CAR",
+          "defense": "CLE",
+          "offense_name": "Carolina Panthers",
+          "defense_name": "Cleveland Browns"
+        },
+        {
+          "play_id": "2653",
+          "quarter": "Q3",
+          "clock": "09:42",
+          "description": "(9:42) (Shotgun) 30-C.Hubbard left guard to CAR 48 for 9 yards (49-C.Schwesinger; 9-G.Delpit).",
+          "epa": 0.91,
+          "side": "defense",
+          "impact": null,
+          "offense": "CAR",
+          "defense": "CLE",
+          "offense_name": "Carolina Panthers",
+          "defense_name": "Cleveland Browns"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": {
+        "designation": "Questionable",
+        "primary_injury": "Shoulder"
+      },
+      "current": {
+        "team": "CLE",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "PIT",
+        "home_away": "home",
+        "date": "2026-10-01",
+        "kickoff_et": "20:15",
+        "venue": "Huntington Bank Field",
+        "team": "CLE",
+        "team_name": "Cleveland Browns",
+        "team_color": "#FF3C00"
+      },
+      "score": 2.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0039013",
+      "name": "Nolan Smith",
+      "position": "LB",
+      "team": "PHI",
+      "team_name": "Philadelphia Eagles",
+      "team_color": "#004C54",
+      "context": "Georgia · 2023 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_PHI_CHI",
+        "opponent": "CHI",
+        "home_away": "away",
+        "team_score": 7,
+        "opp_score": 27,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 0
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 1
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 1
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 44,
+        "st": 0
+      },
+      "key_plays": [
+        {
+          "play_id": "1086",
+          "quarter": "Q2",
+          "clock": "14:08",
+          "description": "(14:08) 11-C.Keenum pass incomplete short right to 15-R.Odunze (3-N.Smith).",
+          "epa": -1.81,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "CHI",
+          "defense": "PHI",
+          "offense_name": "Chicago Bears",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "118",
+          "quarter": "Q1",
+          "clock": "13:43",
+          "description": "(13:43) 4-D.Swift left tackle to CHI 49 for 4 yards (53-Z.Baun; 3-N.Smith).",
+          "epa": -0.13,
+          "side": "defense",
+          "impact": null,
+          "offense": "CHI",
+          "defense": "PHI",
+          "offense_name": "Chicago Bears",
+          "defense_name": "Philadelphia Eagles"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PHI",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "LA",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Lincoln Financial Field",
+        "team": "PHI",
+        "team_name": "Philadelphia Eagles",
+        "team_color": "#004C54"
+      },
+      "score": 1.5,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0041393",
+      "name": "Daylen Everette",
+      "position": "CB",
+      "team": "PIT",
+      "team_name": "Pittsburgh Steelers",
+      "team_color": "#000000",
+      "context": "Georgia · 2026 draft, round 3",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_CIN_PIT",
+        "opponent": "CIN",
+        "home_away": "home",
+        "team_score": 30,
+        "opp_score": 27,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 1
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 0
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 1
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 26,
+        "st": 12
+      },
+      "key_plays": [
+        {
+          "play_id": "1533",
+          "quarter": "Q2",
+          "clock": "04:46",
+          "description": "(4:46) (Shotgun) 9-J.Burrow pass incomplete short middle to 81-D.Meyers (23-D.Everette).",
+          "epa": -1.13,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "CIN",
+          "defense": "PIT",
+          "offense_name": "Cincinnati Bengals",
+          "defense_name": "Pittsburgh Steelers"
+        },
+        {
+          "play_id": "3878",
+          "quarter": "Q4",
+          "clock": "00:58",
+          "description": "(:58) (No Huddle, Shotgun) 9-J.Burrow pass short right to 1-J.Chase ran ob at PIT 38 for 13 yards (23-D.Everette).",
+          "epa": 1.36,
+          "side": "defense",
+          "impact": null,
+          "offense": "CIN",
+          "defense": "PIT",
+          "offense_name": "Cincinnati Bengals",
+          "defense_name": "Pittsburgh Steelers"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PIT",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "CLE",
+        "home_away": "away",
+        "date": "2026-10-01",
+        "kickoff_et": "20:15",
+        "venue": "Huntington Bank Field",
+        "team": "PIT",
+        "team_name": "Pittsburgh Steelers",
+        "team_color": "#000000"
+      },
+      "score": 1.5,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+    },
+    {
+      "id": "00-0038549",
+      "name": "DJ Turner II",
+      "position": "CB",
+      "team": "CIN",
+      "team_name": "Cincinnati Bengals",
+      "team_color": "#FB4F14",
+      "context": "Michigan · 2023 draft, round 2",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_CIN_PIT",
+        "opponent": "PIT",
+        "home_away": "away",
+        "team_score": 27,
+        "opp_score": 30,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 0
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 0
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 1
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 62,
+        "st": 0
+      },
+      "key_plays": [
+        {
+          "play_id": "626",
+          "quarter": "Q1",
+          "clock": "04:46",
+          "description": "(4:46) (No Huddle, Shotgun) 8-A.Rodgers pass incomplete deep left to 4-D.Metcalf (0-D.Turner).",
+          "epa": -0.84,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "PIT",
+          "defense": "CIN",
+          "offense_name": "Pittsburgh Steelers",
+          "defense_name": "Cincinnati Bengals"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "CIN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "JAX",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Paycor Stadium",
+        "team": "CIN",
+        "team_name": "Cincinnati Bengals",
+        "team_color": "#FB4F14"
+      },
+      "score": 1.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0035258",
+      "name": "Hjalte Froholdt",
+      "position": "C",
+      "team": "ARI",
+      "team_name": "Arizona Cardinals",
+      "team_color": "#97233F",
+      "context": "Arkansas · 2019 draft, round 4",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_ARI_SF",
+        "opponent": "SF",
+        "home_away": "away",
+        "team_score": 30,
+        "opp_score": 36,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 87
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 87,
+        "defense": 0,
+        "st": 0
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "ARI",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "NYG",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "MetLife Stadium",
+        "team": "ARI",
+        "team_name": "Arizona Cardinals",
+        "team_color": "#97233F"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0040007",
+      "name": "Tyler Booker",
+      "position": "G",
+      "team": "DAL",
+      "team_name": "Dallas Cowboys",
+      "team_color": "#002244",
+      "context": "Alabama · 2025 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_BAL_DAL",
+        "opponent": "BAL",
+        "home_away": "home",
+        "team_score": 31,
+        "opp_score": 34,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 74
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 6
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 74,
+        "defense": 0,
+        "st": 6
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "DAL",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "HOU",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Reliant Stadium",
+        "team": "DAL",
+        "team_name": "Dallas Cowboys",
+        "team_color": "#002244"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0036408",
+      "name": "Cesar Ruiz",
+      "position": "G",
+      "team": "NO",
+      "team_name": "New Orleans Saints",
+      "team_color": "#D3BC8D",
+      "context": "Michigan · 2020 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_LV_NO",
+        "opponent": "LV",
+        "home_away": "home",
+        "team_score": 27,
+        "opp_score": 35,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 74
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 4
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 74,
+        "defense": 0,
+        "st": 4
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NO",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "ATL",
+        "home_away": "home",
+        "date": "2026-10-05",
+        "kickoff_et": "20:15",
+        "venue": "Caesars Superdome",
+        "team": "NO",
+        "team_name": "New Orleans Saints",
+        "team_color": "#D3BC8D"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0041505",
+      "name": "Francis Mauigoa",
+      "position": "OT",
+      "team": "NYG",
+      "team_name": "New York Giants",
+      "team_color": "#0B2265",
+      "context": "Miami · 2026 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_TEN_NYG",
+        "opponent": "TEN",
+        "home_away": "home",
+        "team_score": 12,
+        "opp_score": 7,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 64
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 4
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 64,
+        "defense": 0,
+        "st": 4
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "ARI",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+    },
+    {
+      "id": "00-0039731",
+      "name": "JC Latham",
+      "position": "OT",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Alabama · 2024 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_TEN_NYG",
+        "opponent": "NYG",
+        "home_away": "away",
+        "team_score": 7,
+        "opp_score": 12,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 60
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 2
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 60,
+        "defense": 0,
+        "st": 2
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "BAL",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "M&T Bank Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0036985",
+      "name": "Robert Hainsey",
+      "position": "C",
+      "team": "JAX",
+      "team_name": "Jacksonville Jaguars",
+      "team_color": "#006778",
+      "context": "Notre Dame · 2021 draft, round 3",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_NE_JAX",
+        "opponent": "NE",
+        "home_away": "home",
+        "team_score": 35,
+        "opp_score": 6,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 59
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 59,
+        "defense": 0,
+        "st": 0
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "JAX",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "CIN",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Paycor Stadium",
+        "team": "JAX",
+        "team_name": "Jacksonville Jaguars",
+        "team_color": "#006778"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0041096",
+      "name": "Kaytron Allen",
+      "position": "RB",
+      "team": "WAS",
+      "team_name": "Washington Commanders",
+      "team_color": "#5A1414",
+      "context": "Penn State · 2026 draft, round 6",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_03_SEA_WAS",
+        "opponent": "SEA",
+        "home_away": "home",
+        "team_score": 33,
+        "opp_score": 31,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "rushing_yards",
+          "label": "rush yards",
+          "value": null
+        },
+        {
+          "key": "carries",
+          "label": "carries",
+          "value": null
+        },
+        {
+          "key": "rushing_tds",
+          "label": "rush TD",
+          "value": null
+        },
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 0,
+        "st": 15
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "WAS",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "IND",
+        "home_away": "neutral",
+        "date": "2026-10-04",
+        "kickoff_et": "09:30",
+        "venue": "Tottenham Hotspur Stadium",
+        "team": "WAS",
+        "team_name": "Washington Commanders",
+        "team_color": "#5A1414"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+    },
+    {
+      "id": "00-0038118",
+      "name": "Daniel Faalele",
+      "position": "G",
+      "team": "JAX",
+      "team_name": "Jacksonville Jaguars",
+      "team_color": "#006778",
+      "context": "Minnesota · 2022 draft, round 4",
+      "availability": {
+        "label": "Inactive for the game",
+        "evidence": "Weekly roster status: inactive"
+      },
+      "game": {
+        "game_id": "2026_03_NE_JAX",
+        "opponent": "NE",
+        "home_away": "home",
+        "team_score": 35,
+        "opp_score": 6,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": null
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "JAX",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "CIN",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Paycor Stadium",
+        "team": "JAX",
+        "team_name": "Jacksonville Jaguars",
+        "team_color": "#006778"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0039923",
+      "name": "J.J. McCarthy",
+      "position": "QB",
+      "team": "MIN",
+      "team_name": "Minnesota Vikings",
+      "team_color": "#4F2683",
+      "context": "Michigan · 2024 draft, round 1",
+      "availability": {
+        "label": "Inactive for the game",
+        "evidence": "Weekly roster status: inactive"
+      },
+      "game": {
+        "game_id": "2026_03_MIN_TB",
+        "opponent": "TB",
+        "home_away": "away",
+        "team_score": 23,
+        "opp_score": 16,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "passing_yards",
+          "label": "pass yards",
+          "value": null
+        },
+        {
+          "key": "passing_tds",
+          "label": "pass TD",
+          "value": null
+        },
+        {
+          "key": "passing_interceptions",
+          "label": "INT",
+          "value": null
+        },
+        {
+          "key": "rushing_yards",
+          "label": "rush yards",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": true,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "ARI",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0040016",
+      "name": "Warren Brinson",
+      "position": "DT",
+      "team": "GB",
+      "team_name": "Green Bay Packers",
+      "team_color": "#203731",
+      "context": "Georgia · 2025 draft, round 6",
+      "availability": {
+        "label": "Inactive for the game",
+        "evidence": "Weekly roster status: inactive"
+      },
+      "game": {
+        "game_id": "2026_03_ATL_GB",
+        "opponent": "ATL",
+        "home_away": "home",
+        "team_score": 14,
+        "opp_score": 35,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": {
+        "designation": "Out",
+        "primary_injury": "Calf"
+      },
+      "current": {
+        "team": "GB",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "TB",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Raymond James Stadium",
+        "team": "GB",
+        "team_name": "Green Bay Packers",
+        "team_color": "#203731"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0040371",
+      "name": "Eric Gregory",
+      "position": "DT",
+      "team": "NE",
+      "team_name": "New England Patriots",
+      "team_color": "#002244",
+      "context": "Arkansas",
+      "availability": {
+        "label": "Practice squad",
+        "evidence": "Weekly roster status: practice squad"
+      },
+      "game": {
+        "game_id": "2026_03_NE_JAX",
+        "opponent": "JAX",
+        "home_away": "away",
+        "team_score": 6,
+        "opp_score": 35,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NE",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "BUF",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Highmark Stadium",
+        "team": "NE",
+        "team_name": "New England Patriots",
+        "team_color": "#002244"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0037612",
+      "name": "Evan Neal",
+      "position": "G",
+      "team": "LV",
+      "team_name": "Las Vegas Raiders",
+      "team_color": "#000000",
+      "context": "Alabama · 2022 draft, round 1",
+      "availability": {
+        "label": "Practice squad",
+        "evidence": "Weekly roster status: practice squad"
+      },
+      "game": {
+        "game_id": "2026_03_LV_NO",
+        "opponent": "NO",
+        "home_away": "away",
+        "team_score": 35,
+        "opp_score": 27,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": null
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "LV",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "KC",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "16:25",
+        "venue": "Allegiant Stadium",
+        "team": "LV",
+        "team_name": "Las Vegas Raiders",
+        "team_color": "#000000"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    },
+    {
+      "id": "00-0036345",
+      "name": "K.J. Osborn",
+      "position": "WR",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Miami; Buffalo · 2020 draft, round 5",
+      "availability": {
+        "label": "Practice squad",
+        "evidence": "Weekly roster status: practice squad"
+      },
+      "game": {
+        "game_id": "2026_03_TEN_NYG",
+        "opponent": "NYG",
+        "home_away": "away",
+        "team_score": 7,
+        "opp_score": 12,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": null
+        },
+        {
+          "key": "receptions",
+          "label": "catches",
+          "value": null
+        },
+        {
+          "key": "targets",
+          "label": "targets",
+          "value": null
+        },
+        {
+          "key": "receiving_tds",
+          "label": "TD",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "BAL",
+        "home_away": "away",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "M&T Bank Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 0.0,
+      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/"
+    },
+    {
+      "id": "00-0041079",
+      "name": "DeMonte Capehart",
+      "position": "DT",
+      "team": "TB",
+      "team_name": "Tampa Bay Buccaneers",
+      "team_color": "#A71930",
+      "context": "Clemson · 2026 draft, round 5",
+      "availability": {
+        "label": "No snaps recorded",
+        "evidence": "Reason not established by snap counts"
+      },
+      "game": {
+        "game_id": "2026_03_MIN_TB",
+        "opponent": "MIN",
+        "home_away": "home",
+        "team_score": 16,
+        "opp_score": 23,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TB",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 4,
+        "opponent": "GB",
+        "home_away": "home",
+        "date": "2026-10-04",
+        "kickoff_et": "13:00",
+        "venue": "Raymond James Stadium",
+        "team": "TB",
+        "team_name": "Tampa Bay Buccaneers",
+        "team_color": "#A71930"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+    },
+    {
+      "id": "00-0039367",
+      "name": "Xavier Thomas",
+      "position": "LB",
+      "team": "",
+      "team_name": "",
+      "team_color": "#123d35",
+      "context": "Clemson · 2024 draft, round 5",
+      "availability": {
+        "label": "Not on an NFL roster",
+        "evidence": "No weekly roster record; current roster shown separately"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null
+      },
+      "key_plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "",
+        "roster_status": "",
+        "roster_label": "Not found"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "unconfirmed",
+        "team": "",
+        "team_name": "",
+        "team_color": "#123d35"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+    }
+  ],
+  "featured_ranking": [
+    "00-0036941",
+    "00-0040708",
+    "00-0036996",
+    "00-0041438",
+    "00-0036282",
+    "00-0039013",
+    "00-0041393",
+    "00-0038549",
+    "00-0035258",
+    "00-0040007",
+    "00-0036408",
+    "00-0041505",
+    "00-0039731",
+    "00-0036985",
+    "00-0041096"
+  ],
+  "counts": {
+    "followed": 23,
+    "played": 15,
+    "by_label": {
+      "Inactive for the game": 3,
+      "No snaps recorded": 1,
+      "Not on an NFL roster": 1,
+      "Played": 15,
+      "Practice squad": 3
+    }
+  },
+  "warnings": [
+    "pfr_def unavailable; related claims withheld (DataError)",
+    "pfr_rec unavailable; related claims withheld (DataError)",
+    "pfr_rush unavailable; related claims withheld (DataError)"
+  ],
+  "validation": {
+    "passed": true,
+    "checks": [
+      "Final scores match the play-by-play end-of-game record for all 16 games.",
+      "Players are matched by GSIS and PFR IDs, never by name.",
+      "Passing, rushing and receiving yards reconcile with play-by-play for 1 players.",
+      "Missing statistics are never treated as a DNP; absences come from weekly roster statuses and complete snap tables."
+    ]
+  },
+  "publication_ready": true
+}
