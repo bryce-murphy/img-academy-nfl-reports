@@ -24,6 +24,8 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - `edition.py`: builds `edition.json`.
 - `editorial.py`: the headline file and its checks.
 - `site.py` with `templates/` and `static/`: the renderer.
+- `players.py`: player page addresses (slugs), game logs and season lines.
+- `field.py`: which plays get a field diagram, and the diagram SVG.
 - `pipeline.py`: one scheduled attempt.
 - `github.py`: API calls.
 - `verify.py`: checks the live site.
