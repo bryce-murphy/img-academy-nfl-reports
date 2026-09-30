@@ -1,7 +1,10 @@
 import contextlib
 import io
+import json
 import tempfile
 import unittest
+from datetime import date, datetime
+from pathlib import Path
 
 import fixture_data
 from src import editorial
@@ -176,6 +179,111 @@ class CheckCommandTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(editorial.main(["check", "--all", "--editions", tmp]), 0)
         self.assertIn("Checked 0 edition(s).", output.getvalue())
+
+
+MOVE = {"kind": "moved_after_game", "from": "MIN", "to": "NYG", "from_name": "Minnesota Vikings", "to_name": "New York Giants",
+        "from_color": "#4F2683", "to_color": "#0B2265", "status": None, "last_week_with_old_team": 2, "last_game_date": "2026-09-20"}
+
+
+def moved_edition():
+    e = fixture_data.golden_edition()
+    e["players"][0]["move"] = dict(MOVE)
+    return e
+
+
+def note(**changes):
+    base = {"player_id": fixture_data.golden_edition()["players"][0]["id"], "kind": "trade", "date": date(2026, 9, 21),
+            "details": "for a 2027 fourth-round pick", "source": "https://www.giants.com/news/x"}
+    base.update(changes)
+    return base
+
+
+class RosterNoteTests(unittest.TestCase):
+    def errors(self, *notes, edition=None):
+        return editorial.check_roster_notes(list(notes), edition or moved_edition())
+
+    def test_valid_note(self):
+        self.assertEqual(self.errors(note()), [])
+        self.assertEqual(self.errors(note(details="")), [])
+        self.assertEqual(self.errors({k: v for k, v in note().items() if k != "details"}), [])
+
+    def test_each_rule(self):
+        cases = {
+            "has no roster move": note(player_id="nobody"),
+            "kind must be one of": note(kind="swap"),
+            "does not fit": note(kind="release"),
+            "after this edition's data": note(date=date(2026, 9, 24)),
+            "before his game": note(date=date(2026, 9, 19)),
+            "allowed site": note(source="https://theathletic.com/x"),
+            "the limit is 100": note(details="x" * 101),
+            "one line": note(details="for a\npick"),
+            "link": note(details="see www.giants.com"),
+            '"IMG" alone': note(details="an IMG alum"),
+            "uses 'injur'": note(details="after an injury"),
+            "repeats the team": note(details="to the Giants for a pick"),
+            "repeats the date": note(details="on Sep 28 for a pick"),
+            "unknown fields": note(team="NYG"),
+        }
+        for expected, bad in cases.items():
+            with self.subTest(expected):
+                self.assertTrue(any(expected in e for e in self.errors(bad)), self.errors(bad))
+
+    def test_unhashable_kind_is_a_kind_error(self):
+        self.assertTrue(any("kind must be one of" in m for m in self.errors(note(kind=["trade"]))))
+
+    def test_departure_kinds_need_a_departure(self):
+        e = moved_edition()
+        e["players"][0]["move"] = dict(MOVE, kind="left_after_game", to=None, to_name=None, to_color=None, status="CUT")
+        self.assertEqual(self.errors(note(kind="release", details=""), edition=e), [])
+        self.assertTrue(any("does not fit" in m for m in self.errors(note(kind="trade"), edition=e)))
+
+    def test_duplicate_player(self):
+        self.assertTrue(any("already has a note" in m for m in self.errors(note(), note())))
+
+    def test_date_must_be_a_plain_date(self):
+        self.assertTrue(any("date must be a date" in m for m in self.errors(note(date=datetime(2026, 9, 21, 10, 0)))))
+        self.assertTrue(any("date must be a date" in m for m in self.errors(note(date="2026-09-21"))))
+
+    def test_review_reports_note_errors(self):
+        e = moved_edition()
+        copy_ = dict(editorial.fallback(e), roster_moves=[note(source="https://example.com/x")])
+        self.assertTrue(any("allowed site" in m for m in editorial.review(copy_, e).errors))
+
+    def test_warnings(self):
+        e = moved_edition()
+        name = e["players"][0]["name"]
+        self.assertEqual(editorial.roster_note_warnings(editorial.fallback(e), e),
+                         [f"{name} has a roster move with no sourced note; the site shows the neutral line"])
+        self.assertEqual(editorial.roster_note_warnings(dict(editorial.fallback(e), roster_moves=[note()]), e),
+                         ["Roster move notes: avoid paywalled stories (for example ESPN+)"])
+
+    def test_dumps_round_trips_notes_and_writes_commented_stubs(self):
+        e = moved_edition()
+        text = editorial.dumps(dict(editorial.fallback(e), roster_moves=[note()]))
+        self.assertEqual(editorial.loads(text)["roster_moves"], [note()])
+        stub_text = editorial.dumps(editorial.fallback(e), stubs=[e["players"][0]])
+        self.assertIn("# [[roster_moves]]", stub_text)
+        self.assertIn(f'# player_id = "{e["players"][0]["id"]}"', stub_text)
+        self.assertIn("Vikings → Giants (moved after the game)", stub_text)
+        self.assertNotIn("roster_moves", editorial.loads(stub_text))
+        noted = editorial.dumps(dict(editorial.fallback(e), roster_moves=[note()]), stubs=[e["players"][0]])
+        self.assertNotIn("# [[roster_moves]]", noted)
+
+    def test_headline_fact_sheet_never_sees_moves(self):
+        e = moved_edition()
+        e["players"][0]["move"]["to_name"] = "Marker Team Zebras"
+        self.assertNotIn("Zebras", json.dumps(editorial.fact_sheet(e)))
+
+    def test_invalid_toml_is_a_clean_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = fixture_data.write_edition_dir(Path(tmp), fixture_data.golden_edition())
+            (directory / "editorial.toml").write_text(editorial.dumps(editorial.fallback(fixture_data.golden_edition())) + "[[roster_moves]]\ndate = YYYY-MM-DD\n", encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                status = editorial.check([directory])
+        self.assertEqual(status, 1)
+        self.assertIn("::error file=", output.getvalue())
+        self.assertIn("not valid TOML", output.getvalue())
 
 
 if __name__ == "__main__":

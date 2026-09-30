@@ -8,9 +8,11 @@ import sys
 import tomllib
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from datetime import date, datetime
 from pathlib import Path
 
 from . import evidence as ev
+from . import moves
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = 1
@@ -45,13 +47,43 @@ SINGULAR = {
 }
 IMG_ALONE = re.compile(r"\bIMG\b(?! Academy)")  # brand rule: public copy never shortens IMG Academy
 CONTROL = re.compile(r"[\x00-\x1f\x7f]")
+DETAILS_LIMIT = 100
+NOTE_FIELDS = {"player_id", "kind", "date", "details", "source"}
+LINKISH = re.compile(r"https?://|www\.", re.I)
+MONTH_WORD = re.compile(r"\b(January|February|March|April|May|June|July|August|September|October|November|December|"
+                        r"Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\b")
 
 
 def _toml_string(value):
     return json.dumps(" ".join(CONTROL.sub(" ", str(value)).split()), ensure_ascii=False)
 
 
-def dumps(copy):
+def _note_lines(note):
+    lines = ["", "[[roster_moves]]", f"player_id = {_toml_string(note.get('player_id', ''))}", f"kind = {_toml_string(note.get('kind', ''))}"]
+    day = note.get("date")
+    lines.append(f"date = {day.isoformat()}" if isinstance(day, date) and not isinstance(day, datetime) else f"date = {_toml_string(day or '')}")
+    if note.get("details"):
+        lines.append(f"details = {_toml_string(note['details'])}")
+    lines.append(f"source = {_toml_string(note.get('source', ''))}")
+    return lines
+
+
+def _stub_lines(player):
+    kinds = " | ".join(moves.ARRIVALS if player["move"]["to"] else moves.DEPARTURES)
+    return [
+        "",
+        f"# Roster move: {player['name']}, {moves.describe(player['move'])}.",
+        "# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).",
+        "# [[roster_moves]]",
+        f"# player_id = {_toml_string(player['id'])}",
+        f'# kind = ""                 # {kinds}',
+        "# date = YYYY-MM-DD",
+        '# details = ""              # optional, your words from the source',
+        '# source = "https://"',
+    ]
+
+
+def dumps(copy, stubs=()):
     lines = [
         f"schema = {SCHEMA}",
         f"source = {_toml_string(copy.get('source', 'owner'))}",
@@ -62,6 +94,13 @@ def dumps(copy):
         f"lead = {_toml_string(copy['lead'])}",
         "alternates = [" + ", ".join(_toml_string(a) for a in copy.get("alternates", [])) + "]",
     ]
+    notes = copy.get("roster_moves") or []
+    for entry in notes:
+        lines += _note_lines(entry)
+    noted = {entry.get("player_id") for entry in notes}
+    for player in stubs:
+        if player.get("move") and player["id"] not in noted:
+            lines += _stub_lines(player)
     return "\n".join(lines) + "\n"
 
 
@@ -285,7 +324,86 @@ def review(copy, edition):
         if term in lower_body and term not in support:
             result.problems.append(f"uses '{term}' without supporting data")
     result.notes.extend(f"name not found in the data: {phrase}" for phrase in _unknown_names([copy["headline"], copy["dek"], copy["lead"], *alternates], text))
+    result.errors.extend(check_roster_notes(copy.get("roster_moves", []), edition))
     return result
+
+
+def _details_problems(details, move):
+    if not details:
+        return []
+    if not isinstance(details, str):
+        return ["details must be text"]
+    problems = []
+    if len(details) > DETAILS_LIMIT:
+        problems.append(f"details is {len(details)} characters; the limit is {DETAILS_LIMIT}")
+    if CONTROL.search(details):
+        problems.append("details must be one line")
+    if LINKISH.search(details):
+        problems.append("details must not contain a link; put it in source")
+    if IMG_ALONE.search(details):
+        problems.append('details says "IMG" alone; write "IMG Academy" in full')
+    lower = details.lower()
+    problems += [f"details uses '{term}'" for term in BLOCKED_TERMS if term in lower]
+    code, name = (move["to"], move["to_name"]) if move["to"] else (move["from"], move["from_name"])
+    if name.lower() in lower or moves.nickname(name).lower() in lower or re.search(rf"\b{re.escape(code)}\b", details):
+        problems.append("details repeats the team; the sentence already names it")
+    if MONTH_WORD.search(details):
+        problems.append("details repeats the date; the sentence already gives it")
+    return problems
+
+
+def check_roster_notes(notes, edition):
+    """Errors for [[roster_moves]] entries. See the spec's section 2 checks table."""
+    if not isinstance(notes, list):
+        return ["roster_moves must be written as [[roster_moves]] tables"]
+    from .site import to_eastern  # local import: site imports editorial
+
+    latest = to_eastern(datetime.fromisoformat(edition["generated_at"].replace("Z", "+00:00"))).date()
+    players = {p["id"]: p for p in edition["players"]}
+    errors, seen = [], set()
+    for number, entry in enumerate(notes, 1):
+        if not isinstance(entry, dict):
+            errors.append(f"roster_moves entry {number} must be a table")
+            continue
+        player = players.get(entry.get("player_id"))
+        if not player or not player.get("move"):
+            errors.append(f"roster_moves entry {number}: player_id {entry.get('player_id')!r} has no roster move in this edition")
+            continue
+        where = f"roster move note for {player['name']}"
+        if player["id"] in seen:
+            errors.append(f"{where}: he already has a note")
+            continue
+        seen.add(player["id"])
+        move = player["move"]
+        unknown = sorted(set(entry) - NOTE_FIELDS)
+        if unknown:
+            errors.append(f"{where}: unknown fields {', '.join(unknown)}")
+        kind = entry.get("kind")
+        if not (isinstance(kind, str) and kind in moves.VERBS):
+            errors.append(f"{where}: kind must be one of {', '.join(moves.VERBS)}")
+        elif (kind in moves.ARRIVALS) != bool(move["to"]):
+            errors.append(f"{where}: kind '{kind}' does not fit {moves.describe(move)}")
+        day = entry.get("date")
+        if not isinstance(day, date) or isinstance(day, datetime):
+            errors.append(f"{where}: date must be a date like 2026-09-28")
+        else:
+            if day > latest:
+                errors.append(f"{where}: date {day.isoformat()} is after this edition's data ({latest.isoformat()})")
+            if move.get("last_game_date") and day < date.fromisoformat(move["last_game_date"]):
+                errors.append(f"{where}: date {day.isoformat()} is before his game on {move['last_game_date']}")
+        if moves.source_label(entry.get("source")) is None:
+            errors.append(f"{where}: source must be an https:// link on an allowed site (see docs/OPERATIONS.md)")
+        errors += [f"{where}: {problem}" for problem in _details_problems(entry.get("details", ""), move)]
+    return errors
+
+
+def roster_note_warnings(copy, edition):
+    noted = {entry.get("player_id") for entry in copy.get("roster_moves") or [] if isinstance(entry, dict)}
+    warnings = [f"{p['name']} has a roster move with no sourced note; the site shows the neutral line"
+                for p in moves.moved_players(edition) if p["id"] not in noted]
+    if noted:
+        warnings.append("Roster move notes: avoid paywalled stories (for example ESPN+)")
+    return warnings
 
 
 def metric_phrase(value, label):
@@ -459,12 +577,18 @@ def check(directories):
     status = 0
     for directory in directories:
         edition = json.loads((directory / "edition.json").read_text(encoding="utf-8"))
-        result = review(load(directory / "editorial.toml"), edition)
         target = (directory / "editorial.toml").as_posix()
+        try:
+            copy = load(directory / "editorial.toml")
+        except tomllib.TOMLDecodeError as exc:
+            print(f"::error file={target}::editorial.toml is not valid TOML ({exc}); check any roster_moves lines you uncommented")
+            status = 1
+            continue
+        result = review(copy, edition)
         for message in result.errors:
             print(f"::error file={target}::{message}")
             status = 1
-        for message in result.problems + result.notes:
+        for message in result.problems + result.notes + roster_note_warnings(copy, edition):
             print(f"::warning file={target}::{message}")
     print(f"Checked {len(directories)} edition(s).")
     return status
