@@ -8,6 +8,7 @@ from pathlib import Path
 import fixture_data
 from src import editorial, site
 from src import evidence as ev
+from src.edition import load_registry
 
 CONFIG = {
     "title": "IMG Academy → NFL",
@@ -27,7 +28,7 @@ class SiteTestCase(unittest.TestCase):
         for other in extra:
             fixture_data.write_edition_dir(self.editions, other)
         out = root / "out"
-        site.build_site(out, self.editions, CONFIG)
+        site.build_site(out, self.editions, CONFIG, registry=load_registry(fixture_data.FIXTURES / "alumni.json"))
         return out
 
     @staticmethod
@@ -199,6 +200,12 @@ class RenderTests(SiteTestCase):
         self.assertIn("sacks, tackles for loss", method)
         self.assertNotIn("largest expected points added", method)
 
+    def test_methodology_explains_player_pages(self):
+        page = self.read(self.render() / "methodology" / "index.html")
+        self.assertIn('id="player-pages"', page)
+        self.assertIn("not a tracking diagram", page)
+        self.assertIn("rarely named in play-by-play", page)
+
     def test_eastern_time_label_follows_daylight_saving(self):
         label = site.eastern_label
         self.assertEqual(label("2026-09-28T13:52:10+00:00"), "Mon, Sep 28, 9:52 a.m. ET")
@@ -314,6 +321,230 @@ import contextlib
 import io
 
 
+class PlayerPageTests(SiteTestCase):
+    def test_every_registry_player_gets_pages(self):
+        out = self.render()
+        registry = load_registry(fixture_data.FIXTURES / "alumni.json")
+        for alum in registry:
+            self.assertTrue((out / "players" / alum["slug"] / "index.html").exists(), alum["name"])
+            self.assertTrue((out / "players" / alum["slug"] / "2026-week-02" / "index.html").exists(), alum["name"])
+        index = self.read(out / "players" / "index.html")
+        self.assertIn("Defensive backs", index)
+        self.assertIn('href="grant-delpit/"', index)
+
+    def test_week_page_lists_every_recorded_play_with_diagrams(self):
+        page = self.read(self.render() / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        self.assertIn("Recorded plays (5)", page)
+        self.assertEqual(page.count('class="play '), 5)
+        self.assertIn('class="field field-medium"', page)
+        self.assertIn("Expected points describe the whole play, not the player named on it.", page)
+        self.assertIn("Positive plays for the Titans", page)
+        self.assertIn("not a tracking diagram", page)
+
+    def test_lineman_with_no_recorded_plays(self):
+        page = self.read(self.render() / "players" / "tyler-booker" / "2026-week-02" / "index.html")
+        self.assertIn("Recorded plays (0)", page)
+        self.assertIn("Offensive linemen are rarely named in play-by-play", page)
+        self.assertNotIn('class="field ', page)
+
+    def test_play_without_epa_has_no_outcome_and_no_side(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        first_key = tate["key_plays"][0]["play_id"]  # key moments are listed first
+        next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = None
+        page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        first = page.split('class="play ')[1].split("</li>")[0]
+        self.assertIn('data-positive=""', first)
+        self.assertNotIn("expected point", first)
+
+    def test_play_with_zero_epa_is_neutral_not_negative(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        first_key = tate["key_plays"][0]["play_id"]
+        next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = 0
+        page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        first = page.split('class="play ')[1].split("</li>")[0]
+        self.assertIn('data-positive=""', first)
+
+    def test_play_side_falls_back_to_position_when_missing(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        first_key = delpit["key_plays"][0]["play_id"]
+        play = next(q for q in delpit["plays"] if q["play_id"] == first_key)
+        play.pop("side", None)
+        play["epa"] = -0.6  # good for the defense; a schema-1-shaped play with no `side` must still mark positive
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        first = page.split('class="play ')[1].split("</li>")[0]
+        self.assertIn('data-positive="1"', first)
+
+    def test_schema_one_edition_renders_from_key_moments(self):
+        edition = fixture_data.golden_edition()
+        edition["schema_version"] = 1
+        for p in edition["players"]:
+            p.pop("plays", None)
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        self.assertIn("The full play list was not saved for this week", page)
+        self.assertIn("Sack", page)
+
+    def test_player_added_later_has_only_his_weeks(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        edition["players"].remove(delpit)
+        edition["featured_ranking"] = [pid for pid in edition["featured_ranking"] if pid != delpit["id"]]
+        out = self.render(edition)
+        self.assertTrue((out / "players" / "grant-delpit" / "index.html").exists())
+        self.assertFalse((out / "players" / "grant-delpit" / "2026-week-02").exists())
+
+    def test_evergreen_page_has_season_and_game_log(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
+        for text in ("Grant Delpit", "CLE / S", "Season", "Impact plays", "Game log", 'href="2026-week-02/"', "See all", "Data as of"):
+            self.assertIn(text, page)
+
+    def test_up_next_appears_only_when_the_edition_has_it(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        delpit["next_game"] = None
+        self.assertNotIn("Up next", self.read(self.render(edition) / "players" / "grant-delpit" / "index.html"))
+        delpit["next_game"] = {"kind": "game", "date": "2026-10-04", "kickoff_et": "13:00", "home_away": "away", "opponent": "PIT", "venue": "Acrisure Stadium", "team": "CLE", "team_name": "Cleveland Browns", "team_color": "#311D00", "week": 3}
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
+        self.assertIn("Up next", page)
+        self.assertIn("CLE at PIT · Sun, Oct 4 · 1:00 p.m. ET", page)
+        edition["historical"] = True
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
+        self.assertNotIn("Up next", page)  # a historical replay's next game is long past
+
+    def test_evergreen_count_matches_week_page_on_schema_one(self):
+        edition = fixture_data.golden_edition()
+        edition["schema_version"] = 1
+        for p in edition["players"]:
+            p.pop("plays", None)
+        out = self.render(edition)
+        week = self.read(out / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        # Only key moments were saved, so the week page must not call them every recorded play.
+        self.assertNotIn("Recorded plays", week)
+        count = re.search(r"Key moments \((\d+)\)", week)[1]
+        self.assertNotEqual(count, "0")
+        evergreen = self.read(out / "players" / "grant-delpit" / "index.html")
+        self.assertNotIn("See all", evergreen)
+        self.assertIn('<a href="2026-week-02/">See Week 2 →</a>', evergreen)
+
+    def test_evergreen_count_matches_week_page_when_plays_are_saved(self):
+        out = self.render()
+        week = self.read(out / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        count = re.search(r"Recorded plays \((\d+)\)", week)[1]
+        self.assertIn(f"See all {count} recorded plays from Week 2 →", self.read(out / "players" / "grant-delpit" / "index.html"))
+
+    def test_no_page_says_see_all_zero(self):
+        out = self.render()
+        booker = self.read(out / "players" / "tyler-booker" / "index.html")
+        self.assertIn('<a href="2026-week-02/">See Week 2 →</a>', booker)
+        for page in (out / "players").rglob("*.html"):
+            self.assertNotIn("See all 0", self.read(page), page)
+
+    def test_game_log_labels_every_phase_with_its_share(self):
+        page = self.read(self.render() / "players" / "daylen-everette" / "index.html")
+        self.assertIn("<td>8 DEF (15%) · 11 ST (48%)</td>", page)
+        capehart = self.read(self.render() / "players" / "demonte-capehart" / "index.html")
+        self.assertIn("<td>—</td>", capehart.split("Game log")[1])
+
+    def test_near_zero_epa_is_neutral(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        for epa in (0.03, -0.04):
+            play = dict(tate["plays"][0], epa=epa)
+            self.assertIsNone(site.play_view(play, tate)["positive"], epa)
+        self.assertTrue(site.play_view(dict(tate["plays"][0], epa=0.2, side="offense"), tate)["positive"])
+
+    def test_explorer_hash_selects_only_play_items(self):
+        script = (Path(site.ROOT) / "static" / "explorer.js").read_text(encoding="utf-8")
+        self.assertNotIn("document.getElementById(location.hash", script)
+        self.assertIn("items.find(function (i) { return i.id === location.hash.slice(1); })", script)
+
+    def test_evergreen_top_play_is_the_cards_drawable_choice(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        first_key = delpit["key_plays"][0]["play_id"]
+        next(q for q in delpit["plays"] if q["play_id"] == first_key)["yardline_100"] = None  # no diagram
+        top = site.top_drawable_play(delpit)
+        self.assertIsNotNone(top)
+        self.assertNotEqual(top["play_id"], first_key)
+        view = site.play_view(top, delpit)
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "index.html")
+        self.assertIn('class="top-play"', page)
+        caption = page.split('class="top-play"')[1].split("<figcaption>")[1].split("</figcaption>")[0]
+        self.assertEqual(caption, f"{view['result']} · {view['outcome']}")
+
+    def test_key_moments_missing_from_plays_are_still_listed(self):
+        edition = fixture_data.golden_edition()
+        delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
+        missing = delpit["key_plays"][1]["play_id"]
+        delpit["plays"] = [q for q in delpit["plays"] if q["play_id"] != missing]
+        saved, plays = site.week_plays(delpit)
+        self.assertTrue(saved)
+        self.assertEqual([q["play_id"] for q in plays[:3]], [k["play_id"] for k in delpit["key_plays"]])
+        self.assertEqual(len(plays), len(delpit["plays"]) + 1)
+        page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        self.assertIn(f'id="play-{missing}"', page)
+
+    def test_evergreen_header_has_monogram_and_college_line(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
+        self.assertIn('<div class="monogram" aria-hidden="true">GD</div>', page)
+        self.assertIn("LSU · 2020 draft, round 2", page)
+
+    def test_explorer_markup_contract(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "2026-week-02" / "index.html")
+        for needle in ('class="explorer-filters" hidden', 'data-filter="impact"', 'id="play-stage"', '<template class="play-large">', 'static/explorer.js?v='):
+            self.assertIn(needle, page)
+
+    def test_week_page_for_a_week_not_played_shows_status_not_explorer(self):
+        page = self.read(self.render() / "players" / "warren-brinson" / "2026-week-02" / "index.html")
+        self.assertNotIn("Recorded plays", page)
+        self.assertNotIn("explorer", page)
+        self.assertIn("Inactive for the game", page)
+        self.assertIn("Weekly roster status: inactive", page)
+
+    def test_evergreen_latest_week_not_played_shows_status(self):
+        page = self.read(self.render() / "players" / "jj-mccarthy" / "index.html")
+        self.assertNotIn("See all", page)
+        self.assertNotIn('class="top-play"', page)
+        self.assertIn("No snaps recorded", page)
+        self.assertIn("Reason not established by snap counts", page)
+
+    def test_play_description_is_escaped_but_diagram_is_markup(self):
+        edition = fixture_data.golden_edition()
+        tate = next(p for p in edition["players"] if p["name"] == "Carnell Tate")
+        tate["plays"][1]["description"] = '<script>alert("x")</script>'
+        page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
+        self.assertNotIn("<script>alert", page)
+        self.assertIn("&lt;script&gt;", page)
+        self.assertIn('<svg class="field field-medium"', page)
+        self.assertNotIn("&lt;svg", page)
+
+    def test_nav_links_players_and_the_site_passes_its_checks(self):
+        out = self.render()
+        self.assertIn(">Players</a>", self.read(out / "index.html"))
+        self.assertEqual(site.check_site(out, site.load_editions(self.editions)), [])
+        self.assertIn("players/grant-delpit/", self.read(out / "sitemap.xml"))
+
+
+class CardStripTests(SiteTestCase):
+    def test_card_strip_links_to_the_play(self):
+        home = self.read(self.render() / "index.html")
+        delpit = home.split('id="player-00-0036282"')[1].split("</article>")[0]
+        self.assertIn('class="field field-strip"', delpit)
+        self.assertIn('href="players/grant-delpit/2026-week-02/#play-', delpit)
+        self.assertIn("See every play", delpit)
+        strip_fragment = delpit.split('class="strip" href="')[1].split('"')[0]
+        self.assertIn(f'<h3><a href="{strip_fragment}">Grant Delpit</a></h3>', delpit)
+
+    def test_cards_without_drawable_plays_have_no_strip(self):
+        home = self.read(self.render() / "index.html")
+        cards = home.split('<article class="card"')[1:]
+        booker = next(c.split("</article>")[0] for c in cards if "Tyler Booker" in c)
+        self.assertNotIn("field-strip", booker)
+        self.assertIn("See every play", booker)
+
+
 class CheckTests(SiteTestCase):
     def test_rendered_site_passes_its_checks(self):
         out = self.render()
@@ -324,6 +555,16 @@ class CheckTests(SiteTestCase):
         page = out / "archive" / "index.html"
         page.write_text(page.read_text(encoding="utf-8") + '<a href="../missing/">x</a>', encoding="utf-8")
         self.assertTrue(any("missing" in p for p in site.check_site(out, site.load_editions(self.editions))))
+
+    def test_broken_play_fragment_is_reported(self):
+        out = self.render()
+        week = out / "players" / "grant-delpit" / "2026-week-02" / "index.html"
+        week.write_text(self.read(week) + '<a href="#play-999999">x</a>', encoding="utf-8")
+        archive = out / "archive" / "index.html"
+        archive.write_text(self.read(archive) + '<a href="../players/grant-delpit/2026-week-02/#play-888888">x</a>', encoding="utf-8")
+        problems = site.check_site(out, site.load_editions(self.editions))
+        self.assertTrue(any("#play-999999" in p for p in problems), problems)
+        self.assertTrue(any("#play-888888" in p for p in problems), problems)
 
     def test_missing_edition_id_is_reported(self):
         out = self.render()
@@ -339,6 +580,17 @@ class CheckTests(SiteTestCase):
         with contextlib.redirect_stdout(buffer):
             site.main(["latest-id", "--editions", str(self.editions)])
         self.assertEqual(buffer.getvalue().strip(), "2026-week-02")
+
+
+class OperationsDocTests(unittest.TestCase):
+    def test_rebuild_and_registry_steps_are_accurate(self):
+        text = (site.ROOT / "docs" / "OPERATIONS.md").read_text(encoding="utf-8")
+        rebuild = next(line for line in text.splitlines() if "rebuild a published edition" in line)
+        self.assertIn("only for editions published as historical replays (Weeks 1–2)", rebuild)
+        self.assertIn("without it", rebuild)
+        season = text.split("## Each season")[1]
+        self.assertIn('lowercase `slug`', season)
+        self.assertIn("refuses", season)
 
 
 if __name__ == "__main__":

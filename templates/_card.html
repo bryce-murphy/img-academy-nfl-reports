@@ -1,6 +1,6 @@
 <article class="card" id="player-{{ p.id }}" style="--team: {{ p.team_color }}">
   <p class="eyebrow">{{ p.team }} / {{ p.position }}</p>
-  <h3>{{ p.name }}</h3>
+  <h3>{% if p.page %}<a href="{{ p.page }}{% if p.strip %}#play-{{ p.strip_play_id }}{% endif %}">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h3>
   <p class="score">{{ p.score_line }}</p>
   {% if p.stats_withheld %}
   <p class="withheld">Stats withheld: the box score and play-by-play disagree.</p>
@@ -17,5 +17,7 @@
     <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }}{% if k.impact %} · {{ k.impact }}{% endif %}</span>{{ k.description }}<span class="play-outcome">{{ k.outcome }}</span></li>{% endfor %}</ol>
   </details>
   {% endif %}
+  {% if p.strip %}<a class="strip" href="{{ p.page }}#play-{{ p.strip_play_id }}">{{ p.strip }}<span class="play-outcome">{{ p.strip_outcome }}</span></a>{% endif %}
+  {% if p.page %}<p class="see-plays"><a href="{{ p.page }}">See every play →</a></p>{% endif %}
   <footer>{{ p.context }}{% if p.context and p.source_url %} · {% endif %}{% if p.source_url %}<a href="{{ p.source_url }}" rel="noopener">IMG Academy affiliation source</a>{% endif %}</footer>
 </article>

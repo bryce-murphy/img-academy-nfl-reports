@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import hashlib
 import json
 import re
@@ -12,10 +13,12 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
+from markupsafe import Markup
 
-from . import editorial
+from . import editorial, field
 from . import evidence as ev
-from .edition import load_config
+from . import players as pl
+from .edition import load_config, load_registry
 from .upnext import DAYS, MONTHS, kickoff_label, matchup_label
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -213,6 +216,52 @@ def player_view(player):
     return view
 
 
+def next_line(player):
+    info = player.get("next_game")
+    if not info:
+        return ""
+    if info.get("kind") == "game":
+        return f"{matchup_label(info, info['team'])} · {kickoff_label(info)}"
+    if info.get("kind") == "bye":
+        return f"Bye in Week {info['bye_week']}, then {matchup_label(info, info['team'])} · {kickoff_label(info)}"
+    return "Next game unconfirmed" if info.get("kind") == "unconfirmed" else "Season complete"
+
+
+def play_view(play, player, key_ids=()):
+    """`positive` is three-way: True, False, or None (unknown epa, or neutral: it rounds to 0.0 as shown)."""
+    epa = play.get("epa")
+    side = play.get("side") or ("defense" if player["position"] in DEFENSIVE_POSITIONS else "offense")
+    positive = None if epa is None or round(abs(epa), 1) == 0 else (epa > 0 if side == "offense" else epa < 0)
+    outcome = play_outcome(play, player) if epa is not None else ""
+    color = player.get("team_color", "#0057b8")
+    medium, large = field.svg(play, "medium", color, outcome=outcome), field.svg(play, "large", color, outcome=outcome)
+    return dict(
+        play,
+        outcome=outcome,
+        spot=field.spot_line(play), result=field.result_line(play) or "",
+        svg_medium=Markup(medium) if medium else None, svg_large=Markup(large) if large else None,
+        positive=positive, key=play.get("play_id") in key_ids,
+    )
+
+
+def week_plays(player):
+    """Recorded plays for a week page: key moments first, then game order. Schema-1 editions have only key moments.
+
+    A key moment can be missing from `plays` (credited through a role outside the recorded-play roles, or on a
+    deleted play); it is appended so the explorer lists every key moment the card shows."""
+    key_plays = player.get("key_plays", [])
+    key_ids = [k["play_id"] for k in key_plays]
+    plays = player.get("plays")
+    saved = plays is not None
+    if saved:
+        present = {q["play_id"] for q in plays}
+        source = list(plays) + [k for k in key_plays if k["play_id"] not in present]
+    else:
+        source = key_plays
+    ordered = sorted(source, key=lambda q: (q["play_id"] not in key_ids, key_ids.index(q["play_id"]) if q["play_id"] in key_ids else 0, float(q["play_id"])))
+    return saved, [play_view(q, player, set(key_ids)) for q in ordered]
+
+
 def up_next_groups(players):
     groups = {}
     for player in players:
@@ -237,8 +286,29 @@ def up_next_groups(players):
     return sorted(rendered, key=lambda g: (g["info"].get("date", "9999-12-31"), g["team"]))
 
 
-def edition_context(edition, *, root, data_path):
+def top_drawable_play(player):
+    """The first key moment, in key-moment order, that is present in the player's recorded plays (schema 2)
+    and has a field diagram. Schema-1 editions have no `plays`, so they never yield a drawable play."""
+    plays_by_id = {q["play_id"]: q for q in player.get("plays") or []}
+    for k in player.get("key_plays", []):
+        play = plays_by_id.get(k["play_id"])
+        if play is not None and field.geometry(play) is not None:
+            return play
+    return None
+
+
+def edition_context(edition, *, root, data_path, slugs):
     players = [player_view(p) for p in edition.data["players"]]
+    for raw, view in zip(edition.data["players"], players):
+        slug = slugs.get(raw["id"])
+        view["page"] = f"{root}players/{slug}/{edition.id}/" if slug else None
+        top = top_drawable_play(raw)
+        view["strip"] = None
+        if top is not None:
+            outcome = play_outcome(top, raw) if top.get("epa") is not None else ""
+            view["strip"] = Markup(field.svg(top, "strip", raw.get("team_color", "#0057b8"), outcome=outcome))
+            view["strip_play_id"] = top["play_id"]
+            view["strip_outcome"] = outcome
     by_id = {p["id"]: p for p in players}
     featured = by_id.get(edition.editorial.get("featured_player_id", ""))
     if featured and featured["availability"]["label"] != ev.PLAYED:
@@ -276,7 +346,9 @@ def social_drafts(edition, copy, url):
     return {"state": "draft", "edition": edition["id"], "url": url, "linkedin": linkedin, "x": x}
 
 
+@functools.cache
 def environment():
+    """One shared Jinja environment per process; templates and asset fingerprints do not change during a build."""
     env = Environment(
         loader=FileSystemLoader(str(ROOT / "templates")),
         autoescape=select_autoescape(["html", "xml"]),
@@ -287,6 +359,7 @@ def environment():
     )
     env.filters["num"] = ev.fmt
     env.globals["asset_version"] = asset_version(ROOT / "static" / "styles.css")
+    env.globals["explorer_version"] = asset_version(ROOT / "static" / "explorer.js")
     return env
 
 
@@ -294,8 +367,10 @@ def _write_json(path, value, **options):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2, **options) + "\n", encoding="utf-8", newline="\n")
 
 
-def build_site(out, editions_root=ROOT / "editions", config=None):
+def build_site(out, editions_root=ROOT / "editions", config=None, registry=None):
     config = config or load_config()
+    if registry is None:
+        registry = load_registry()
     env = environment()
     editions = load_editions(editions_root)
     out = Path(out)
@@ -306,6 +381,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None):
         shutil.copy2(asset, out / "static" / asset.name)
     (out / ".nojekyll").write_text("", encoding="utf-8")
     site_url = config["site_url"]
+    slugs = {alum["gsis_id"]: alum["slug"] for alum in registry}
     written = []
 
     def page(template, path, **context):
@@ -314,28 +390,61 @@ def build_site(out, editions_root=ROOT / "editions", config=None):
         target.write_text(env.get_template(template).render(site=config, **context), encoding="utf-8", newline="\n")
         written.append(target)
 
+    urls = [site_url, site_url + "archive/", site_url + "methodology/"] + [f"{site_url}editions/{e.id}/" for e in editions]
     for e in editions:
         folder = f"editions/{e.id}/"
-        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path=""))
+        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path="", slugs=slugs))
         _write_json(out / folder / "edition.json", e.data)
         _write_json(out / folder / "sources.json", e.sources, sort_keys=True)
         _write_json(out / folder / "social-drafts.json", social_drafts(e.data, e.editorial, site_url + folder))
     if editions:
         latest = editions[-1]
         page("edition.html", "index.html", canonical=f"{site_url}editions/{latest.id}/",
-             **edition_context(latest, root="", data_path=f"editions/{latest.id}/"))
+             **edition_context(latest, root="", data_path=f"editions/{latest.id}/", slugs=slugs))
     else:
         page("empty.html", "index.html", canonical=site_url, root="")
     page("archive.html", "archive/index.html", canonical=site_url + "archive/", root="../", editions=list(reversed(editions)))
     page("methodology.html", "methodology/index.html", canonical=site_url + "methodology/", root="../")
     page("404.html", "404.html", canonical=site_url, root=site_url)
-    urls = [site_url, site_url + "archive/", site_url + "methodology/"] + [f"{site_url}editions/{e.id}/" for e in editions]
+    datas = [e.data for e in editions]
+    listing = []
+    for alum in registry:
+        apps = pl.appearances(datas, alum["gsis_id"])
+        latest = apps[-1][1] if apps else None
+        base_url = f"players/{alum['slug']}/"
+        for e_data, p in apps:
+            view = player_view(p)
+            saved, plays = week_plays(p)
+            page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
+                 player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
+                 nickname=pl.nickname(p["team_name"]), caption=field.CAPTION, data_as_of=eastern_label(e_data["generated_at"]),
+                 next_text=next_line(p))
+            urls.append(f"{site_url}{base_url}{e_data['id']}/")
+        log = pl.game_log(apps)
+        for row, (_, p) in zip(log, apps):
+            row["contribution"] = contribution(p)
+        latest_edition = apps[-1][0] if apps else None
+        latest_saved, latest_plays = week_plays(latest) if latest else (False, [])
+        top = top_drawable_play(latest) if latest else None
+        page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
+             player=player_view(latest) if latest else None, latest_edition=latest_edition,
+             played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
+             season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
+             top_play=play_view(top, latest) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,
+             next_text=next_line(latest) if latest and not latest_edition.get("historical") else "",
+             data_as_of=eastern_label(latest_edition["generated_at"]) if apps else "")
+        urls.append(site_url + base_url)
+        listing.append({"alum": alum, "player": latest, "group": pl.group_of(latest["position"]) if latest else "Other"})
+    page("players.html", "players/index.html", canonical=site_url + "players/", root="../",
+         groups=[(title, [x for x in listing if x["group"] == title]) for title, _ in pl.GROUPS + (("Other", set()),)])
+    urls.append(site_url + "players/")
     page("sitemap.xml", "sitemap.xml", canonical=site_url, root="", urls=urls)
     (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {site_url}sitemap.xml\n", encoding="utf-8", newline="\n")
     return written
 
 
 LINK = re.compile(r'(?:href|src)="([^"#?]*)[^"]*"')
+PLAY_FRAGMENT = re.compile(r'href="([^"#?]*)(?:\?[^"#]*)?#(play-[^"]+)"')
 
 
 def check_site(out, editions):
@@ -360,6 +469,14 @@ def check_site(out, editions):
                 resolved = resolved / "index.html"
             if not resolved.exists():
                 problems.append(f"{name} links to missing {target}")
+        for target, fragment in PLAY_FRAGMENT.findall(text):
+            if target.startswith(("http://", "https://", "mailto:")):
+                continue
+            resolved = page if not target else (page.parent / target).resolve()
+            if target.endswith("/") or resolved.is_dir():
+                resolved = resolved / "index.html"
+            if resolved.exists() and f'id="{fragment}"' not in resolved.read_text(encoding="utf-8"):
+                problems.append(f"{name} links to missing {target}#{fragment}")
     return problems
 
 

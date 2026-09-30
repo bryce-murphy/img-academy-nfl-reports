@@ -30,6 +30,7 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
 - **Rebuild an open edition PR with fresher data:** run the workflow with `refresh` checked. Your headline edits are kept.
 - **Manual fallback, if automation is broken:** in a Claude Code session, run `.venv/Scripts/python -m src.edition --season 2026 --week N`. Optionally run `.venv/Scripts/python -m src.editorial draft editions/2026-week-NN` (needs `ANTHROPIC_API_KEY` locally). Then commit on a branch named `edition/2026-week-NN`, push, open a PR and merge it as usual.
 - **"Site deployment not verified" issue:** re-run **Deploy site** from the Actions tab. If it keeps failing, check Settings → Pages.
+- **To rebuild a published edition with new code:** run `.venv/Scripts/python -m src.edition --season 2026 --week N`. Add `--historical` only for editions published as historical replays (Weeks 1–2); rebuild a live edition (Week 3 on) without it, so it keeps its label and Up next. Keep the published `current` roster notes, review the diff, open a PR.
 
 ## One-time owner setup
 
@@ -47,6 +48,6 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
 
 ## Each season
 
-- Review `data/alumni.json` (rookies, transfers, undrafted signings), with a source for every entry, then set `registry_reviewed_season` in `config.json`. Scheduled editions refuse to run until the two match.
+- Review `data/alumni.json` (rookies, transfers, undrafted signings), with a source for every entry. Give each new entry a permanent lowercase `slug` (e.g. `grant-delpit`); it is the player's page address, so never change it, and the build refuses entries without one. Then set `registry_reviewed_season` in `config.json`. Scheduled editions refuse to run until the two match.
 - Update the season on the share card (`scripts/share_card.html`, "2026 Season · Weekly Recap"), then run `scripts/make_share_card.py`.
 - Public repositories lose scheduled workflows after 60 days without activity. In late August, open Actions and re-enable **Weekly edition** if needed.
