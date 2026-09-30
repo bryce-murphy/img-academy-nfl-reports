@@ -19,6 +19,7 @@ SCHEMA = 1
 TEXT_FIELDS = ("headline", "dek", "lead")
 LIMITS = {"headline": 70, "dek": 160}
 LEAD_WORDS = 80
+DETAILS_BLOCKED = ("physical", "reserve", "non-football", "medical", "health")
 BLOCKED_TERMS = ("injur", "bench", "dnp", "did not play", "scratch", "illness", "sick", "suspen", "concussion")
 NUMBER_WORDS = {word: value for value, word in enumerate(
     "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
@@ -343,7 +344,7 @@ def _details_problems(details, move):
     if IMG_ALONE.search(details):
         problems.append('details says "IMG" alone; write "IMG Academy" in full')
     lower = details.lower()
-    problems += [f"details uses '{term}'" for term in BLOCKED_TERMS if term in lower]
+    problems += [f"details uses '{term}'" for term in (*BLOCKED_TERMS, *DETAILS_BLOCKED) if term in lower]
     code, name = (move["to"], move["to_name"]) if move["to"] else (move["from"], move["from_name"])
     if name.lower() in lower or moves.nickname(name).lower() in lower or re.search(rf"\b{re.escape(code)}\b", details):
         problems.append("details repeats the team; the sentence already names it")
@@ -611,7 +612,14 @@ def main(argv=None):
         edition = json.loads((args.directory / "edition.json").read_text(encoding="utf-8"))
         config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
         copy, report = produce(edition, model=config["editorial_model"])
-        (args.directory / "editorial.toml").write_bytes(dumps(copy).encode("utf-8"))
+        target = args.directory / "editorial.toml"
+        try:
+            kept = loads(target.read_text(encoding="utf-8")).get("roster_moves")
+        except (OSError, ValueError):
+            kept = None  # no file, or it does not parse: start without notes
+        if kept:
+            copy = {**copy, "roster_moves": kept}
+        target.write_bytes(dumps(copy, stubs=moves.moved_players(edition)).encode("utf-8"))
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
     return 2

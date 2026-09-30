@@ -70,6 +70,12 @@ class DetectTests(unittest.TestCase):
         move = detect(cut, week=4, history=[before])
         self.assertEqual((move["kind"], move["status"]), ("left_before_week", "CUT"))
 
+    def test_release_by_another_team_is_not_a_release_by_the_old_team(self):
+        self.assertEqual(detect(player(now="NYG", status="CUT"))["status"], "none")
+        before = edition(3, player())
+        other = player(team="NYG", label="Released", now="NYG", status="CUT")
+        self.assertEqual(detect(other, week=4, history=[before])["status"], "none")
+
     def test_off_every_roster_for_a_second_week_is_not_a_move(self):
         gone = player(team="", label="Not on an NFL roster", now="", status="", game_id=None)
         history = [edition(3, player()), edition(4, gone)]
@@ -132,6 +138,12 @@ class DetectTests(unittest.TestCase):
         bye = player(label="Bye week", game_id=None, now="NYG")
         move = detect(bye, week=4)
         self.assertEqual((move["kind"], move["last_week_with_old_team"], move["last_game_date"]), ("moved_after_game", 4, None))
+
+    def test_bye_walk_back_stops_at_an_older_stint(self):
+        history = [edition(1, player(), gameday="2026-09-13"), edition(2, player(team="NYG", now="NYG")),
+                   edition(3, player(label="Bye week", game_id=None))]
+        move = detect(player(team="NYG", now="NYG"), week=4, history=history)
+        self.assertEqual((move["kind"], move["from"], move["last_week_with_old_team"], move["last_game_date"]), ("first_week", "MIN", 3, None))
 
     def test_no_game_date_when_old_team_had_no_game(self):
         self.assertIsNone(detect(player(now="NYG", game_id=None))["last_game_date"])

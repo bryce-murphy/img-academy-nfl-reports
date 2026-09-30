@@ -28,11 +28,14 @@ def now_team(player):
     return current.get("team") or None
 
 
-def departure_status(player):
-    status = (player.get("current") or {}).get("roster_status")
-    if status == "RET":
+def departure_status(player, old):
+    """RET, CUT (only when the evidence belongs to `old`, the team he left) or none."""
+    current = player.get("current") or {}
+    if current.get("roster_status") == "RET":
         return "RET"
-    if status == "CUT" or player["availability"]["label"] == "Released":
+    if current.get("roster_status") == "CUT" and current.get("team") == old:
+        return "CUT"
+    if player["availability"]["label"] == "Released" and player.get("team") == old:
         return "CUT"
     return "none"
 
@@ -49,13 +52,19 @@ def detect(player, week, games, history, team_name, team_color):
             "kind": kind, "from": old, "to": new,
             "from_name": team_name(old), "to_name": team_name(new) if new else None,
             "from_color": team_color(old), "to_color": team_color(new) if new else None,
-            "status": None if new else departure_status(player),
+            "status": None if new else departure_status(player, old),
             "last_week_with_old_team": last_week, "last_game_date": last_date,
         }
 
     def last_with(old, appearances, fallback_week, fallback_date):
-        """Latest week on `old` that was not a bye; the candidate week if there is none."""
-        found = next(((w, g, q) for w, g, q in reversed(appearances) if week_team(q) == old and q["availability"]["label"] != ev.BYE), None)
+        """Latest non-bye week of the current continuous stint on `old`; the candidate week if there is none."""
+        found = None
+        for w, g, q in reversed(appearances):
+            if week_team(q) != old:
+                break  # an older stint with the same team does not count
+            if q["availability"]["label"] != ev.BYE:
+                found = (w, g, q)
+                break
         return (found[0], _game_date(found[1], found[2])) if found else (fallback_week, fallback_date)
 
     this, now = week_team(player), now_team(player)

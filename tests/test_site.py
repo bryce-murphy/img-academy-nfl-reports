@@ -587,7 +587,7 @@ class OperationsDocTests(unittest.TestCase):
         text = (site.ROOT / "docs" / "OPERATIONS.md").read_text(encoding="utf-8")
         rebuild = next(line for line in text.splitlines() if "rebuild a published edition" in line)
         self.assertIn("--rebuild", rebuild)
-        self.assertIn("add `--historical` for Weeks 1–2", rebuild)
+        self.assertIn("without it", rebuild)
         season = text.split("## Each season")[1]
         self.assertIn('lowercase `slug`', season)
         self.assertIn("refuses", season)
@@ -616,6 +616,15 @@ class MoveRenderTests(SiteTestCase):
         self.assertIn(f"{absent['name']}: Released by the Vikings (on their roster in Week 2).", home)
         slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == played["id"])
         self.assertIn("Now on the Giants&#39; roster", self.read(out / "players" / slug / "index.html"))
+
+    def test_missing_team_colors_write_no_move_style(self):
+        e, played, absent = self.edition_with_moves()
+        played["move"] = dict(MOVE, to_color=None, from_color=None)
+        absent["move"] = dict(MOVE, kind="left_after_game", to=None, to_name=None, to_color=None, from_color=None, status="CUT")
+        home = self.read(self.render(e) / "index.html")
+        self.assertIn("Now on the Giants", home)
+        self.assertNotIn("--move: None", home)
+        self.assertNotIn("--move: ;", home)
 
     def test_sourced_note_renders_with_link(self):
         from datetime import date

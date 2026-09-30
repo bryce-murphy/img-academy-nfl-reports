@@ -3,6 +3,7 @@ import io
 import json
 import tempfile
 import unittest
+from unittest import mock
 from datetime import date, datetime
 from pathlib import Path
 
@@ -220,6 +221,8 @@ class RosterNoteTests(unittest.TestCase):
             "link": note(details="see www.giants.com"),
             '"IMG" alone': note(details="an IMG alum"),
             "uses 'injur'": note(details="after an injury"),
+            "uses 'physical'": note(details="after a failed physical"),
+            "uses 'reserve'": note(details="from the reserve/non-football list"),
             "repeats the team": note(details="to the Giants for a pick"),
             "repeats the date": note(details="on Sep 28 for a pick"),
             "unknown fields": note(team="NYG"),
@@ -273,6 +276,27 @@ class RosterNoteTests(unittest.TestCase):
         e = moved_edition()
         e["players"][0]["move"]["to_name"] = "Marker Team Zebras"
         self.assertNotIn("Zebras", json.dumps(editorial.fact_sheet(e)))
+
+    def draft(self, toml_text):
+        e = moved_edition()
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = fixture_data.write_edition_dir(Path(tmp), e)
+            if toml_text is not None:
+                (directory / "editorial.toml").write_text(toml_text, encoding="utf-8")
+            with mock.patch.object(editorial, "produce", return_value=(editorial.fallback(e), {})), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(editorial.main(["draft", str(directory)]), 0)
+            return editorial.loads((directory / "editorial.toml").read_text(encoding="utf-8")), (directory / "editorial.toml").read_text(encoding="utf-8"), e
+
+    def test_draft_keeps_owner_notes_and_adds_stubs(self):
+        e = moved_edition()
+        kept = editorial.dumps(dict(editorial.fallback(e), roster_moves=[note()]))
+        parsed, text, _ = self.draft(kept)
+        self.assertEqual(parsed["roster_moves"], [note()])
+        self.assertNotIn("# [[roster_moves]]", text)
+        _, text, _ = self.draft(None)
+        self.assertIn("# [[roster_moves]]", text)
+        _, text, _ = self.draft("not = [valid")
+        self.assertIn("# [[roster_moves]]", text)
 
     def test_invalid_toml_is_a_clean_error(self):
         with tempfile.TemporaryDirectory() as tmp:
