@@ -100,3 +100,4 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .explorer-filters button[aria-pressed="true"]{background:var(--brand);color:#fff}
 .play-pick{all:unset;cursor:pointer;display:block}
 .play-result{display:block;font-size:12px}
+.move,.desk-move{margin:4px 0 0;padding-left:10px;border-left:3px solid var(--move,var(--brand));font-size:14px;color:var(--ink)}

@@ -593,5 +593,50 @@ class OperationsDocTests(unittest.TestCase):
         self.assertIn("refuses", season)
 
 
+MOVE = {"kind": "moved_after_game", "from": "MIN", "to": "NYG", "from_name": "Minnesota Vikings", "to_name": "New York Giants",
+        "from_color": "#4F2683", "to_color": "#0B2265", "status": None, "last_week_with_old_team": 2, "last_game_date": "2026-09-20"}
+
+
+class MoveRenderTests(SiteTestCase):
+    def edition_with_moves(self):
+        e = fixture_data.golden_edition()
+        played = next(p for p in e["players"] if p["availability"]["label"] == ev.PLAYED)
+        absent = next(p for p in e["players"] if p["availability"]["label"] != ev.PLAYED)
+        played["move"] = dict(MOVE)
+        absent["move"] = dict(MOVE, kind="left_after_game", to=None, to_name=None, to_color=None, status="CUT")
+        return e, played, absent
+
+    def test_neutral_lines_on_card_desk_and_player_page(self):
+        e, played, absent = self.edition_with_moves()
+        out = self.render(e)
+        home = self.read(out / "index.html")
+        card = next(c for c in home.split('<article class="card"')[1:] if played["name"] in c)
+        self.assertIn("Now on the Giants&#39; roster (was Vikings in Week 2).", card)
+        self.assertIn("--move: #0B2265", card)
+        self.assertIn(f"{absent['name']}: Released by the Vikings (on their roster in Week 2).", home)
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == played["id"])
+        self.assertIn("Now on the Giants&#39; roster", self.read(out / "players" / slug / "index.html"))
+
+    def test_sourced_note_renders_with_link(self):
+        from datetime import date
+        e, played, _ = self.edition_with_moves()
+        copy_ = dict(editorial.fallback(e), roster_moves=[{"player_id": played["id"], "kind": "trade", "date": date(2026, 9, 21),
+                                                           "details": "for a 2027 fourth-round pick", "source": "https://www.giants.com/news/x"}])
+        home = self.read(self.render(e, copy_) / "index.html")
+        self.assertIn("Traded to the Giants on Sep 21 for a 2027 fourth-round pick.", home)
+        self.assertIn('Source: <a href="https://www.giants.com/news/x" rel="external noopener">Giants.com</a>', home)
+
+    def test_schema_2_editions_and_orphan_notes_render(self):
+        from datetime import date
+        e = fixture_data.golden_edition()
+        for p in e["players"]:
+            p.pop("move", None)
+        e["schema_version"] = 2
+        copy_ = dict(editorial.fallback(e), roster_moves=[{"player_id": e["players"][0]["id"], "kind": "trade", "date": date(2026, 9, 21),
+                                                           "source": "https://www.giants.com/news/x"}])
+        home = self.read(self.render(e, copy_) / "index.html")
+        self.assertNotIn('class="move"', home)
+
+
 if __name__ == "__main__":
     unittest.main()
