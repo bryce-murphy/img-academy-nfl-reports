@@ -246,7 +246,9 @@ class EditionTests(unittest.TestCase):
         def sources(season, *, week=None, only=None, historical=False):
             return data, manifest, []
 
-        edition, sources_out, report = ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False, registry=registry, sources=sources)
+        with tempfile.TemporaryDirectory() as empty:
+            edition, sources_out, report = ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False,
+                                                         registry=registry, sources=sources, editions_root=Path(empty))
         self.assertEqual((edition["id"], report.missing()), ("2026-week-02", []))
         self.assertIs(sources_out, manifest)
 
@@ -328,6 +330,30 @@ class MainHeadlineTests(unittest.TestCase):
 
             self.assertEqual(run(), 0)
             self.assertIn("Owner headline", headline_path.read_text(encoding="utf-8"))
+
+
+class MainRebuildTests(unittest.TestCase):
+    def test_rebuild_keeps_published_players_and_reads_history_from_out(self):
+        data, manifest, _ = fixture_data.load()
+        games = fixture_data.week_games(data)
+        golden_edition = fixture_data.golden_edition()
+        with tempfile.TemporaryDirectory() as tmp:
+            published_dir = Path(tmp) / "2026-week-02"
+            published_dir.mkdir()
+            (published_dir / "edition.json").write_text(json.dumps(golden_edition), encoding="utf-8")
+            with mock.patch.object(ed, "due_week", return_value=(2, games)),                  mock.patch.object(ed, "build_week", return_value=(golden_edition, manifest, Readiness())) as build_week,                  contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(ed.main(["--season", "2026", "--week", "2", "--out", tmp, "--rebuild"]), 0)
+            kwargs = build_week.call_args.kwargs
+            self.assertEqual(kwargs["editions_root"], Path(tmp))
+            self.assertEqual(kwargs["keep"], {p["id"]: p for p in golden_edition["players"]})
+
+    def test_rebuild_without_a_published_edition_is_a_usage_error(self):
+        data = fixture_data.load()[0]
+        with tempfile.TemporaryDirectory() as tmp,              mock.patch.object(ed, "due_week", return_value=(2, fixture_data.week_games(data))),              mock.patch.object(ed, "build_week") as build_week,              contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as caught:
+                ed.main(["--season", "2026", "--week", "2", "--out", tmp, "--rebuild"])
+        self.assertEqual(caught.exception.code, 2)
+        build_week.assert_not_called()
 
 
 class DenominatorTests(unittest.TestCase):
