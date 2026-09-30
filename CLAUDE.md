@@ -42,7 +42,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - Pin every GitHub Action to a full SHA. Use only GitHub-owned actions. Never put `${{ }}` expressions inside `run:` scripts; pass values through `env:`.
 - Public copy says "IMG Academy" in full, never "IMG" alone (brand guidelines' editorial rule).
 - The author works at IMG Academy: never write "not affiliated". The label is "Not an official IMG Academy or NFL publication"; the site does not mention the author's job.
-- Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders.
+- Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders. Football-diagram conventions are the exception (the first-down marker is yellow, `--first-down`).
 
 ## Git
 

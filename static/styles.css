@@ -1,4 +1,4 @@
-:root{--ink:#424242;--muted:#587089;--paper:#ffffff;--wash:#f5f5f5;--card:#ffffff;--brand:#0057b8;--brand-dark:#004b9f;--navy:#002d54;--light:#dde3eb;--line:#dde3eb;--warm:#cecac8;--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif}
+:root{--ink:#424242;--muted:#587089;--paper:#ffffff;--wash:#f5f5f5;--card:#ffffff;--brand:#0057b8;--brand-dark:#004b9f;--navy:#002d54;--light:#dde3eb;--line:#dde3eb;--warm:#cecac8;--first-down:#e4c200;--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,Arial,sans-serif}
@@ -84,3 +84,9 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 @media (max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
 @media (max-width:640px){.masthead,main,.site-footer{padding-left:16px;padding-right:16px}.masthead{grid-template-columns:1fr}.masthead nav{grid-column:1;grid-row:2;justify-self:start;gap:16px}.independent{grid-row:3}.brand svg{height:40px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{flex-direction:column}.section-head p{text-align:left}.availability>div{grid-template-columns:1fr}.availability dd.note{grid-column:1}.method{padding:20px}.monogram{font-size:96px}}
 @media print{details{display:block}.card{break-inside:avoid}}
+.field{display:block;width:100%;height:auto;margin:6px 0}
+.field .turf{fill:var(--wash)}.field .endzone{fill:var(--light)}.field .endzone-label{font:700 12px var(--display);fill:var(--navy)}
+.field .yard-minor{stroke:var(--light);stroke-width:1}.field .yard-major{stroke:var(--warm);stroke-width:1.5}
+.field .los{stroke:var(--navy);stroke-width:2}.field .marker{stroke:var(--first-down);stroke-width:2}
+.field .air{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4}.field .run{stroke:var(--navy);stroke-width:4;stroke-linecap:round}
+.field .ball{fill:var(--navy)}.field .target{fill:#fff;stroke:var(--muted);stroke-width:2}
