@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 
 from src import moves
 
@@ -139,3 +140,73 @@ class RealDataTests(unittest.TestCase):
         move = moves.detect(mccarthy, 3, week3["games"], moves.load_history(root, 2026, 3), NAMES.get, COLORS.get)
         self.assertEqual((move["kind"], move["from"], move["to"], move["last_week_with_old_team"], move["last_game_date"]),
                          ("moved_after_game", "MIN", "NYG", 3, gameday))
+
+
+ARRIVAL = {"kind": "moved_after_game", "from": "MIN", "to": "NYG", "from_name": "Minnesota Vikings", "to_name": "New York Giants",
+           "from_color": "#4F2683", "to_color": "#0B2265", "status": None, "last_week_with_old_team": 3, "last_game_date": "2026-09-27"}
+DEPARTURE = dict(ARRIVAL, kind="left_after_game", to=None, to_name=None, to_color=None, status="CUT")
+NOTE = {"player_id": "p1", "kind": "trade", "date": date(2026, 9, 28), "details": "for a 2027 fourth-round pick",
+        "source": "https://www.giants.com/news/trade"}
+
+
+class SourceTests(unittest.TestCase):
+    def test_allowed_sites_and_labels(self):
+        self.assertEqual(moves.source_label("https://www.giants.com/news/x"), "Giants.com")
+        self.assertEqual(moves.source_label("https://operations.nfl.com/updates/x"), "NFL Football Operations")
+        self.assertEqual(moves.source_label("https://www.nfl.com/news/x"), "NFL.com")
+        self.assertEqual(moves.source_label("https://apnews.com/article/x"), "AP")
+        self.assertEqual(moves.source_label("https://www.espn.com/nfl/story/x"), "ESPN")
+        self.assertEqual(len([d for d in moves.ALLOWED_SOURCES if d not in {"nfl.com", "operations.nfl.com", "espn.com", "apnews.com"}]), 32)
+
+    def test_rejected_links(self):
+        for url in ("http://www.giants.com/x", "https://theathletic.com/x", "https://example.com/x", "giants.com/x", "", "https://nfl.com.evil.test/x"):
+            self.assertIsNone(moves.source_label(url), url)
+
+    def test_look_alike_and_odd_hosts(self):
+        self.assertIsNone(moves.source_label("https://giants.com.evil.test/x"))
+        self.assertIsNone(moves.source_label("https://giants.com@evil.test/x"))
+        self.assertIsNone(moves.source_label("https://www.giants.com:8443/x"))
+        self.assertEqual(moves.source_label("https://GIANTS.com/x"), "Giants.com")
+
+
+class SentenceTests(unittest.TestCase):
+    def test_neutral_lines(self):
+        self.assertEqual(moves.neutral(ARRIVAL), "Now on the Giants' roster (was Vikings in Week 3).")
+        self.assertEqual(moves.neutral(dict(ARRIVAL, kind="first_week")), "First week with the Giants (was Vikings in Week 3).")
+        self.assertEqual(moves.neutral(DEPARTURE), "Released by the Vikings (on their roster in Week 3).")
+        self.assertEqual(moves.neutral(dict(DEPARTURE, status="RET")), "Listed as retired (on the Vikings' roster in Week 3).")
+        self.assertEqual(moves.neutral(dict(DEPARTURE, status="none", kind="left_before_week")), "No longer on the Vikings' roster (last listed in Week 3).")
+
+    def test_describe_for_the_pr(self):
+        self.assertEqual(moves.describe(ARRIVAL), "Vikings → Giants (moved after the game)")
+        self.assertEqual(moves.describe(dict(DEPARTURE, kind="left_before_week")), "left the Vikings (left before this week)")
+
+    def test_sourced_sentences(self):
+        self.assertEqual(moves.sourced(ARRIVAL, NOTE), "Traded to the Giants on Sep 28 for a 2027 fourth-round pick.")
+        self.assertEqual(moves.sourced(ARRIVAL, dict(NOTE, details="")), "Traded to the Giants on Sep 28.")
+        self.assertEqual(moves.sourced(ARRIVAL, dict(NOTE, kind="waiver claim")), "Claimed off waivers by the Giants on Sep 28 for a 2027 fourth-round pick.")
+        self.assertEqual(moves.sourced(DEPARTURE, dict(NOTE, kind="waived", details="")), "Waived by the Vikings on Sep 28.")
+        self.assertEqual(moves.sourced(DEPARTURE, dict(NOTE, kind="release", details="")), "Released by the Vikings on Sep 28.")
+
+    def test_details_trailing_period_is_not_doubled(self):
+        self.assertEqual(moves.sourced(ARRIVAL, dict(NOTE, details="for a 2027 fourth-round pick.")),
+                         "Traded to the Giants on Sep 28 for a 2027 fourth-round pick.")
+
+    def test_view_prefers_a_matching_note_from_any_edition(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week4_player = {"id": "p1", "move": dict(ARRIVAL, kind="first_week")}
+        index = moves.note_index([(week3, {"roster_moves": [NOTE]}), ({"week": 4, "players": [week4_player]}, {})])
+        shown = moves.view(week4_player, index)
+        self.assertEqual(shown, {"text": "Traded to the Giants on Sep 28 for a 2027 fourth-round pick.",
+                                 "source_url": NOTE["source"], "source_label": "Giants.com", "color": "#0B2265"})
+
+    def test_earliest_note_wins_and_neutral_without_note(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week4 = {"week": 4, "players": [{"id": "p1", "move": dict(ARRIVAL, kind="first_week")}]}
+        later = dict(NOTE, details="later text")
+        index = moves.note_index([(week3, {"roster_moves": [NOTE]}), (week4, {"roster_moves": [later]})])
+        self.assertIn("fourth-round", moves.view(week4["players"][0], index)["text"])
+        self.assertEqual(moves.view({"id": "p1", "move": DEPARTURE}, {}),
+                         {"text": "Released by the Vikings (on their roster in Week 3).", "source_url": None, "source_label": None, "color": "#4F2683"})
+        self.assertIsNone(moves.view({"id": "p1", "move": None}, index))
+        self.assertIsNone(moves.view({"id": "p1"}, index))
