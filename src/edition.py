@@ -12,10 +12,14 @@ from . import evidence as ev
 from . import readiness
 from .data import load_sources, utcnow
 from .errors import DataError, NotReady
+from .players import SLUG
 from .upnext import next_game
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+_INTS = ("down", "ydstogo", "yardline_100", "yards_gained", "air_yards", "yards_after_catch")
+_FLAGS = ("goal_to_go", "pass_attempt", "rush_attempt", "complete_pass", "sack", "interception", "fumble",
+          "penalty", "qb_kneel", "qb_spike", "two_point_attempt", "qb_dropback")
 DEFAULT_COLOR = "#123d35"
 RECEIVING = [("receiving_yards", "receiving yards"), ("receptions", "catches"), ("targets", "targets"), ("receiving_tds", "TD")]
 POSITIONS = {
@@ -54,6 +58,9 @@ def load_registry(path=ROOT / "data" / "alumni.json"):
     ids = [a["gsis_id"] for a in registry]
     if len(ids) != len(set(ids)) or not all(re.fullmatch(r"00-\d{7}", i) for i in ids):
         raise DataError("Invalid or duplicate alumni IDs")
+    slugs = [a.get("slug", "") for a in registry]
+    if not all(SLUG.fullmatch(s or "") for s in slugs) or len(slugs) != len(set(slugs)):
+        raise DataError("Every alumni entry needs a unique lowercase slug")
     return registry
 
 
@@ -130,6 +137,47 @@ def play_key(value):
     """'40', '40.0' -> '40': play ids differ in format between play-by-play and FTN. None when not a whole number."""
     number = ev.num(value)
     return str(int(number)) if number is not None and number == int(number) else None
+
+
+def _int_or_none(value):
+    number = ev.num(value)
+    return int(number) if number is not None else None
+
+
+def _flag_or_none(value):
+    number = ev.num(value)
+    return None if number is None else int(number == 1)
+
+
+def _round_or_none(value, digits):
+    number = ev.num(value)
+    return round(number, digits) if number is not None else None
+
+
+def play_record(play, pid, team, team_name):
+    """One recorded play for player pages. Blank or NA cells stay None; flags are 0/1/None."""
+    side, impact = ev.side_and_impact(play, pid, team)
+    laterals = [_flag_or_none(play.get(k)) for k in ("lateral_reception", "lateral_rush")]
+    return {
+        "play_id": play_key(play["play_id"]),
+        "quarter": ev.quarter_label(play.get("qtr")),
+        "clock": play.get("time", ""),
+        "offense": play.get("posteam", ""),
+        "defense": play.get("defteam", ""),
+        "offense_name": team_name(play.get("posteam", "")),
+        "defense_name": team_name(play.get("defteam", "")),
+        "play_type": play.get("play_type", ""),
+        **{k: _int_or_none(play.get(k)) for k in _INTS},
+        **{k: _flag_or_none(play.get(k)) for k in _FLAGS},
+        "lateral": 1 if 1 in laterals else (0 if laterals == [0, 0] else None),
+        "cp": _round_or_none(play.get("cp"), 3),
+        "qb_epa": _round_or_none(play.get("qb_epa"), 3),
+        "epa": _round_or_none(play.get("epa"), 2),
+        "side": side,
+        "impact": impact,
+        "roles": ev.recorded_roles(play, pid),
+        "description": play.get("desc", ""),
+    }
 
 
 def _index(pairs):
@@ -257,6 +305,31 @@ def next_gen(wk, pid, team, game):
     return values
 
 
+def team_snaps(rows, team):
+    """Team snaps per phase: the most any player on the team played in that phase of the game."""
+    out = {}
+    for phase, column in (("team_offense", "offense_snaps"), ("team_defense", "defense_snaps"), ("team_st", "st_snaps")):
+        values = [ev.num(r.get(column)) for r in rows if r.get("team") == team]
+        values = [v for v in values if v is not None]
+        out[phase] = int(max(values)) if values and max(values) > 0 else None
+    return out
+
+
+def _whole(value, tolerance=0.05):
+    return int(round(value)) if value is not None and abs(value - round(value)) <= tolerance else None
+
+
+def usage(stat):
+    targets, share = ev.num(stat.get("targets")), ev.num(stat.get("target_share"))
+    air, air_share = ev.num(stat.get("receiving_air_yards")), ev.num(stat.get("air_yards_share"))
+    return {
+        "targets": int(targets) if targets is not None else None,
+        "team_targets": _whole(targets / share) if targets is not None and share else None,
+        "air_yards": int(air) if air is not None else None,
+        "team_air_yards": _whole(air / air_share) if air is not None and air_share else None,
+    }
+
+
 def player_record(alum, wk, warnings):
     pid, name = alum["gsis_id"], alum["name"]
     data = wk.data
@@ -272,6 +345,12 @@ def player_record(alum, wk, warnings):
     # Actual participation roles only: penalty-only and fantasy attributions do not count.
     roles = [k for k in (plays[0] if plays else {}) if k.endswith("_player_id") and not k.startswith(("penalty", "fantasy"))]
     involvement = [p for p in plays if p.get("play_type") not in {"", "no_play"} and any(p.get(k) == pid for k in roles)]
+    recorded = [
+        p for p in plays
+        if p.get("play_type") not in {"", "no_play"} and p.get("play_deleted") != "1" and p.get("aborted_play") != "1"
+        and ev.recorded_roles(p, pid)
+    ]
+    recorded.sort(key=lambda p: float(p["play_id"]))
     pfr = alum.get("pfr_id") or person.get("pfr_id") or roster.get("pfr_id")
     snap = ev.unique([s for s in data.get("snaps", []) if pfr and s["pfr_player_id"] == pfr and s["game_id"] == game.get("game_id")], name + " snap count")
     if snap and snap["team"] != team:
@@ -304,11 +383,16 @@ def player_record(alum, wk, warnings):
         "game": game_summary(game, team),
         "metrics": metrics,
         "stats_withheld": bool(mismatches),
-        "snaps": {"offense": ev.clean(snap.get("offense_snaps")), "defense": ev.clean(snap.get("defense_snaps")), "st": ev.clean(snap.get("st_snaps"))},
+        "snaps": {
+            "offense": ev.clean(snap.get("offense_snaps")), "defense": ev.clean(snap.get("defense_snaps")), "st": ev.clean(snap.get("st_snaps")),
+            **team_snaps(wk.snaps_by_team.get((game.get("game_id"), team), []), team),
+        },
+        "usage": usage(stat),
         "key_plays": [
             dict(k, offense_name=wk.team_name(k["offense"]), defense_name=wk.team_name(k["defense"]))
             for k in ev.key_plays(involvement, pid, team)
         ],
+        "plays": [play_record(p, pid, team, wk.team_name) for p in recorded],
         "next_gen": next_gen(wk, pid, team, game),
         "charting": charting(wk, pid, pfr, team, game, plays, stat, name, warnings),
         "injury_report": {"designation": injury.get("report_status", ""), "primary_injury": injury.get("report_primary_injury", "")}

@@ -157,6 +157,24 @@ class RankingTests(unittest.TestCase):
         ]
         self.assertEqual(ev.rank(players), ["a", "b", "ol"])
 
+    def test_rank_tiebreak_uses_real_snap_phases_not_team_denominators(self):
+        # Both players are tied on score. "more" has more actual snaps (offense+defense+st = 10)
+        # than "fewer" (= 5), so real phase totals should rank "more" first. But "fewer" carries
+        # huge team_offense/team_defense/team_st values (new denominator keys on the snaps dict);
+        # summing every value in "snaps" (the old, buggy tiebreak) would make "fewer" look like it
+        # played far more and rank it first instead.
+        more = {
+            "id": "more", "name": "More Snaps", "score": 3.0,
+            "snaps": {"offense": 10, "defense": 0, "st": 0, "team_offense": 20, "team_defense": 20, "team_st": 20},
+            "availability": {"label": ev.PLAYED},
+        }
+        fewer = {
+            "id": "fewer", "name": "Fewer Snaps", "score": 3.0,
+            "snaps": {"offense": 5, "defense": 0, "st": 0, "team_offense": 1000, "team_defense": 1000, "team_st": 1000},
+            "availability": {"label": ev.PLAYED},
+        }
+        self.assertEqual(ev.rank([fewer, more]), ["more", "fewer"])
+
 
 ME = "00-0036282"
 
@@ -220,6 +238,27 @@ class KeyPlayTests(unittest.TestCase):
 
     def test_plays_without_epa_are_skipped(self):
         self.assertEqual(self.ids([play(1, "", sack_player_id=True), play(2, "NA", sack_player_id=True)]), [])
+
+
+class RecordedRoleTests(unittest.TestCase):
+    def test_only_allowlisted_roles_count(self):
+        play = {"solo_tackle_1_player_id": ME, "penalty_player_id": ME, "fantasy_player_id": ME, "lateral_receiver_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["solo_tackle_1"])
+
+    def test_every_matched_role_is_kept_in_order(self):
+        play = {"sack_player_id": ME, "forced_fumble_player_1_player_id": ME, "qb_hit_1_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["sack", "qb_hit_1", "forced_fumble_player_1"])
+
+    def test_td_only_credit_is_recorded_under_the_real_column_name(self):
+        # td_player_id is the real nflverse column; the role name must be "td" so
+        # f"{role}_player_id" reads it (not "td_player", which would look for the
+        # nonexistent "td_player_player_id" and silently miss every TD-only play).
+        play = {"td_player_id": ME}
+        self.assertEqual(ev.recorded_roles(play, ME), ["td"])
+
+    def test_side_and_impact_match_key_plays(self):
+        self.assertEqual(ev.side_and_impact(play(1, -1.8, sack_player_id=True), ME, "CLE"), ("defense", "Sack"))
+        self.assertEqual(ev.side_and_impact(play(2, 3.1, posteam="CLE", defteam="TB", td_player_id=True), ME, "CLE"), ("offense", "Touchdown"))
 
 
 if __name__ == "__main__":

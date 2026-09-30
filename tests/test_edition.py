@@ -255,6 +255,51 @@ class EditionTests(unittest.TestCase):
         self.assertEqual(ed.stat_season_type("SB"), "POST")
 
 
+class PlaysTests(unittest.TestCase):
+    def test_every_recorded_play_is_saved_with_field_details(self):
+        tate = player(build(), "Carnell Tate")
+        self.assertEqual(len(tate["plays"]), 5)
+        first = tate["plays"][0]
+        for key in ("down", "ydstogo", "yardline_100", "yards_gained", "air_yards", "complete_pass", "roles", "side", "offense_name"):
+            self.assertIn(key, first)
+        self.assertEqual(first["roles"], ["receiver"])
+        self.assertEqual([p["play_id"] for p in tate["plays"]], sorted((p["play_id"] for p in tate["plays"]), key=float))
+
+    def test_key_plays_are_among_plays_and_unchanged(self):
+        edition = build()
+        for p in edition["players"]:
+            ids = {q["play_id"] for q in p["plays"]}
+            self.assertTrue({k["play_id"] for k in p["key_plays"]} <= ids, p["name"])
+
+    def test_blank_cells_stay_null(self):
+        record = ed.play_record({"play_id": "7", "epa": "NA", "air_yards": "", "posteam": "CLE", "defteam": "TB", "desc": "x", "qtr": "1", "time": "15:00", "solo_tackle_1_player_id": "00-1"}, "00-1", "TB", lambda t: t)
+        self.assertIsNone(record["epa"])
+        self.assertIsNone(record["air_yards"])
+        self.assertIsNone(record["sack"])
+
+    def test_schema_version_is_two(self):
+        self.assertEqual(build()["schema_version"], 2)
+
+    def test_a_player_without_recorded_plays_has_an_empty_list(self):
+        self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
+
+    def test_lateral_is_one_if_either_flag_is_one_zero_only_if_both_are_explicitly_zero(self):
+        def lateral(reception, rush):
+            row = {"play_id": "7", "posteam": "CLE", "defteam": "TB", "desc": "x", "qtr": "1", "time": "15:00"}
+            if reception is not None:
+                row["lateral_reception"] = reception
+            if rush is not None:
+                row["lateral_rush"] = rush
+            return ed.play_record(row, "00-1", "TB", lambda t: t)["lateral"]
+
+        self.assertEqual(lateral("1", None), 1)
+        self.assertEqual(lateral(None, "1"), 1)
+        self.assertEqual(lateral("0", "0"), 0)
+        self.assertIsNone(lateral("0", None))
+        self.assertIsNone(lateral(None, "0"))
+        self.assertIsNone(lateral(None, None))
+
+
 class MainHeadlineTests(unittest.TestCase):
     def test_writes_fallback_headline_without_overwriting_an_existing_one(self):
         data = fixture_data.load()[0]
@@ -282,6 +327,28 @@ class MainHeadlineTests(unittest.TestCase):
 
             self.assertEqual(run(), 0)
             self.assertIn("Owner headline", headline_path.read_text(encoding="utf-8"))
+
+
+class DenominatorTests(unittest.TestCase):
+    def test_team_snaps_are_the_most_any_teammate_played(self):
+        rows = [{"team": "CLE", "offense_snaps": "60", "defense_snaps": "0", "st_snaps": "3"},
+                {"team": "CLE", "offense_snaps": "0", "defense_snaps": "65", "st_snaps": "22"},
+                {"team": "TB", "offense_snaps": "70", "defense_snaps": "0", "st_snaps": "1"}]
+        self.assertEqual(ed.team_snaps(rows, "CLE"), {"team_offense": 60, "team_defense": 65, "team_st": 22})
+        self.assertEqual(ed.team_snaps([], "CLE"), {"team_offense": None, "team_defense": None, "team_st": None})
+
+    def test_usage_recovers_team_totals_or_stays_null(self):
+        self.assertEqual(ed.usage({"targets": "5", "target_share": "0.29411765", "receiving_air_yards": "50", "air_yards_share": "0.4385965"}),
+                         {"targets": 5, "team_targets": 17, "air_yards": 50, "team_air_yards": 114})
+        self.assertEqual(ed.usage({"targets": "5", "target_share": "0.3", "receiving_air_yards": "", "air_yards_share": "0"}),
+                         {"targets": 5, "team_targets": None, "air_yards": None, "team_air_yards": None})
+        self.assertEqual(ed.usage({}), {"targets": None, "team_targets": None, "air_yards": None, "team_air_yards": None})
+
+    def test_edition_players_carry_denominators(self):
+        delpit = player(build(), "Grant Delpit")
+        self.assertEqual(delpit["snaps"]["defense"], 65)
+        self.assertGreaterEqual(delpit["snaps"]["team_defense"], 65)
+        self.assertIn("usage", delpit)
 
 
 if __name__ == "__main__":

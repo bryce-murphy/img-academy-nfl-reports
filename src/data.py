@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from .errors import DataError, NotReady  # noqa: F401  (re-exported)
+from .evidence import RECORDED_ROLES
 
 RELEASES = "https://api.github.com/repos/nflverse/nflverse-data/releases/tags/"
 DOWNLOADS = "https://github.com/nflverse/nflverse-data/releases/download/"
@@ -20,6 +21,13 @@ HOSTS = {"api.github.com", "github.com", "release-assets.githubusercontent.com",
 MAX_BYTES = 180_000_000
 DOWNLOAD_ATTEMPTS = 4
 RETRY_SECONDS = 30
+
+PLAY_COLUMNS = (
+    "posteam", "defteam", "down", "ydstogo", "goal_to_go", "yardline_100", "yards_gained", "air_yards",
+    "yards_after_catch", "pass_attempt", "rush_attempt", "complete_pass", "sack", "interception", "fumble",
+    "lateral_reception", "lateral_rush", "penalty", "qb_kneel", "qb_spike", "two_point_attempt", "cp",
+    "qb_dropback", "qb_epa", "play_deleted", "aborted_play",
+)
 
 
 def pause(seconds):
@@ -54,9 +62,16 @@ def specifications(season):
         "rosters": ("weekly_rosters", f"roster_weekly_{season}.csv", {"gsis_id", "team", "week", "status"}),
         "current_rosters": ("rosters", f"roster_{season}.csv", {"gsis_id", "team", "status"}),
         "players": ("players", "players.csv", {"gsis_id", "display_name", "pfr_id"}),
-        "stats": ("stats_player", f"stats_player_week_{season}.csv", {"player_id", "week", "season", "game_id", "team"}),
-        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {"game_id", "play_id", "week", "desc", "epa", "wpa"}),
-        "snaps": ("snap_counts", f"snap_counts_{season}.csv", {"game_id", "pfr_player_id", "offense_snaps", "defense_snaps", "st_snaps"}),
+        "stats": ("stats_player", f"stats_player_week_{season}.csv", {
+            "player_id", "week", "season", "game_id", "team",
+            "targets", "target_share", "receiving_air_yards", "air_yards_share",
+        }),
+        "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {
+            "game_id", "play_id", "week", "desc", "epa", "wpa", *PLAY_COLUMNS,
+            "qtr", "time", "play_type", "fumble_lost", "third_down_failed", "fourth_down_failed",
+            *(f"{role}_player_id" for role in RECORDED_ROLES),
+        }),
+        "snaps": ("snap_counts", f"snap_counts_{season}.csv", {"game_id", "pfr_player_id", "team", "offense_snaps", "defense_snaps", "st_snaps"}),
         "injuries": ("injuries", f"injuries_{season}.csv", {"gsis_id", "week", "report_status", "report_primary_injury"}),
         "teams": ("teams", "teams_colors_logos.csv", {"team_abbr", "team_name", "team_logo_espn"}),
         "ngs_passing": ("nextgen_stats", "ngs_passing.csv.gz", {"season", "week", "player_gsis_id", "team_abbr"}),
