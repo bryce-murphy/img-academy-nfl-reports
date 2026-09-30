@@ -22,6 +22,8 @@ CFG = {
 FIRST = "30 14 * 9-12,1-2 2"
 FINAL = "30 6 * 9-12,1-2 3"
 BOT = "edition-bot[bot]"
+PIPELINE_MOVE = {"kind": "moved_after_game", "from": "MIN", "to": "NYG", "from_name": "Minnesota Vikings", "to_name": "New York Giants",
+                 "from_color": "#4F2683", "to_color": "#0B2265", "status": None, "last_week_with_old_team": 2, "last_game_date": "2026-09-20"}
 
 
 class FakeGitHub:
@@ -330,6 +332,35 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(pipeline.remind(gh, "bryce-murphy").state, "reminded")
         self.assertEqual([number for number, _ in gh.comments], [42])
         self.assertIn("@bryce-murphy", gh.comments[0][1])
+
+    def test_pr_body_lists_roster_moves(self):
+        edition = fixture_data.golden_edition()
+        copy = editorial.fallback(edition)
+        report = {"used": "fallback", "reasons": [], "rejected": None, "notes": []}
+        drafts = {"state": "withheld", "reason": "test"}
+        self.assertNotIn("Roster moves", pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run"))
+        edition["players"][0]["move"] = dict(PIPELINE_MOVE)
+        body = pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run")
+        name = edition["players"][0]["name"]
+        self.assertIn("**Roster moves**", body)
+        self.assertIn(f'- [ ] {name}: Vikings → Giants (moved after the game). Site shows: "Now on the Giants\' roster (was Vikings in Week 2)."', body)
+        self.assertIn("ESPN+", body)
+
+    def test_drafted_editorial_has_stubs_for_moves(self):
+        original = pipeline.build_week
+
+        def with_move(*args, **kwargs):
+            edition, manifest, report = original(*args, **kwargs)
+            edition["players"][0]["move"] = dict(PIPELINE_MOVE)
+            return edition, manifest, report
+
+        gh = FakeGitHub()
+        with unittest.mock.patch.object(pipeline, "build_week", with_move):
+            self.assertEqual(self.attempt(gh).state, "opened")
+        text = gh.commits[0][2]["editions/2026-week-02/editorial.toml"].decode("utf-8")
+        self.assertIn("# [[roster_moves]]", text)
+        self.assertNotIn("roster_moves", editorial.loads(text))
+        self.assertIn("**Roster moves**", gh.opened[0][2])
 
     def test_settings_from_env(self):
         settings = pipeline.settings_from_env({"EVENT_NAME": "schedule", "SCHEDULE": FINAL, "EDITION_AUTOMATION": "on", "APP_SLUG": "edition-bot", "INPUT_WEEK": ""})

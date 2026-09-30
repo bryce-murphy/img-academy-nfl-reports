@@ -5,7 +5,7 @@ import os
 import sys
 from dataclasses import dataclass
 
-from . import editorial
+from . import editorial, moves
 from .data import utcnow
 from .edition import build_week, due_week, dump_json, edition_id, fetch, load_config, load_registry
 from .errors import DataError, NotReady
@@ -141,7 +141,7 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
         draft_report = {"used": "owner edits kept", "reasons": [], "rejected": None, "notes": []}
     else:
         copy, draft_report = (drafter or default_drafter(cfg))(edition)
-        files[f"editions/{eid}/editorial.toml"] = editorial.dumps(copy).encode("utf-8")
+        files[f"editions/{eid}/editorial.toml"] = editorial.dumps(copy, stubs=moves.moved_players(edition)).encode("utf-8")
     if head is None:
         head = gh.ref_sha("main")
         gh.create_branch(branch, head)
@@ -187,6 +187,11 @@ def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
     lines += [f"| {p['name']} ({p['team']}) | {result_line(p)} | {contribution(p)} |" for p in played] or ["| No alumni played | | |"]
     by_label = ", ".join(f"{label}: {count}" for label, count in edition["counts"]["by_label"].items())
     lines += ["", f"**Availability:** {by_label}", ""]
+    moved = moves.moved_players(edition)
+    if moved:
+        lines += ["**Roster moves** (the site shows the neutral line unless you uncomment and fill in the entry in `editorial.toml`; "
+                  "links must be on an allowed site, and avoid paywalled stories such as ESPN+):"]
+        lines += [f"- [ ] {p['name']}: {moves.describe(p['move'])}. Site shows: \"{moves.neutral(p['move'])}\"" for p in moved] + [""]
     if readiness_report.missing_optional:
         lines += ["**Published without:**"] + [f"- {item}" for item in readiness_report.missing_optional] + [""]
     if readiness_report.pending:
