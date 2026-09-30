@@ -3,6 +3,7 @@
   {% if show_monogram is defined and show_monogram %}<div class="player-mark"><div class="monogram" aria-hidden="true">{{ player.initials }}</div></div>{% endif %}
   <h1>{{ player.name }}</h1>
   <p class="score">{{ player.score_line }}</p>
+  {% if player.move %}{% set move = player.move %}{% include "_move.html" %}{% endif %}
   {% if player.participation %}<p class="evidence">{{ player.participation }}</p>{% endif %}
   <div class="metrics">{% for m in player.metrics %}<div><strong>{{ m.value | num }}</strong><span>{{ m.label }}</span></div>{% endfor %}</div>
   {% if player.charting_lines %}<ul class="ngs charted">{% for line in player.charting_lines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}

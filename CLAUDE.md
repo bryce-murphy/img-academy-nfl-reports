@@ -26,6 +26,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - `site.py` with `templates/` and `static/`: the renderer.
 - `players.py`: player page addresses (slugs), game logs and season lines.
 - `field.py`: which plays get a field diagram, and the diagram SVG.
+- `moves.py`: roster moves (detection against earlier editions), allowed sources and move sentences.
 - `pipeline.py`: one scheduled attempt.
 - `github.py`: API calls.
 - `verify.py`: checks the live site.
@@ -42,6 +43,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - Add a regression test with every accuracy fix.
 - Automation never rewrites a merged `editions/<id>/` directory.
 - Pin every GitHub Action to a full SHA. Use only GitHub-owned actions. Never put `${{ }}` expressions inside `run:` scripts; pass values through `env:`.
+- A move's reason (traded, claimed, signed, waived) appears only from an owner note with an allowed source; only the data's own statuses (released, retired) appear without one.
 - Public copy says "IMG Academy" in full, never "IMG" alone (brand guidelines' editorial rule).
 - The author works at IMG Academy: never write "not affiliated". The label is "Not an official IMG Academy or NFL publication"; the site does not mention the author's job.
 - Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders. Football-diagram conventions are the exception (the first-down marker is yellow, `--first-down`).

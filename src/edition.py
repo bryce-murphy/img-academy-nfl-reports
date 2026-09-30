@@ -9,6 +9,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from . import evidence as ev
+from . import moves
 from . import readiness
 from .data import load_sources, utcnow
 from .errors import DataError, NotReady
@@ -16,7 +17,9 @@ from .players import SLUG
 from .upnext import next_game
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+EDITIONS_ROOT = ROOT / "editions"
+KEEP_FIELDS = ("current", "position", "team_changed")
 _INTS = ("down", "ydstogo", "yardline_100", "yards_gained", "air_yards", "yards_after_catch")
 _FLAGS = ("goal_to_go", "pass_attempt", "rush_attempt", "complete_pass", "sack", "interception", "fumble",
           "penalty", "qb_kneel", "qb_spike", "two_point_attempt", "qb_dropback")
@@ -409,10 +412,19 @@ def player_record(alum, wk, warnings):
     }
 
 
-def build_edition(data, registry, games, season, week, *, generated_at, historical=False, warnings=()):
+def build_edition(data, registry, games, season, week, *, generated_at, historical=False, warnings=(), history=(), keep=None):
     warnings = list(warnings)
     wk = _Week(data, games, season, week, historical, ev.validate_games(games, data["pbp"]))
     players = [player_record(alum, wk, warnings) for alum in registry]
+    keep = keep or {}
+    for p in players:
+        published = keep.get(p["id"])
+        if published:
+            p.update({k: published[k] for k in KEEP_FIELDS if k in published})
+        if published and "move" in published:
+            p["move"] = published["move"]
+        else:
+            p["move"] = moves.detect(p, week, games, list(history), wk.team_name, wk.team_color)
     ranking = ev.rank(players)
     order = {pid: i for i, pid in enumerate(ranking)}
     players.sort(key=lambda p: (order.get(p["id"], len(order)), ev.LABEL_ORDER.index(p["availability"]["label"]), p["name"]))
@@ -476,7 +488,7 @@ def due_week(season, week, *, today, historical, scheduled, season_types, source
     return ev.choose_week(schedule, season, today, season_types, week, scheduled)
 
 
-def build_week(season, week, games, *, historical, final, registry, sources=fetch):
+def build_week(season, week, games, *, historical, final, registry, sources=fetch, editions_root=None, keep=None):
     data, manifest, warnings = sources(season, week=week, historical=historical)
     ids = {alum["gsis_id"] for alum in registry}
     followed_teams = {
@@ -490,6 +502,7 @@ def build_week(season, week, games, *, historical, final, registry, sources=fetc
     edition = build_edition(
         data, registry, games, season, week,
         generated_at=utcnow().isoformat(timespec="seconds"), historical=historical, warnings=warnings,
+        history=moves.load_history(editions_root or EDITIONS_ROOT, season, week), keep=keep,
     )
     return edition, manifest, report
 
@@ -500,17 +513,26 @@ def main(argv=None):
     parser.add_argument("--week", type=int, required=True)
     parser.add_argument("--historical", action="store_true", help="Relax source freshness and omit up-next")
     parser.add_argument("--out", type=Path, default=ROOT / "editions")
+    parser.add_argument("--rebuild", action="store_true",
+                        help="Rebuild a published edition, keeping its roster notes, positions, team-change flags and moves")
     args = parser.parse_args(argv)
     config = load_config()
     week, games = due_week(args.season, args.week, today=utcnow().date(), historical=args.historical, scheduled=False, season_types=config["season_types"])
-    edition, manifest, report = build_week(args.season, week, games, historical=args.historical, final=True, registry=load_registry())
+    keep = None
+    if args.rebuild:
+        published = args.out / edition_id(args.season, week) / "edition.json"
+        if not published.is_file():
+            parser.error(f"--rebuild needs a published {published}")
+        keep = {p["id"]: p for p in json.loads(published.read_text(encoding="utf-8"))["players"]}
+    edition, manifest, report = build_week(args.season, week, games, historical=args.historical, final=True,
+                                           registry=load_registry(), editions_root=args.out, keep=keep)
     directory = args.out / edition["id"]
     write_edition(edition, manifest, directory)
     from . import editorial  # local import: editorial reads edition dicts; edition never needs editorial otherwise
 
     headline_file = directory / "editorial.toml"
     if not headline_file.exists():
-        headline_file.write_bytes(editorial.dumps(editorial.fallback(edition)).encode("utf-8"))
+        headline_file.write_bytes(editorial.dumps(editorial.fallback(edition), stubs=moves.moved_players(edition)).encode("utf-8"))
     print(f"Built {directory}: {edition['counts']['played']} of {edition['counts']['followed']} alumni played; "
           f"missing optional data: {', '.join(report.missing_optional) or 'none'}; "
           f"charting pending: {', '.join(report.pending) or 'none'}")

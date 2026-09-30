@@ -15,7 +15,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from markupsafe import Markup
 
-from . import editorial, field
+from . import editorial, field, moves
 from . import evidence as ev
 from . import players as pl
 from .edition import load_config, load_registry
@@ -297,9 +297,10 @@ def top_drawable_play(player):
     return None
 
 
-def edition_context(edition, *, root, data_path, slugs):
+def edition_context(edition, *, root, data_path, slugs, notes=None):
     players = [player_view(p) for p in edition.data["players"]]
     for raw, view in zip(edition.data["players"], players):
+        view["move"] = moves.view(raw, notes or {}, edition.data["season"])
         slug = slugs.get(raw["id"])
         view["page"] = f"{root}players/{slug}/{edition.id}/" if slug else None
         top = top_drawable_play(raw)
@@ -373,6 +374,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         registry = load_registry()
     env = environment()
     editions = load_editions(editions_root)
+    notes = moves.note_index([(e.data, e.editorial) for e in editions])
     out = Path(out)
     if out.exists():
         shutil.rmtree(out)
@@ -393,14 +395,14 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
     urls = [site_url, site_url + "archive/", site_url + "methodology/"] + [f"{site_url}editions/{e.id}/" for e in editions]
     for e in editions:
         folder = f"editions/{e.id}/"
-        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path="", slugs=slugs))
+        page("edition.html", folder + "index.html", canonical=site_url + folder, **edition_context(e, root="../../", data_path="", slugs=slugs, notes=notes))
         _write_json(out / folder / "edition.json", e.data)
         _write_json(out / folder / "sources.json", e.sources, sort_keys=True)
         _write_json(out / folder / "social-drafts.json", social_drafts(e.data, e.editorial, site_url + folder))
     if editions:
         latest = editions[-1]
         page("edition.html", "index.html", canonical=f"{site_url}editions/{latest.id}/",
-             **edition_context(latest, root="", data_path=f"editions/{latest.id}/", slugs=slugs))
+             **edition_context(latest, root="", data_path=f"editions/{latest.id}/", slugs=slugs, notes=notes))
     else:
         page("empty.html", "index.html", canonical=site_url, root="")
     page("archive.html", "archive/index.html", canonical=site_url + "archive/", root="../", editions=list(reversed(editions)))
@@ -414,6 +416,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         base_url = f"players/{alum['slug']}/"
         for e_data, p in apps:
             view = player_view(p)
+            view["move"] = moves.view(p, notes, e_data["season"])
             saved, plays = week_plays(p)
             page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
                  player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
@@ -426,8 +429,11 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         latest_edition = apps[-1][0] if apps else None
         latest_saved, latest_plays = week_plays(latest) if latest else (False, [])
         top = top_drawable_play(latest) if latest else None
+        latest_view = player_view(latest) if latest else None
+        if latest_view:
+            latest_view["move"] = moves.view(latest, notes, latest_edition["season"])
         page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
-             player=player_view(latest) if latest else None, latest_edition=latest_edition,
+             player=latest_view, latest_edition=latest_edition,
              played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
              season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
              top_play=play_view(top, latest) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,

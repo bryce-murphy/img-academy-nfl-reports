@@ -55,6 +55,7 @@
     <div>
       <dt>{{ group.label }}</dt>
       <dd>{% for p in group.players %}<span>{{ p.name }}{% if p.team %} · {{ p.team }}{% endif %}</span>{% endfor %}</dd>
+      {% for p in group.players if p.move %}<dd class="desk-move"{% if p.move.color %} style="--move: {{ p.move.color }}"{% endif %}>{{ p.name }}: {{ p.move.text }}{% if p.move.source_url %} Source: <a href="{{ p.move.source_url }}" rel="external noopener">{{ p.move.source_label }}</a>{% endif %}</dd>{% endfor %}
       <dd class="note">{{ group.note }}</dd>
     </div>
   {% endfor %}

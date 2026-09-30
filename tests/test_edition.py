@@ -12,6 +12,7 @@ import fixture_data
 from src import edition as ed
 from src import editorial
 from src import evidence as ev
+from src import moves
 from src.errors import DataError, NotReady
 from src.readiness import Readiness
 
@@ -245,7 +246,9 @@ class EditionTests(unittest.TestCase):
         def sources(season, *, week=None, only=None, historical=False):
             return data, manifest, []
 
-        edition, sources_out, report = ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False, registry=registry, sources=sources)
+        with tempfile.TemporaryDirectory() as empty:
+            edition, sources_out, report = ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False,
+                                                         registry=registry, sources=sources, editions_root=Path(empty))
         self.assertEqual((edition["id"], report.missing()), ("2026-week-02", []))
         self.assertIs(sources_out, manifest)
 
@@ -277,8 +280,8 @@ class PlaysTests(unittest.TestCase):
         self.assertIsNone(record["air_yards"])
         self.assertIsNone(record["sack"])
 
-    def test_schema_version_is_two(self):
-        self.assertEqual(build()["schema_version"], 2)
+    def test_schema_version_is_three(self):
+        self.assertEqual(build()["schema_version"], 3)
 
     def test_a_player_without_recorded_plays_has_an_empty_list(self):
         self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
@@ -329,6 +332,30 @@ class MainHeadlineTests(unittest.TestCase):
             self.assertIn("Owner headline", headline_path.read_text(encoding="utf-8"))
 
 
+class MainRebuildTests(unittest.TestCase):
+    def test_rebuild_keeps_published_players_and_reads_history_from_out(self):
+        data, manifest, _ = fixture_data.load()
+        games = fixture_data.week_games(data)
+        golden_edition = fixture_data.golden_edition()
+        with tempfile.TemporaryDirectory() as tmp:
+            published_dir = Path(tmp) / "2026-week-02"
+            published_dir.mkdir()
+            (published_dir / "edition.json").write_text(json.dumps(golden_edition), encoding="utf-8")
+            with mock.patch.object(ed, "due_week", return_value=(2, games)),                  mock.patch.object(ed, "build_week", return_value=(golden_edition, manifest, Readiness())) as build_week,                  contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(ed.main(["--season", "2026", "--week", "2", "--out", tmp, "--rebuild"]), 0)
+            kwargs = build_week.call_args.kwargs
+            self.assertEqual(kwargs["editions_root"], Path(tmp))
+            self.assertEqual(kwargs["keep"], {p["id"]: p for p in golden_edition["players"]})
+
+    def test_rebuild_without_a_published_edition_is_a_usage_error(self):
+        data = fixture_data.load()[0]
+        with tempfile.TemporaryDirectory() as tmp,              mock.patch.object(ed, "due_week", return_value=(2, fixture_data.week_games(data))),              mock.patch.object(ed, "build_week") as build_week,              contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as caught:
+                ed.main(["--season", "2026", "--week", "2", "--out", tmp, "--rebuild"])
+        self.assertEqual(caught.exception.code, 2)
+        build_week.assert_not_called()
+
+
 class DenominatorTests(unittest.TestCase):
     def test_team_snaps_are_the_most_any_teammate_played(self):
         rows = [{"team": "CLE", "offense_snaps": "60", "defense_snaps": "0", "st_snaps": "3"},
@@ -349,6 +376,42 @@ class DenominatorTests(unittest.TestCase):
         self.assertEqual(delpit["snaps"]["defense"], 65)
         self.assertGreaterEqual(delpit["snaps"]["team_defense"], 65)
         self.assertIn("usage", delpit)
+
+
+class MoveAttachTests(unittest.TestCase):
+    def build(self, **kwargs):
+        return build(**kwargs)
+
+    def test_schema_3_every_player_has_a_move_key(self):
+        e = self.build()
+        self.assertEqual(e["schema_version"], 3)
+        self.assertTrue(all("move" in p for p in e["players"]))
+
+    def test_history_produces_first_week_moves(self):
+        e = self.build()
+        target = next(p for p in e["players"] if moves.week_team(p) and moves.now_team(p) == moves.week_team(p))
+        earlier = {"season": 2026, "week": 1, "games": [], "players": [dict(target, team="ZZZ", availability={"label": "Played", "evidence": ""}, game=None)]}
+        again = self.build(history=[earlier])
+        moved = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((moved["move"]["kind"], moved["move"]["from"], moved["move"]["to"]), ("first_week", "ZZZ", target["team"]))
+
+    def test_keep_restores_published_roster_facts_and_move(self):
+        e = self.build()
+        target = e["players"][0]
+        published = dict(target, current={"team": "OLD", "roster_status": "ACT", "roster_label": "Active roster"},
+                         position="XX", team_changed=True, move={"kind": "moved_after_game", "from": "A", "to": "B"})
+        again = self.build(keep={target["id"]: published})
+        kept = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((kept["current"]["team"], kept["position"], kept["team_changed"], kept["move"]["to"]), ("OLD", "XX", True, "B"))
+
+    def test_keep_without_a_published_move_recomputes_from_published_roster(self):
+        e = self.build()
+        target = next(p for p in e["players"] if p["availability"]["label"] == "Played")
+        published = {k: v for k, v in target.items() if k != "move"}
+        published["current"] = dict(target["current"], team="ZZZ", roster_status="ACT")
+        again = self.build(keep={target["id"]: published})
+        kept = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((kept["move"]["kind"], kept["move"]["to"]), ("moved_after_game", "ZZZ"))
 
 
 if __name__ == "__main__":
