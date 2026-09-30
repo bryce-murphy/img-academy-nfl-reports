@@ -159,7 +159,8 @@ class SourceTests(unittest.TestCase):
         self.assertEqual(len([d for d in moves.ALLOWED_SOURCES if d not in {"nfl.com", "operations.nfl.com", "espn.com", "apnews.com"}]), 32)
 
     def test_rejected_links(self):
-        for url in ("http://www.giants.com/x", "https://theathletic.com/x", "https://example.com/x", "giants.com/x", "", "https://nfl.com.evil.test/x"):
+        for url in ("http://www.giants.com/x", "https://theathletic.com/x", "https://example.com/x", "giants.com/x", "", "https://nfl.com.evil.test/x",
+                    "https://giants.com:abc/x", "https://giants.com:99999/x", "https://[x/"):
             self.assertIsNone(moves.source_label(url), url)
 
     def test_look_alike_and_odd_hosts(self):
@@ -210,3 +211,44 @@ class SentenceTests(unittest.TestCase):
                          {"text": "Released by the Vikings (on their roster in Week 3).", "source_url": None, "source_label": None, "color": "#4F2683"})
         self.assertIsNone(moves.view({"id": "p1", "move": None}, index))
         self.assertIsNone(moves.view({"id": "p1"}, index))
+
+    def test_view_fallback_to_neutral_for_disallowed_source(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        bad_source = dict(NOTE, source="https://theathletic.com/x")
+        index = moves.note_index([(week3, {"roster_moves": [bad_source]})])
+        result = moves.view(week3["players"][0], index)
+        self.assertEqual(result["text"], moves.neutral(ARRIVAL))
+        self.assertIsNone(result["source_url"])
+        self.assertIsNone(result["source_label"])
+
+    def test_view_fallback_for_invalid_kind(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        bad_kind = dict(NOTE, kind="javascript:alert(1)")
+        index = moves.note_index([(week3, {"roster_moves": [bad_kind]})])
+        result = moves.view(week3["players"][0], index)
+        self.assertEqual(result["text"], moves.neutral(ARRIVAL))
+        self.assertIsNone(result["source_url"])
+
+    def test_view_fallback_for_wrong_direction_arrival_kind_on_departure(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": DEPARTURE}]}
+        wrong_kind = dict(NOTE, kind="trade")
+        index = moves.note_index([(week3, {"roster_moves": [wrong_kind]})])
+        result = moves.view(week3["players"][0], index)
+        self.assertEqual(result["text"], moves.neutral(DEPARTURE))
+        self.assertIsNone(result["source_url"])
+
+    def test_view_fallback_for_wrong_direction_departure_kind_on_arrival(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        wrong_kind = dict(NOTE, kind="release")
+        index = moves.note_index([(week3, {"roster_moves": [wrong_kind]})])
+        result = moves.view(week3["players"][0], index)
+        self.assertEqual(result["text"], moves.neutral(ARRIVAL))
+        self.assertIsNone(result["source_url"])
+
+    def test_view_fallback_for_invalid_date(self):
+        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        bad_date = dict(NOTE, date="2026-09-28")
+        index = moves.note_index([(week3, {"roster_moves": [bad_date]})])
+        result = moves.view(week3["players"][0], index)
+        self.assertEqual(result["text"], moves.neutral(ARRIVAL))
+        self.assertIsNone(result["source_url"])

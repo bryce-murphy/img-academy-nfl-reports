@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date as date_type
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -111,8 +112,11 @@ def source_label(url):
     """The outlet label for an allowed https link, or None. Hosts match exactly or as a subdomain."""
     if not isinstance(url, str):
         return None
-    parts = urlsplit(url.strip())
-    if parts.scheme != "https" or parts.username or parts.password or parts.port or not parts.hostname:
+    try:
+        parts = urlsplit(url.strip())
+        if parts.scheme != "https" or parts.username or parts.password or parts.port or not parts.hostname:
+            return None
+    except ValueError:
         return None
     host = parts.hostname.lower()
     for domain in sorted(ALLOWED_SOURCES, key=len, reverse=True):
@@ -164,12 +168,34 @@ def note_index(editions):
     return index
 
 
+def _usable(note, move):
+    """Check if a note is safe to display. False means fall back to neutral text."""
+    if not note:
+        return False
+    # Source must be allowed
+    if source_label(note.get("source")) is None:
+        return False
+    # Kind must be in VERBS
+    if note.get("kind") not in VERBS:
+        return False
+    # Kind must fit the move direction
+    kind = note["kind"]
+    if kind in ARRIVALS and not move.get("to"):
+        return False
+    if kind in DEPARTURES and move.get("to") is not None:
+        return False
+    # Date must be a date object
+    if not isinstance(note.get("date"), date_type):
+        return False
+    return True
+
+
 def view(player, index):
     move = player.get("move")
     if not move:
         return None
     note = index.get((player["id"], move["from"], move["to"]))
     color = move.get("to_color") or move.get("from_color")
-    if note:
+    if _usable(note, move):
         return {"text": sourced(move, note), "source_url": note["source"], "source_label": source_label(note["source"]), "color": color}
     return {"text": neutral(move), "source_url": None, "source_label": None, "color": color}
