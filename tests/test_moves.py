@@ -105,6 +105,34 @@ class DetectTests(unittest.TestCase):
         move = detect(player(team="CLE", now="CLE"), week=4, history=[before])
         self.assertEqual((move["from"], move["to"]), ("MIN", "CLE"))
 
+    def test_first_week_after_a_bye_names_the_last_week_with_the_old_team(self):
+        bye = player(label="Bye week", game_id=None)
+        history = [edition(3, player(), gameday="2026-09-27"), edition(4, bye)]
+        move = detect(player(team="NYG", now="NYG"), week=5, history=history)
+        self.assertEqual((move["kind"], move["from"], move["last_week_with_old_team"], move["last_game_date"]),
+                         ("first_week", "MIN", 3, "2026-09-27"))
+
+    def test_moved_after_game_during_a_bye_names_the_last_week_with_the_old_team(self):
+        bye = player(label="Bye week", game_id=None, now="NYG")
+        move = detect(bye, week=4, history=[edition(3, player(), gameday="2026-09-27")])
+        self.assertEqual((move["kind"], move["from"], move["to"], move["last_week_with_old_team"], move["last_game_date"]),
+                         ("moved_after_game", "MIN", "NYG", 3, "2026-09-27"))
+
+    def test_left_before_week_after_a_bye_names_the_last_week_with_the_old_team(self):
+        gone = player(team="", label="Not on an NFL roster", now="", status="", game_id=None)
+        history = [edition(3, player(), gameday="2026-09-27"), edition(4, player(label="Bye week", game_id=None))]
+        move = detect(gone, week=5, history=history)
+        self.assertEqual((move["kind"], move["from"], move["last_week_with_old_team"], move["last_game_date"]),
+                         ("left_before_week", "MIN", 3, "2026-09-27"))
+
+    def test_only_a_bye_with_the_old_team_keeps_the_candidate_week(self):
+        history = [edition(4, player(label="Bye week", game_id=None))]
+        move = detect(player(team="NYG", now="NYG"), week=5, history=history)
+        self.assertEqual((move["kind"], move["from"], move["last_week_with_old_team"], move["last_game_date"]), ("first_week", "MIN", 4, None))
+        bye = player(label="Bye week", game_id=None, now="NYG")
+        move = detect(bye, week=4)
+        self.assertEqual((move["kind"], move["last_week_with_old_team"], move["last_game_date"]), ("moved_after_game", 4, None))
+
     def test_no_game_date_when_old_team_had_no_game(self):
         self.assertIsNone(detect(player(now="NYG", game_id=None))["last_game_date"])
 
@@ -194,61 +222,72 @@ class SentenceTests(unittest.TestCase):
                          "Traded to the Giants on Sep 28 for a 2027 fourth-round pick.")
 
     def test_view_prefers_a_matching_note_from_any_edition(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
         week4_player = {"id": "p1", "move": dict(ARRIVAL, kind="first_week")}
-        index = moves.note_index([(week3, {"roster_moves": [NOTE]}), ({"week": 4, "players": [week4_player]}, {})])
-        shown = moves.view(week4_player, index)
+        index = moves.note_index([(week3, {"roster_moves": [NOTE]}), ({"season": 2026, "week": 4, "players": [week4_player]}, {})])
+        shown = moves.view(week4_player, index, 2026)
         self.assertEqual(shown, {"text": "Traded to the Giants on Sep 28 for a 2027 fourth-round pick.",
                                  "source_url": NOTE["source"], "source_label": "Giants.com", "color": "#0B2265"})
 
+    def test_same_move_twice_keeps_each_note_to_its_own_occurrence(self):
+        first = {"id": "p1", "move": dict(DEPARTURE, last_week_with_old_team=3)}
+        second = {"id": "p1", "move": dict(DEPARTURE, last_week_with_old_team=9)}
+        note3 = dict(NOTE, kind="release", date=date(2026, 9, 28), details="")
+        note9 = dict(NOTE, kind="release", date=date(2026, 11, 20), details="")
+        index = moves.note_index([({"season": 2026, "week": 4, "players": [first]}, {"roster_moves": [note3]}),
+                                  ({"season": 2026, "week": 10, "players": [second]}, {"roster_moves": [note9]})])
+        self.assertEqual(moves.view(first, index, 2026)["text"], "Released by the Vikings on Sep 28.")
+        self.assertEqual(moves.view(second, index, 2026)["text"], "Released by the Vikings on Nov 20.")
+        self.assertEqual(moves.view(second, index, 2025)["text"], moves.neutral(second["move"]))
+
     def test_earliest_note_wins_and_neutral_without_note(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
-        week4 = {"week": 4, "players": [{"id": "p1", "move": dict(ARRIVAL, kind="first_week")}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week4 = {"season": 2026, "week": 4, "players": [{"id": "p1", "move": dict(ARRIVAL, kind="first_week")}]}
         later = dict(NOTE, details="later text")
         index = moves.note_index([(week3, {"roster_moves": [NOTE]}), (week4, {"roster_moves": [later]})])
-        self.assertIn("fourth-round", moves.view(week4["players"][0], index)["text"])
-        self.assertEqual(moves.view({"id": "p1", "move": DEPARTURE}, {}),
+        self.assertIn("fourth-round", moves.view(week4["players"][0], index, 2026)["text"])
+        self.assertEqual(moves.view({"id": "p1", "move": DEPARTURE}, {}, 2026),
                          {"text": "Released by the Vikings (on their roster in Week 3).", "source_url": None, "source_label": None, "color": "#4F2683"})
-        self.assertIsNone(moves.view({"id": "p1", "move": None}, index))
-        self.assertIsNone(moves.view({"id": "p1"}, index))
+        self.assertIsNone(moves.view({"id": "p1", "move": None}, index, 2026))
+        self.assertIsNone(moves.view({"id": "p1"}, index, 2026))
 
     def test_view_fallback_to_neutral_for_disallowed_source(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
         bad_source = dict(NOTE, source="https://theathletic.com/x")
         index = moves.note_index([(week3, {"roster_moves": [bad_source]})])
-        result = moves.view(week3["players"][0], index)
+        result = moves.view(week3["players"][0], index, 2026)
         self.assertEqual(result["text"], moves.neutral(ARRIVAL))
         self.assertIsNone(result["source_url"])
         self.assertIsNone(result["source_label"])
 
     def test_view_fallback_for_invalid_kind(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
         bad_kind = dict(NOTE, kind="javascript:alert(1)")
         index = moves.note_index([(week3, {"roster_moves": [bad_kind]})])
-        result = moves.view(week3["players"][0], index)
+        result = moves.view(week3["players"][0], index, 2026)
         self.assertEqual(result["text"], moves.neutral(ARRIVAL))
         self.assertIsNone(result["source_url"])
 
     def test_view_fallback_for_wrong_direction_arrival_kind_on_departure(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": DEPARTURE}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": DEPARTURE}]}
         wrong_kind = dict(NOTE, kind="trade")
         index = moves.note_index([(week3, {"roster_moves": [wrong_kind]})])
-        result = moves.view(week3["players"][0], index)
+        result = moves.view(week3["players"][0], index, 2026)
         self.assertEqual(result["text"], moves.neutral(DEPARTURE))
         self.assertIsNone(result["source_url"])
 
     def test_view_fallback_for_wrong_direction_departure_kind_on_arrival(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
         wrong_kind = dict(NOTE, kind="release")
         index = moves.note_index([(week3, {"roster_moves": [wrong_kind]})])
-        result = moves.view(week3["players"][0], index)
+        result = moves.view(week3["players"][0], index, 2026)
         self.assertEqual(result["text"], moves.neutral(ARRIVAL))
         self.assertIsNone(result["source_url"])
 
     def test_view_fallback_for_invalid_date(self):
-        week3 = {"week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
+        week3 = {"season": 2026, "week": 3, "players": [{"id": "p1", "move": ARRIVAL}]}
         bad_date = dict(NOTE, date="2026-09-28")
         index = moves.note_index([(week3, {"roster_moves": [bad_date]})])
-        result = moves.view(week3["players"][0], index)
+        result = moves.view(week3["players"][0], index, 2026)
         self.assertEqual(result["text"], moves.neutral(ARRIVAL))
         self.assertIsNone(result["source_url"])

@@ -300,7 +300,7 @@ def top_drawable_play(player):
 def edition_context(edition, *, root, data_path, slugs, notes=None):
     players = [player_view(p) for p in edition.data["players"]]
     for raw, view in zip(edition.data["players"], players):
-        view["move"] = moves.view(raw, notes or {})
+        view["move"] = moves.view(raw, notes or {}, edition.data["season"])
         slug = slugs.get(raw["id"])
         view["page"] = f"{root}players/{slug}/{edition.id}/" if slug else None
         top = top_drawable_play(raw)
@@ -416,7 +416,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         base_url = f"players/{alum['slug']}/"
         for e_data, p in apps:
             view = player_view(p)
-            view["move"] = moves.view(p, notes)
+            view["move"] = moves.view(p, notes, e_data["season"])
             saved, plays = week_plays(p)
             page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
                  player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
@@ -431,7 +431,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         top = top_drawable_play(latest) if latest else None
         latest_view = player_view(latest) if latest else None
         if latest_view:
-            latest_view["move"] = moves.view(latest, notes)
+            latest_view["move"] = moves.view(latest, notes, latest_edition["season"])
         page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
              player=latest_view, latest_edition=latest_edition,
              played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,

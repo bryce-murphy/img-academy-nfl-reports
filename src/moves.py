@@ -53,20 +53,30 @@ def detect(player, week, games, history, team_name, team_color):
             "last_week_with_old_team": last_week, "last_game_date": last_date,
         }
 
+    def last_with(old, appearances, fallback_week, fallback_date):
+        """Latest week on `old` that was not a bye; the candidate week if there is none."""
+        found = next(((w, g, q) for w, g, q in reversed(appearances) if week_team(q) == old and q["availability"]["label"] != ev.BYE), None)
+        return (found[0], _game_date(found[1], found[2])) if found else (fallback_week, fallback_date)
+
     this, now = week_team(player), now_team(player)
-    if this and now != this:
-        return move("moved_after_game" if now else "left_after_game", this, now, week, _game_date(games, player))
     earlier = [(e, q) for e in history for q in e["players"] if q["id"] == player["id"]]
+    seen = [(e["week"], e["games"], q) for e, q in earlier]
+    if this and now != this:
+        last_week, last_date = last_with(this, seen + [(week, games, player)], week, _game_date(games, player))
+        return move("moved_after_game" if now else "left_after_game", this, now, last_week, last_date)
     previous = history[-1] if history else None
     before_player = next((q for e, q in earlier if e is previous), None)
     before = week_team(before_player) if before_player else None
     if before and this != before:
         kind = "first_week" if this else "left_before_week"
-        return move(kind, before, this, previous["week"], _game_date(previous["games"], before_player))
+        last_week, last_date = last_with(before, seen, previous["week"], _game_date(previous["games"], before_player))
+        return move(kind, before, this, last_week, last_date)
     if this and before is None:
         last = next(((e, q) for e, q in reversed(earlier) if week_team(q)), None)
         if last and week_team(last[1]) != this:
-            return move("first_week", week_team(last[1]), this, last[0]["week"], _game_date(last[0]["games"], last[1]))
+            old = week_team(last[1])
+            last_week, last_date = last_with(old, seen, last[0]["week"], _game_date(last[0]["games"], last[1]))
+            return move("first_week", old, this, last_week, last_date)
     return None
 
 
@@ -157,14 +167,15 @@ def sourced(move, note):
 
 
 def note_index(editions):
-    """(player id, from, to) -> the earliest edition's note for that move. `editions` is oldest first."""
+    """(player id, from, to, season, last week with the old team) -> the earliest note for that occurrence of a move.
+    `editions` is oldest first. A move and its first-week carry-over share a key, so the note follows it."""
     index = {}
     for data, copy in editions:
         players = {p["id"]: p for p in data.get("players", [])}
         for note in (copy or {}).get("roster_moves", []) or []:
             move = (players.get(note.get("player_id")) or {}).get("move")
             if move:
-                index.setdefault((note["player_id"], move["from"], move["to"]), note)
+                index.setdefault((note["player_id"], move["from"], move["to"], data.get("season"), move["last_week_with_old_team"]), note)
     return index
 
 
@@ -190,11 +201,11 @@ def _usable(note, move):
     return True
 
 
-def view(player, index):
+def view(player, index, season):
     move = player.get("move")
     if not move:
         return None
-    note = index.get((player["id"], move["from"], move["to"]))
+    note = index.get((player["id"], move["from"], move["to"], season, move["last_week_with_old_team"]))
     color = move.get("to_color") or move.get("from_color")
     if _usable(note, move):
         return {"text": sourced(move, note), "source_url": note["source"], "source_label": source_label(note["source"]), "color": color}
