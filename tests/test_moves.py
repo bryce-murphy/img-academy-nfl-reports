@@ -125,3 +125,17 @@ class HistoryTests(unittest.TestCase):
     def test_moved_players(self):
         e = {"players": [{"id": "a", "move": None}, {"id": "b", "move": {"kind": "first_week"}}, {"id": "c"}]}
         self.assertEqual([p["id"] for p in moves.moved_players(e)], ["b"])
+
+
+class RealDataTests(unittest.TestCase):
+    def test_mccarthy_week_3_is_a_move_after_the_game(self):
+        import json
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[1] / "editions"
+        week3 = json.loads((root / "2026-week-03" / "edition.json").read_text(encoding="utf-8"))
+        mccarthy = next(p for p in week3["players"] if p["name"] == "J.J. McCarthy")
+        gameday = next(g["gameday"] for g in week3["games"] if g["game_id"] == mccarthy["game"]["game_id"])
+        move = moves.detect(mccarthy, 3, week3["games"], moves.load_history(root, 2026, 3), NAMES.get, COLORS.get)
+        self.assertEqual((move["kind"], move["from"], move["to"], move["last_week_with_old_team"], move["last_game_date"]),
+                         ("moved_after_game", "MIN", "NYG", 3, gameday))

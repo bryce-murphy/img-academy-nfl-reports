@@ -12,6 +12,7 @@ import fixture_data
 from src import edition as ed
 from src import editorial
 from src import evidence as ev
+from src import moves
 from src.errors import DataError, NotReady
 from src.readiness import Readiness
 
@@ -277,8 +278,8 @@ class PlaysTests(unittest.TestCase):
         self.assertIsNone(record["air_yards"])
         self.assertIsNone(record["sack"])
 
-    def test_schema_version_is_two(self):
-        self.assertEqual(build()["schema_version"], 2)
+    def test_schema_version_is_three(self):
+        self.assertEqual(build()["schema_version"], 3)
 
     def test_a_player_without_recorded_plays_has_an_empty_list(self):
         self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
@@ -349,6 +350,42 @@ class DenominatorTests(unittest.TestCase):
         self.assertEqual(delpit["snaps"]["defense"], 65)
         self.assertGreaterEqual(delpit["snaps"]["team_defense"], 65)
         self.assertIn("usage", delpit)
+
+
+class MoveAttachTests(unittest.TestCase):
+    def build(self, **kwargs):
+        return build(**kwargs)
+
+    def test_schema_3_every_player_has_a_move_key(self):
+        e = self.build()
+        self.assertEqual(e["schema_version"], 3)
+        self.assertTrue(all("move" in p for p in e["players"]))
+
+    def test_history_produces_first_week_moves(self):
+        e = self.build()
+        target = next(p for p in e["players"] if moves.week_team(p) and moves.now_team(p) == moves.week_team(p))
+        earlier = {"season": 2026, "week": 1, "games": [], "players": [dict(target, team="ZZZ", availability={"label": "Played", "evidence": ""}, game=None)]}
+        again = self.build(history=[earlier])
+        moved = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((moved["move"]["kind"], moved["move"]["from"], moved["move"]["to"]), ("first_week", "ZZZ", target["team"]))
+
+    def test_keep_restores_published_roster_facts_and_move(self):
+        e = self.build()
+        target = e["players"][0]
+        published = dict(target, current={"team": "OLD", "roster_status": "ACT", "roster_label": "Active roster"},
+                         position="XX", team_changed=True, move={"kind": "moved_after_game", "from": "A", "to": "B"})
+        again = self.build(keep={target["id"]: published})
+        kept = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((kept["current"]["team"], kept["position"], kept["team_changed"], kept["move"]["to"]), ("OLD", "XX", True, "B"))
+
+    def test_keep_without_a_published_move_recomputes_from_published_roster(self):
+        e = self.build()
+        target = next(p for p in e["players"] if p["availability"]["label"] == "Played")
+        published = {k: v for k, v in target.items() if k != "move"}
+        published["current"] = dict(target["current"], team="ZZZ", roster_status="ACT")
+        again = self.build(keep={target["id"]: published})
+        kept = next(p for p in again["players"] if p["id"] == target["id"])
+        self.assertEqual((kept["move"]["kind"], kept["move"]["to"]), ("moved_after_game", "ZZZ"))
 
 
 if __name__ == "__main__":

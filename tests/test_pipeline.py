@@ -1,7 +1,11 @@
+import tempfile
 import unittest
+import unittest.mock
 from copy import deepcopy
+from pathlib import Path
 
 import fixture_data
+from src import edition as edition_module
 from src import editorial, pipeline
 from src.errors import DataError
 from src.pipeline import Settings
@@ -104,6 +108,11 @@ def without_end_of_game(data):
 class PipelineTests(unittest.TestCase):
     def setUp(self):
         self.data, self.manifest, self.registry = fixture_data.load()
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        patcher = unittest.mock.patch.object(edition_module, "EDITIONS_ROOT", Path(tmp.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def attempt(self, gh, settings=None, data=None, cfg=None):
         settings = settings or Settings(event="schedule", schedule=FIRST, automation="on", run_url="https://run", bot_login=BOT)
