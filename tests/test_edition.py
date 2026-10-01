@@ -92,6 +92,13 @@ class ChartingTests(unittest.TestCase):
         data["ftn"].append(dict(data["ftn"][0], week=""))
         self.assertEqual(player(build(data), "Carnell Tate")["charting"]["targets"]["charted"], 5)
 
+    def test_half_sacks_are_kept_not_truncated(self):
+        # PFR credits shared sacks as 0.5 (62 player-games in the 2026 file by Week 3); int() turned them into 0.
+        edition = build(self.mutate("pfr_def", "pfr_player_name", "Grant Delpit", def_sacks="0.5"))
+        self.assertEqual(player(edition, "Grant Delpit")["charting"]["pass_rush"]["sacks"], 0.5)
+        whole = player(build(), "Grant Delpit")["charting"]["pass_rush"]["sacks"]
+        self.assertEqual((whole, type(whole)), (1, int))
+
     def test_blank_pfr_fields_withhold_the_line_instead_of_reading_zero(self):
         edition = build(self.mutate("pfr_def", "pfr_player_name", "Grant Delpit", def_missed_tackles="NA", def_completions_allowed=""))
         delpit = player(edition, "Grant Delpit")["charting"]

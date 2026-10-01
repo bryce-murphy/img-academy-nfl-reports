@@ -96,7 +96,9 @@ class SeasonLineTests(unittest.TestCase):
         self.assertIn("1 sack", lines["Impact plays"])
         self.assertIn("65 defensive snaps", lines["Snaps"])
         self.assertNotIn("per 100", lines["Impact plays"])
-        self.assertIn("Charted in coverage", lines["Coverage"])
+        self.assertIn("Thrown at 4 times in coverage. 2 were completed, for 17 yards", lines["Coverage"])
+        self.assertEqual(lines["Pass rush"], "Pressured the quarterback once.")
+        self.assertEqual(lines["Tackling"], "Made 5 tackles and missed none.")
         self.assertNotIn("allowed", " ".join(lines.values()))
 
     def test_rates_appear_at_the_threshold(self):
@@ -253,9 +255,17 @@ class SeasonLineTests(unittest.TestCase):
             "tackling": {"missed": 1, "attempts": 4}, "rushing": None, "broken_tackles": None,
         }}})
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2, week3], "00-0036282"), "SAF")}
-        self.assertIn("(based on 1 of 2 weeks)", lines["Coverage"])
-        self.assertIn("(based on 1 of 2 weeks)", lines["Tackling"])
-        self.assertNotIn("(based on", lines["Pass rush"])
+        self.assertEqual(lines["Coverage"], "Thrown at 4 times in coverage. 2 were completed, for 17 yards (based on 1 of 2 weeks).")
+        self.assertEqual(lines["Tackling"], "Made 3 tackles and missed 1 (based on 1 of 2 weeks).")
+        self.assertEqual(lines["Pass rush"], "Pressured the quarterback 3 times.")
+
+    def test_season_pass_rush_never_claims_zero_pressures(self):
+        # An all-zero PFR pass-rush week is not stored, so a season total of 0 can't be told from missing data.
+        week2 = edition_with(2, **{"Grant Delpit": {"charting": {
+            "targets": None, "coverage": None, "pass_rush": {"pressures": 0, "hurries": 0, "qb_hits": 0, "sacks": 0, "blitzes": 2},
+            "tackling": None, "rushing": None, "broken_tackles": None}}})
+        lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([week2], "00-0036282"), "SAF")}
+        self.assertNotIn("Pass rush", lines)
 
     def test_receiver_charted_targets_note_partial_weeks(self):
         a = edition_with(2, **{"Carnell Tate": {"charting": {
@@ -267,7 +277,7 @@ class SeasonLineTests(unittest.TestCase):
         }}})
         tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([a, b], tate), "WR")}
-        self.assertIn("(based on 1 of 2 weeks)", lines["Charted targets"])
+        self.assertEqual(lines["Pass catching"], "3 of his 5 charted targets were catchable. No drops (based on 1 of 2 weeks).")
 
     def test_defense_tackles_line(self):
         plays = [{"roles": ["solo_tackle_1"], "side": "defense", "impact": None}] * 3

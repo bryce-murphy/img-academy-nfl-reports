@@ -163,27 +163,89 @@ class RenderTests(SiteTestCase):
         self.assertIn("Good for the Browns defense", html)
         self.assertNotIn("EPA -", html)
 
-    def test_charting_lines_are_counts_in_plain_words(self):
-        lines = site.charting_lines
-        self.assertEqual(lines({"charting": None}), [])
-        self.assertEqual(lines({"charting": {"targets": {"charted": 5, "catchable": 3, "contested": 1, "contested_catches": 1, "drops": 0}}}),
-                         ["Targets: 3 of 5 catchable, 0 drops, 1 of 1 contested caught"])
-        self.assertEqual(lines({"charting": {"coverage": {"targets": 4, "completions": 2, "yards": 17, "touchdowns": 1, "interceptions": 0}}}),
-                         ["Charted in coverage: 4 targets, 2 completions, 17 yards, 1 touchdown"])
-        self.assertEqual(lines({"charting": {"pass_rush": {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 2}}}),
-                         ["Pass rush: 1 pressure (1 sack), blitzed 2 times"])
-        self.assertEqual(lines({"charting": {"pass_rush": {"pressures": 0, "hurries": 0, "qb_hits": 0, "sacks": 0, "blitzes": 1}}}),
-                         ["Pass rush: 0 pressures, blitzed 1 time"])
-        self.assertEqual(lines({"charting": {"tackling": {"missed": 1, "attempts": 6}}}), ["Tackling: 1 missed in 6 attempts"])
-        self.assertEqual(lines({"charting": {"rushing": {"carries": 5, "before_contact": 16, "after_contact": 8, "broken_tackles": 0}}}),
-                         ["Rushing: 8 of 24 yards after contact, 0 broken tackles"])
-        self.assertEqual(lines({"charting": {"broken_tackles": 2}}), ["Broken tackles after the catch: 2"])
+    def test_charting_lines_are_plain_sentences(self):
+        def lines(**charting):
+            return site.charting_lines({"charting": charting})
+
+        self.assertEqual(site.charting_lines({"charting": None}), [])
+        targets = {"charted": 9, "catchable": 6, "contested": 2, "contested_catches": 1, "drops": 0}
+        self.assertEqual(lines(targets=targets), ["6 of his 9 charted targets were catchable. No drops. Caught 1 of 2 contested throws."])
+        self.assertEqual(lines(targets=dict(targets, catchable=9, drops=1, contested=0, contested_catches=0)),
+                         ["All 9 of his charted targets were catchable. 1 drop."])
+        self.assertEqual(lines(targets=dict(targets, charted=1, catchable=1, contested=1, contested_catches=1)),
+                         ["His only charted target was catchable. No drops. Caught his only contested throw."])
+        self.assertEqual(lines(targets=dict(targets, catchable=0, drops=2, contested=2, contested_catches=0)),
+                         ["None of his 9 charted targets were catchable. 2 drops. Caught neither contested throw."])
+        self.assertEqual(lines(targets=dict(targets, contested=2, contested_catches=2))[0].split(". ")[-1], "Caught both contested throws.")
+
+        cover = {"targets": 4, "completions": 4, "yards": 52, "touchdowns": 0, "interceptions": 0}
+        self.assertEqual(lines(coverage=cover), ["Thrown at 4 times in coverage. All 4 were completed, for 52 yards."])
+        self.assertEqual(lines(coverage=dict(cover, targets=6, completions=2, yards=17, touchdowns=1, interceptions=1)),
+                         ["Thrown at 6 times in coverage. 2 were completed, for 17 yards. 1 went for a touchdown. Intercepted 1 pass."])
+        self.assertEqual(lines(coverage=dict(cover, targets=3, completions=0, yards=0)), ["Thrown at 3 times in coverage. None was completed."])
+        self.assertEqual(lines(coverage=dict(cover, targets=2, completions=0, yards=0)), ["Thrown at 2 times in coverage. Neither was completed."])
+        self.assertEqual(lines(coverage=dict(cover, targets=1, completions=1, yards=1)), ["Thrown at one time in coverage. It was completed, for 1 yard."])
+        self.assertEqual(lines(coverage=dict(cover, targets=1, completions=0, yards=0)), ["Thrown at one time in coverage. It was not completed."])
+
+        rush = {"pressures": 1, "hurries": 0, "qb_hits": 0, "sacks": 1, "blitzes": 1}
+        self.assertEqual(lines(pass_rush=rush), ["Pressured the quarterback once, with a sack. Blitzed once."])
+        self.assertEqual(lines(pass_rush=dict(rush, pressures=3, hurries=1, qb_hits=1, blitzes=0)),
+                         ["Pressured the quarterback 3 times (1 sack, 1 hit, 1 hurry)."])
+        self.assertEqual(lines(pass_rush=dict(rush, pressures=2, sacks=0.5, hurries=1, blitzes=2)),
+                         ["Pressured the quarterback twice (0.5 sacks, 1 hurry). Blitzed twice."])
+        self.assertEqual(lines(pass_rush=dict(rush, pressures=0, sacks=0, blitzes=1)), ["Blitzed once, without a pressure."])
+        self.assertEqual(lines(pass_rush=dict(rush, pressures=0, sacks=0, blitzes=3)), ["Blitzed 3 times, without a pressure."])
+
+        self.assertEqual(lines(tackling={"missed": 0, "attempts": 10}), ["Made 10 tackles and missed none."])
+        self.assertEqual(lines(tackling={"missed": 1, "attempts": 6}), ["Made 5 tackles and missed 1."])
+        self.assertEqual(lines(tackling={"missed": 2, "attempts": 2}), ["Missed 2 tackles and made none."])
+        self.assertEqual(lines(tackling={"missed": 0, "attempts": 1}), ["Made 1 tackle and missed none."])
+
+        self.assertEqual(lines(rushing={"carries": 5, "before_contact": 16, "after_contact": 8, "broken_tackles": 0}),
+                         ["Gained 8 of his 24 rushing yards after first contact."])
+        self.assertEqual(lines(rushing={"carries": 9, "before_contact": 22, "after_contact": 30, "broken_tackles": 3}),
+                         ["Gained 30 of his 52 rushing yards after first contact. Broke 3 tackles."])
+        self.assertEqual(lines(rushing={"carries": 4, "before_contact": -6, "after_contact": 9, "broken_tackles": 1}),
+                         ["Gained 9 yards after first contact, on 3 rushing yards in all. Broke 1 tackle."])
+        self.assertEqual(lines(broken_tackles=2), ["Broke 2 tackles after the catch."])
+        self.assertEqual(lines(broken_tackles=1), ["Broke 1 tackle after the catch."])
+
+    def test_tracking_lines_are_plain_sentences(self):
+        def line(label, value, source="ngs_receiving"):
+            return site.charting_lines({"next_gen": [{"label": label, "value": value, "unit": "", "source": source}]})
+
+        self.assertEqual(line("Average separation", 3.16), ["Defenders were 3.2 yards away, on average, when passes reached him."])
+        self.assertEqual(line("YAC above expectation per catch", -1.41), ["Averaged 1.4 fewer yards after the catch than expected."])
+        self.assertEqual(line("YAC above expectation per catch", 0.62), ["Averaged 0.6 more yards after the catch than expected."])
+        self.assertEqual(line("YAC above expectation per catch", -0.04), ["Matched the expected yards after the catch."])
+        self.assertEqual(line("Time to throw", 2.84, "ngs_passing"), ["Averaged 2.8 seconds from snap to throw."])
+        self.assertEqual(line("Completion above expectation", 4.12, "ngs_passing"), ["Completed passes at a rate 4.1 percentage points above expected."])
+        self.assertEqual(line("Completion above expectation", -2.5, "ngs_passing"), ["Completed passes at a rate 2.5 percentage points below expected."])
+        self.assertEqual(line("Completion above expectation", 0.01, "ngs_passing"), ["Completed passes at the expected rate."])
+        both = site.charting_lines({"next_gen": [{"label": "Rushing yards over expected", "value": 12.34, "unit": "yards", "source": "ngs_rushing"},
+                                                 {"label": "RYOE per carry", "value": 0.82, "unit": "yards", "source": "ngs_rushing"}]})
+        self.assertEqual(both, ["Ran for 12.3 more yards than expected (0.8 per carry)."])
+        self.assertEqual(site.charting_lines({"next_gen": [{"label": "Rushing yards over expected", "value": -3.0, "unit": "yards", "source": "ngs_rushing"}]}),
+                         ["Ran for 3.0 fewer yards than expected."])
+
+    def test_lines_run_receiving_rushing_passing_then_defense_and_credit_their_sources(self):
+        player = {"charting": {"tackling": {"missed": 0, "attempts": 2}, "targets": {"charted": 2, "catchable": 2, "contested": 0, "contested_catches": 0, "drops": 0},
+                               "rushing": {"carries": 1, "before_contact": 2, "after_contact": 1, "broken_tackles": 0}},
+                  "next_gen": [{"label": "Time to throw", "value": 2.5, "unit": "s", "source": "ngs_passing"},
+                               {"label": "Average separation", "value": 2.0, "unit": "yards", "source": "ngs_receiving"}]}
+        self.assertEqual([l.split(" ")[0] for l in site.charting_lines(player)], ["All", "Defenders", "Gained", "Averaged", "Made"])
+        self.assertEqual(site.charting_sources(player), "Sources: Pro Football Reference; FTN Data via nflverse; NFL Next Gen Stats.")
+        self.assertEqual(site.charting_sources({"charting": {"tackling": {"missed": 0, "attempts": 2}}}), "Source: Pro Football Reference.")
+        self.assertEqual(site.charting_sources({"next_gen": player["next_gen"]}), "Source: NFL Next Gen Stats.")
+        self.assertIsNone(site.charting_sources({"charting": None}))
 
     def test_cards_show_charting_and_pages_credit_the_charting_sources(self):
         out = self.render()
         html = self.read(out / "index.html")
-        self.assertIn("Charted in coverage: 4 targets, 2 completions, 17 yards", html)
-        self.assertIn("Targets: 3 of 5 catchable, 0 drops", html)
+        self.assertIn("Thrown at 4 times in coverage. 2 were completed, for 17 yards.", html)
+        self.assertIn("3 of his 5 charted targets were catchable. No drops.", html)
+        self.assertIn('<p class="stat-sources">Source', html)
+        self.assertNotIn("Charted in coverage", html)
         self.assertNotIn(" allowed", html.split('<footer class="site-footer">')[0].split("<main")[1])
         for page in (html, self.read(out / "methodology" / "index.html")):
             self.assertIn("FTN Data via nflverse", page)
