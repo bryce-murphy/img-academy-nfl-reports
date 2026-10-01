@@ -69,6 +69,7 @@ def specifications(season):
         "pbp": ("pbp", f"play_by_play_{season}.csv.gz", {
             "game_id", "play_id", "week", "desc", "epa", "wpa", *PLAY_COLUMNS,
             "qtr", "time", "play_type", "fumble_lost", "third_down_failed", "fourth_down_failed",
+            "passer_player_name", "rusher_player_name", "receiver_player_name",
             *(f"{role}_player_id" for role in RECORDED_ROLES),
         }),
         "snaps": ("snap_counts", f"snap_counts_{season}.csv", {"game_id", "pfr_player_id", "team", "offense_snaps", "defense_snaps", "st_snaps"}),

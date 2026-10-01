@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "id": "2026-week-02",
   "season": 2026,
   "week": 2,
@@ -137,6 +137,136 @@
       "home_score": 28
     }
   ],
+  "teams": {
+    "ARI": {
+      "name": "Arizona Cardinals",
+      "color": "#97233F"
+    },
+    "ATL": {
+      "name": "Atlanta Falcons",
+      "color": "#A71930"
+    },
+    "BAL": {
+      "name": "Baltimore Ravens",
+      "color": "#241773"
+    },
+    "BUF": {
+      "name": "Buffalo Bills",
+      "color": "#00338D"
+    },
+    "CAR": {
+      "name": "Carolina Panthers",
+      "color": "#0085CA"
+    },
+    "CHI": {
+      "name": "Chicago Bears",
+      "color": "#0B162A"
+    },
+    "CIN": {
+      "name": "Cincinnati Bengals",
+      "color": "#FB4F14"
+    },
+    "CLE": {
+      "name": "Cleveland Browns",
+      "color": "#FF3C00"
+    },
+    "DAL": {
+      "name": "Dallas Cowboys",
+      "color": "#002244"
+    },
+    "DEN": {
+      "name": "Denver Broncos",
+      "color": "#002244"
+    },
+    "DET": {
+      "name": "Detroit Lions",
+      "color": "#0076B6"
+    },
+    "GB": {
+      "name": "Green Bay Packers",
+      "color": "#203731"
+    },
+    "HOU": {
+      "name": "Houston Texans",
+      "color": "#03202F"
+    },
+    "IND": {
+      "name": "Indianapolis Colts",
+      "color": "#002C5F"
+    },
+    "JAX": {
+      "name": "Jacksonville Jaguars",
+      "color": "#006778"
+    },
+    "KC": {
+      "name": "Kansas City Chiefs",
+      "color": "#E31837"
+    },
+    "LA": {
+      "name": "Los Angeles Rams",
+      "color": "#003594"
+    },
+    "LAC": {
+      "name": "Los Angeles Chargers",
+      "color": "#007BC7"
+    },
+    "LV": {
+      "name": "Las Vegas Raiders",
+      "color": "#000000"
+    },
+    "MIA": {
+      "name": "Miami Dolphins",
+      "color": "#008E97"
+    },
+    "MIN": {
+      "name": "Minnesota Vikings",
+      "color": "#4F2683"
+    },
+    "NE": {
+      "name": "New England Patriots",
+      "color": "#002244"
+    },
+    "NO": {
+      "name": "New Orleans Saints",
+      "color": "#D3BC8D"
+    },
+    "NYG": {
+      "name": "New York Giants",
+      "color": "#0B2265"
+    },
+    "NYJ": {
+      "name": "New York Jets",
+      "color": "#003F2D"
+    },
+    "PHI": {
+      "name": "Philadelphia Eagles",
+      "color": "#004C54"
+    },
+    "PIT": {
+      "name": "Pittsburgh Steelers",
+      "color": "#000000"
+    },
+    "SEA": {
+      "name": "Seattle Seahawks",
+      "color": "#002244"
+    },
+    "SF": {
+      "name": "San Francisco 49ers",
+      "color": "#AA0000"
+    },
+    "TB": {
+      "name": "Tampa Bay Buccaneers",
+      "color": "#A71930"
+    },
+    "TEN": {
+      "name": "Tennessee Titans",
+      "color": "#4495D2"
+    },
+    "WAS": {
+      "name": "Washington Commanders",
+      "color": "#5A1414"
+    }
+  },
   "players": [
     {
       "id": "00-0036282",
@@ -273,7 +403,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(5:37) (Shotgun) 6-B.Mayfield pass short left to 7-B.Irving to CLE 30 for 3 yards (9-G.Delpit)."
+          "description": "(5:37) (Shotgun) 6-B.Mayfield pass short left to 7-B.Irving to CLE 30 for 3 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "842",
@@ -313,7 +446,10 @@
             "qb_hit_1",
             "solo_tackle_1"
           ],
-          "description": "(2:28) 6-B.Mayfield sacked at TB 17 for 0 yards (9-G.Delpit)."
+          "description": "(2:28) 6-B.Mayfield sacked at TB 17 for 0 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "1905",
@@ -351,7 +487,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(1:56) (No Huddle, Shotgun) 1-K.Gainwell right tackle to CLE 22 for 4 yards (9-G.Delpit)."
+          "description": "(1:56) (No Huddle, Shotgun) 1-K.Gainwell right tackle to CLE 22 for 4 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "2344",
@@ -389,7 +528,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(10:20) (Shotgun) 6-B.Mayfield scrambles up the middle pushed ob at CLE 5 for 9 yards (9-G.Delpit)."
+          "description": "(10:20) (Shotgun) 6-B.Mayfield scrambles up the middle pushed ob at CLE 5 for 9 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "3344",
@@ -427,7 +569,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(12:44) (Shotgun) 6-B.Mayfield pass short middle to 14-C.Godwin to TB 30 for 14 yards (9-G.Delpit)."
+          "description": "(12:44) (Shotgun) 6-B.Mayfield pass short middle to 14-C.Godwin to TB 30 for 14 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         }
       ],
       "next_gen": [],
@@ -612,7 +757,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(:02) 26-K.Johnson left guard to GB 48 for 12 yards (8-A.Cisco)."
+          "description": "(:02) 26-K.Johnson left guard to GB 48 for 12 yards (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "1302",
@@ -650,7 +798,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(11:06) 32-M.Lloyd up the middle to NYJ 8 for 7 yards (8-A.Cisco; 44-J.Sherwood)."
+          "description": "(11:06) 32-M.Lloyd up the middle to NYJ 8 for 7 yards (8-A.Cisco; 44-J.Sherwood).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "1661",
@@ -690,7 +841,10 @@
             "forced_fumble_player_1",
             "solo_tackle_1"
           ],
-          "description": "(5:58) 26-K.Johnson up the middle to GB 43 for -3 yards (8-A.Cisco). FUMBLES (8-A.Cisco), touched at GB 42, recovered by GB-10-J.Love at GB 38."
+          "description": "(5:58) 26-K.Johnson up the middle to GB 43 for -3 yards (8-A.Cisco). FUMBLES (8-A.Cisco), touched at GB 42, recovered by GB-10-J.Love at GB 38.",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "2654",
@@ -728,7 +882,10 @@
           "roles": [
             "pass_defense_1"
           ],
-          "description": "(7:44) 10-J.Love pass incomplete deep left to 9-C.Watson (8-A.Cisco)."
+          "description": "(7:44) 10-J.Love pass incomplete deep left to 9-C.Watson (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "2677",
@@ -766,7 +923,10 @@
           "roles": [
             "qb_hit_1"
           ],
-          "description": "(7:39) (Shotgun) 10-J.Love pass incomplete short right to 9-C.Watson [8-A.Cisco]."
+          "description": "(7:39) (Shotgun) 10-J.Love pass incomplete short right to 9-C.Watson [8-A.Cisco].",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4627",
@@ -804,7 +964,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(7:29) 26-K.Johnson left end pushed ob at GB 45 for 11 yards (8-A.Cisco)."
+          "description": "(7:29) 26-K.Johnson left end pushed ob at GB 45 for 11 yards (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4724",
@@ -842,7 +1005,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(5:54) 10-J.Love pass short left to 0-M.Golden pushed ob at NYJ 8 for 14 yards (8-A.Cisco)."
+          "description": "(5:54) 10-J.Love pass short left to 0-M.Golden pushed ob at NYJ 8 for 14 yards (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         }
       ],
       "next_gen": [],
@@ -1021,7 +1187,10 @@
           "roles": [
             "assist_tackle_2"
           ],
-          "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith)."
+          "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "1717",
@@ -1062,7 +1231,10 @@
             "tackle_for_loss_1",
             "solo_tackle_1"
           ],
-          "description": "(1:26) (Shotgun) 1-C.Ward sacked at TEN 27 for -5 yards (3-N.Smith)."
+          "description": "(1:26) (Shotgun) 1-C.Ward sacked at TEN 27 for -5 yards (3-N.Smith).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "3082",
@@ -1101,7 +1273,10 @@
             "tackle_for_loss_1",
             "solo_tackle_1"
           ],
-          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith)."
+          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         }
       ],
       "next_gen": [],
@@ -1280,7 +1455,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(13:51) (Shotgun) 1-C.Ward pass incomplete short middle to 14-C.Tate."
+          "description": "(13:51) (Shotgun) 1-C.Ward pass incomplete short middle to 14-C.Tate.",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "2312",
@@ -1318,7 +1496,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(11:00) (Shotgun) 1-C.Ward pass short middle to 14-C.Tate to TEN 22 for 6 yards (2-T.Woolen)."
+          "description": "(11:00) (Shotgun) 1-C.Ward pass short middle to 14-C.Tate to TEN 22 for 6 yards (2-T.Woolen).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "3126",
@@ -1356,7 +1537,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(12:54) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate (2-T.Woolen)."
+          "description": "(12:54) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate (2-T.Woolen).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "3639",
@@ -1394,7 +1578,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(3:29) (Shotgun) 1-C.Ward pass short left to 14-C.Tate to PHI 36 for 6 yards (27-Q.Mitchell)."
+          "description": "(3:29) (Shotgun) 1-C.Ward pass short left to 14-C.Tate to PHI 36 for 6 yards (27-Q.Mitchell).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4131",
@@ -1432,7 +1619,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(:09) (Shotgun) 1-C.Ward pass short right to 14-C.Tate to 50 for 15 yards (2-T.Woolen)."
+          "description": "(:09) (Shotgun) 1-C.Ward pass short right to 14-C.Tate to 50 for 15 yards (2-T.Woolen).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         }
       ],
       "next_gen": [
@@ -1621,7 +1811,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(3:01) (Shotgun) 31-K.Allen left end to 50 for 7 yards (53-D.Winters)."
+          "description": "(3:01) (Shotgun) 31-K.Allen left end to 50 for 7 yards (53-D.Winters).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4117",
@@ -1659,7 +1852,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(2:23) 31-K.Allen left tackle to DAL 41 for 9 yards (53-D.Winters). WAS-76-S.Cosmi was injured during the play."
+          "description": "(2:23) 31-K.Allen left tackle to DAL 41 for 9 yards (53-D.Winters). WAS-76-S.Cosmi was injured during the play.",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4159",
@@ -1697,7 +1893,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(2:00) 31-K.Allen left tackle to DAL 40 for 1 yard (97-K.Clark)."
+          "description": "(2:00) 31-K.Allen left tackle to DAL 40 for 1 yard (97-K.Clark).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4188",
@@ -1735,7 +1934,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(1:16) 31-K.Allen left tackle to DAL 36 for 4 yards (6-D.Ezeiruaku)."
+          "description": "(1:16) 31-K.Allen left tackle to DAL 36 for 4 yards (6-D.Ezeiruaku).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "4210",
@@ -1773,7 +1975,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(:37) 31-K.Allen left tackle to DAL 33 for 3 yards (28-S.Revel)."
+          "description": "(:37) 31-K.Allen left tackle to DAL 33 for 3 yards (28-S.Revel).",
+          "passer_name": null,
+          "rusher_name": null,
+          "receiver_name": null
         }
       ],
       "next_gen": [],
