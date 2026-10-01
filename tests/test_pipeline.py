@@ -64,6 +64,8 @@ class FakeGitHub:
         self.updated.append((number, body, title))
 
     def request_review(self, number, reviewers):
+        if getattr(self, "review_error", None):
+            raise self.review_error
         self.reviews.append((number, list(reviewers)))
 
     def find_issue(self, title, label):
@@ -327,9 +329,43 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("- FTN charting for 2026_03_PHI_TB", body)
         self.assertNotIn("Charting not yet available", pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run"))
 
+    def test_a_failed_review_request_does_not_fail_the_run(self):
+        from src.github import GitHubError
+        gh = FakeGitHub()
+        gh.review_error = GitHubError(422, "Could not add requested reviewers to pull request.")
+        outcome = self.attempt(gh)
+        self.assertEqual((outcome.state, outcome.number, outcome.failed), ("opened", 42, False))
+        self.assertIn("review request skipped", outcome.message)
+
+    def remind(self, gh):
+        return pipeline.remind(gh, "bryce-murphy", cfg=CFG, today=fixture_data.TODAY,
+                               sources=sources_from(self.data, self.manifest), run_url="https://run")
+
+    def test_wednesday_check_flags_an_edition_that_was_never_built(self):
+        gh = FakeGitHub(on_main=False)
+        outcome = self.remind(gh)
+        self.assertEqual((outcome.state, outcome.failed), ("missing", True))
+        title, body, _ = gh.upserts[0]
+        self.assertEqual(title, "Edition 2026-week-02 blocked")
+        self.assertIn("Run workflow", body)
+
+    def test_wednesday_check_is_quiet_when_the_edition_is_published(self):
+        gh = FakeGitHub(on_main=True)
+        outcome = self.remind(gh)
+        self.assertEqual((outcome.state, outcome.failed), ("nothing pending", False))
+        self.assertEqual(gh.upserts, [])
+
+    def test_wednesday_check_is_quiet_outside_a_reporting_window(self):
+        from datetime import date
+        gh = FakeGitHub(on_main=False)
+        outcome = pipeline.remind(gh, "bryce-murphy", cfg=CFG, today=date(2026, 7, 15),
+                                  sources=sources_from(self.data, self.manifest), run_url="https://run")
+        self.assertFalse(outcome.failed)
+        self.assertEqual(gh.upserts, [])
+
     def test_reminder_mentions_the_owner_on_edition_prs_only(self):
         gh = FakeGitHub(open_prs=[{"number": 42, "head": {"ref": "edition/2026-week-02"}}, {"number": 3, "head": {"ref": "feat/other"}}])
-        self.assertEqual(pipeline.remind(gh, "bryce-murphy").state, "reminded")
+        self.assertEqual(self.remind(gh).state, "reminded")
         self.assertEqual([number for number, _ in gh.comments], [42])
         self.assertIn("@bryce-murphy", gh.comments[0][1])
 

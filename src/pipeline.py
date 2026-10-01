@@ -9,7 +9,7 @@ from . import editorial, moves
 from .data import utcnow
 from .edition import build_week, due_week, dump_json, edition_id, fetch, load_config, load_registry
 from .errors import DataError, NotReady
-from .github import GitHub
+from .github import GitHub, GitHubError
 from .site import contribution, result_line, social_drafts
 
 ATTEMPTS = {"30 14 * 9-12,1-2 2": 1, "30 20 * 9-12,1-2 2": 2, "30 6 * 9-12,1-2 3": 3}
@@ -149,23 +149,59 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
     drafts = social_drafts(edition, copy, f"{cfg['site_url']}editions/{eid}/")
     body = pr_body(edition, copy, draft_report, report, drafts, s.run_url)
     title = f"Edition {season} Week {week}: {copy['headline']}"
+    note = ""
     if pr:
         number = pr["number"]
         gh.update_pr(number, body, title=title)
     else:
         number = gh.open_pr(branch, title, body)["number"]
-        gh.request_review(number, [cfg["owner_github"]])
+        try:
+            gh.request_review(number, [cfg["owner_github"]])
+        except GitHubError as exc:  # CODEOWNERS already requests the owner; a refused extra request is not a failure
+            note = f" (review request skipped: {exc})"
     issue = gh.find_issue(f"Edition {eid} blocked", BLOCKED_LABEL)
     if issue:
         gh.close_issue(issue["number"], f"Resolved: the edition is ready for approval in #{number}.")
-    return Outcome("opened", f"Edition {eid} is ready for approval in #{number}.", number=number)
+    return Outcome("opened", f"Edition {eid} is ready for approval in #{number}.{note}", number=number)
 
 
-def remind(gh, owner):
+def remind(gh, owner, *, cfg, today, sources=fetch, run_url=""):
+    """Wednesday morning: nudge the owner on waiting edition PRs, and flag a due edition that was never built
+    (GitHub's scheduler can start runs hours late or skip them)."""
     pending = [pr for pr in gh.open_prs() if pr["head"]["ref"].startswith("edition/")]
     for pr in pending:
         gh.comment(pr["number"], f"@{owner} Reminder: this edition is waiting for your approval. The site keeps last week's edition until you merge.")
-    return Outcome("reminded" if pending else "nothing pending", f"{len(pending)} edition PR(s) waiting.")
+    if pending:
+        return Outcome("reminded", f"{len(pending)} edition PR(s) waiting.")
+    missing = _missing_edition(gh, cfg, today, sources)
+    if missing:
+        body = "\n".join([
+            "**Step:** Schedule", "",
+            f"**Reason:** By Wednesday morning there is no edition PR and `editions/{missing}/` is not on main. "
+            "GitHub's scheduler can start runs hours late or skip them.", "",
+            f"**Run:** {run_url}", "",
+            "Next: run **Actions → Weekly edition → Run workflow** (leave season and week blank). "
+            "This issue closes itself when the edition PR opens.",
+        ])
+        gh.upsert_issue(f"Edition {missing} blocked", body, BLOCKED_LABEL)
+        return Outcome("missing", f"Edition {missing} was never built; opened a blocked issue.", failed=True)
+    return Outcome("nothing pending", "0 edition PR(s) waiting.")
+
+
+def _missing_edition(gh, cfg, today, sources):
+    """The due edition's id when it is neither open nor on main; None when nothing is due or it exists."""
+    if today.month not in SEASON_MONTHS:
+        return None
+    season = today.year if today.month >= 3 else today.year - 1
+    try:
+        week, _ = due_week(season, None, today=today, historical=False, scheduled=True,
+                           season_types=cfg["season_types"], sources=sources)
+    except (NotReady, DataError):
+        return None
+    if week is None:
+        return None
+    eid = edition_id(season, week)
+    return None if gh.file_exists(f"editions/{eid}/edition.json", "main") else eid
 
 
 def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
@@ -222,7 +258,7 @@ def main():
     if settings.automation != "on":
         outcome = Outcome("disabled", "Repository variable EDITION_AUTOMATION is not 'on'.")
     elif settings.schedule == REMINDER:
-        outcome = remind(gh, cfg["owner_github"])
+        outcome = remind(gh, cfg["owner_github"], cfg=cfg, today=utcnow().date(), run_url=settings.run_url)
     else:
         outcome = run_attempt(settings, gh=gh, cfg=cfg, registry=load_registry(), today=utcnow().date())
     line = f"{outcome.state}: {outcome.message}"
