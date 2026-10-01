@@ -238,21 +238,31 @@ class FaceliftTests(unittest.TestCase):
         self.assertEqual(label.group(2), "start")
         self.assertGreater(float(label.group(1)), float(zone.group(1)) + float(zone.group(2)))
 
-    def test_short_play_labels_clear_the_line_of_scrimmage(self):
+    def test_labels_clear_the_line_of_scrimmage_and_the_first_down_line(self):
         # Rendered label sizes from styles.css; a glyph is at most about 0.6 em wide.
         fonts = {"card": 16, "medium": 17, "large": 26}
         plays = {"loss of 2": pass_play(sack=1, yards_gained=-2), "gain of 1": base(yards_gained=1), "gain of 2": base(yards_gained=2),
                  "no gain": base(yards_gained=0), "short incompletion": pass_play(air_yards=2, yards_gained=0, complete_pass=0),
-                 "incompletion behind the line": pass_play(air_yards=-2, yards_gained=0, complete_pass=0)}
+                 "incompletion behind the line": pass_play(air_yards=-2, yards_gained=0, complete_pass=0),
+                 "incompletion at the marker": pass_play(air_yards=10, yards_gained=0, complete_pass=0),
+                 "gain just short of the marker": base(yards_gained=9), "gain just past the marker": base(yards_gained=11),
+                 "catch at the marker": pass_play(complete_pass=1, air_yards=8, yards_gained=10),
+                 # Greg Newsome II, 2026 Week 3: "Incomplete" centered on a target that sat on the first-down line.
+                 "Newsome's breakup": pass_play(down=3, ydstogo=5, yardline_100=84, air_yards=5, yards_gained=0, complete_pass=0)}
         for size, font in fonts.items():
             for name, play in plays.items():
                 with self.subTest(size=size, play=name):
                     markup = field.svg(play, size)
-                    los = float(re.search(r'class="los" x1="([\d.]+)"', markup).group(1))
+                    # "Incomplete" can be too wide for the narrow card to clear both lines; it must still clear the line
+                    # of scrimmage (see the halo test below).
+                    wide = size == "card" and ">Incomplete<" in markup
+                    lines = [float(re.search(rf'class="{line}" x1="([\d.]+)"', markup).group(1)) for line in ("los", "marker")]
                     x, anchor, text = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)">([^<]+)<', markup).groups()
                     x, width = float(x), len(text) * font * 0.6
                     left = {"start": x, "middle": x - width / 2, "end": x - width}[anchor]
-                    self.assertFalse(left <= los <= left + width, f"{text!r} spans {left:.0f}-{left + width:.0f}, LOS at {los}")
+                    for line in lines[:1] if wide else lines:
+                        self.assertFalse(left <= line <= left + width, f"{text!r} spans {left:.0f}-{left + width:.0f}, a line at {line}")
+                    self.assertTrue(0 <= left and left + width <= field.SIZES[size][0])
 
     def test_short_loss_label_sits_on_the_play_line_past_the_arrowhead(self):
         # Jihaad Campbell, 2026 Week 3: a 2-yard loss at the PHI 7 whose centered label sat on the 10-yard line.
@@ -267,8 +277,20 @@ class FaceliftTests(unittest.TestCase):
         self.assertIn('text-anchor="middle">−2<', field.svg(play, "medium"))
 
     def test_long_play_label_stays_centered_over_the_tip(self):
-        markup = field.svg(base(yards_gained=9), "medium")
-        self.assertIn('text-anchor="middle">+9<', markup)
+        markup = field.svg(base(yards_gained=5), "medium")
+        self.assertIn('text-anchor="middle">+5<', markup)
+
+    def test_a_label_with_no_clear_place_crosses_only_the_first_down_line_on_its_halo(self):
+        # "Incomplete" is too wide to clear both lines on the narrow card; it keeps off the line of scrimmage and its
+        # halo breaks the first-down line beneath it.
+        markup = field.svg(pass_play(air_yards=10, yards_gained=0, complete_pass=0), "card")
+        los = float(re.search(r'class="los" x1="([\d.]+)"', markup).group(1))
+        x, anchor = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)">Incomplete<', markup).groups()
+        width = len("Incomplete") * field.LABEL_FONT["card"] * 0.6
+        left = {"start": float(x), "middle": float(x) - width / 2, "end": float(x) - width}[anchor]
+        self.assertFalse(left <= los <= left + width)
+        css = (Path(__file__).resolve().parents[1] / "static" / "styles.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"\.field \.yardage\{[^}]*paint-order:stroke;stroke:var\(--light\)")
 
     def test_aria_label_carries_the_tag(self):
         self.assertIn("Big play", field.svg(base(), "medium", outcome="Big play"))
