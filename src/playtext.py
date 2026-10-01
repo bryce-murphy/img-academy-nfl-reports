@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-from .editorial import NAME_SUFFIXES
+from .editorial import BLOCKED_TERMS, NAME_SUFFIXES
 from .players import nickname
 
 CLOCK = re.compile(r"^\(\d{1,2}:\d{2}\)\s*")
@@ -17,7 +17,8 @@ PBP_NAME = re.compile(r"[A-Z][a-z]{0,2}\.\s?(.+)")
 SACKS = {"sack", "half_sack_1", "half_sack_2"}
 FORCED = {"forced_fumble_player_1", "forced_fumble_player_2"}
 BREAKUPS = {"pass_defense_1", "pass_defense_2"}
-SOLO = {"solo_tackle_1", "solo_tackle_2", "tackle_with_assist_1", "tackle_with_assist_2", "tackle_for_loss_1", "tackle_for_loss_2"}
+SOLO = {"solo_tackle_1", "solo_tackle_2", "tackle_with_assist_1", "tackle_with_assist_2"}
+LOSS_TACKLES = {"tackle_for_loss_1", "tackle_for_loss_2"}
 ASSISTS = {"assist_tackle_1", "assist_tackle_2", "assist_tackle_3", "assist_tackle_4"}
 SPECIAL_TEAMS = {"kickoff", "punt", "field_goal", "extra_point"}
 STOPS = ("3rd-down stop", "4th-down stop")
@@ -41,6 +42,16 @@ def clean_description(text):
     text = FORMATION.sub("", text)
     text = JERSEY.sub("", text)
     return " ".join(text.split())
+
+
+def safe_description(text):
+    """The cleaned play-by-play text without any sentence that uses a blocked term (injury, benching and the like)."""
+    cleaned = clean_description(text)
+    kept = [part for part in cleaned.split(". ") if not any(term in part.lower() for term in BLOCKED_TERMS)]
+    result = ". ".join(kept)
+    if result and cleaned.endswith(".") and not result.endswith("."):
+        result += "."
+    return result
 
 
 def _yards(n):
@@ -89,12 +100,12 @@ def _template(play, me, roles):
         return f"{verb} for {_a(abs(gained))}-yard loss." if gained < 0 else f"{verb}."
     if roles & FORCED:
         return pick(f"{me} forced a fumble.", f"{me} knocked the ball loose.")
-    if roles & BREAKUPS:
+    if roles & BREAKUPS and play.get("complete_pass") == 0:
         if not qb:
             return None
         thrown = f"{qb}'s pass to {target}" if target else f"{qb}'s pass"
         return pick(f"{me} broke up {thrown}.", f"{me} got a hand on {thrown}.")
-    if roles & (SOLO | ASSISTS):
+    if roles & (SOLO | ASSISTS | LOSS_TACKLES):
         return _tackle(play, me, roles, gained, runner, target, pick)
     if "passer" in roles:
         return _passer(play, me, gained, target, pick)
@@ -118,7 +129,7 @@ def _template(play, me, roles):
 
 
 def _tackle(play, me, roles, gained, runner, target, pick):
-    solo = bool(roles & SOLO)
+    solo = bool(roles & SOLO) or not roles & ASSISTS
     bring, stop = ("brought down", "stopped") if solo else ("helped bring down", "helped stop")
     made = "made the tackle" if solo else "helped make the tackle"
     if play.get("complete_pass") == 1 and target:
@@ -160,8 +171,10 @@ def play_line(play, player):
     roles = set(play.get("roles") or [])
     line = _template(play, alum_name(player["name"]), roles)
     if line is None:
-        return clean_description(play.get("description", ""))
-    if "td" in roles:
+        return safe_description(play.get("description", ""))
+    gained = play.get("yards_gained")
+    flat_carry = gained is not None and gained <= 0 and roles & {"rusher", "receiver"}
+    if "td" in roles and not flat_carry:
         line = line[:-1] + " for a touchdown."
     if play.get("impact") in STOPS and play.get("offense_name"):
         line = f"{line[:-1]}, stopping the {nickname(play['offense_name'])} on {play['impact'][:3]} down."

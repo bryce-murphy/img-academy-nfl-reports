@@ -142,3 +142,28 @@ class AddOnAndFallbackTests(unittest.TestCase):
                 self.assertFalse(any(term in line for term in editorial.BLOCKED_TERMS))
                 self.assertIsNone(re.search(r"(?<!\d)0-yard", line))
                 self.assertNotIn(" 0 yard", line)
+
+
+class FixRoundTests(unittest.TestCase):
+    def test_deflected_but_caught_pass_is_not_a_breakup(self):
+        only = catch(roles=["pass_defense_1"], yards_gained=9, description="(2:00) 16-J.Goff pass short to 18-J.Gibbs for 9 yards.")
+        self.assertEqual(playtext.play_line(only, CISCO), "J.Goff pass short to J.Gibbs for 9 yards.")
+        both = catch(roles=["pass_defense_1", "solo_tackle_1"], yards_gained=9)
+        self.assertEqual(playtext.play_line(both, CISCO), "Cisco brought down Gibbs after a 9-yard catch.")
+
+    def test_shared_tackle_for_loss_is_not_solo(self):
+        shared = run(roles=["tackle_for_loss_1", "assist_tackle_1"], yards_gained=-2)
+        self.assertEqual(playtext.play_line(shared, CISCO), "Cisco helped stop Montgomery for a 2-yard loss.")
+        alone = run(roles=["tackle_for_loss_1"], yards_gained=-3)
+        self.assertEqual(playtext.play_line(alone, CISCO), "Cisco stopped Montgomery for a 3-yard loss.")
+
+    def test_fallback_drops_blocked_sentences(self):
+        text = "(2:00) 16-J.Goff pass short left to 18-I.TeSlaa for 5 yards (8-A.Cisco). 18-I.TeSlaa was injured during the play."
+        self.assertEqual(playtext.safe_description(text), "J.Goff pass short left to I.TeSlaa for 5 yards (A.Cisco).")
+        self.assertEqual(playtext.play_line(play(roles=["kicker"], description=text), CISCO),
+                         "J.Goff pass short left to I.TeSlaa for 5 yards (A.Cisco).")
+        self.assertEqual(playtext.safe_description("(1:00) 18-I.TeSlaa was injured during the play."), "")
+
+    def test_no_touchdown_add_on_for_a_flat_carry(self):
+        line = playtext.play_line(run(roles=["rusher", "td"], rusher_name="K.Allen", yards_gained=0), ALLEN)
+        self.assertEqual(line, "Allen was stopped for no gain.")
