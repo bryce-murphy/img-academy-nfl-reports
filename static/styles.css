@@ -52,6 +52,8 @@ a:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-off
 .evidence,.caption{font-size:12px;color:var(--muted);margin:0}
 .withheld,.availability-note{margin:0;padding:10px 12px;background:var(--wash);border-left:3px solid var(--warm);font-size:12px}
 .ngs{margin:0;padding:10px 12px 10px 28px;background:var(--wash);font-size:12px}
+.stat-box{background:var(--wash)}.stat-box .ngs{padding-bottom:4px}
+.stat-sources{margin:0;padding:0 12px 8px;font-size:11px;color:var(--muted)}
 details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .plays{padding-left:20px;font-size:12px}
 .plays li{margin:10px 0}

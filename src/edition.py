@@ -218,9 +218,10 @@ def _flag(value):
 
 
 def _counts(row, fields):
-    """Whole-number counts for a group of fields, or None if any is missing: a blank is never a zero."""
+    """Counts for a group of fields, or None if any is missing: a blank is never a zero. Whole numbers become ints;
+    a fraction (PFR splits a shared sack as 0.5) is kept as it is."""
     values = {key: ev.num(row.get(column)) for key, column in fields}
-    return None if any(v is None for v in values.values()) else {k: int(v) for k, v in values.items()}
+    return None if any(v is None for v in values.values()) else {k: int(v) if float(v).is_integer() else v for k, v in values.items()}
 
 
 COVERAGE_FIELDS = (("targets", "def_targets"), ("completions", "def_completions_allowed"), ("yards", "def_yards_allowed"), ("touchdowns", "def_receiving_td_allowed"), ("interceptions", "def_ints"))

@@ -15,7 +15,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from markupsafe import Markup, escape
 
-from . import editorial, field, moves, playtext
+from . import editorial, field, moves, playtext, statlines
 from . import evidence as ev
 from . import players as pl
 from .edition import load_config, load_registry
@@ -145,37 +145,36 @@ def _n(count, word, plural=None):
     return f"{count} {word if count == 1 else plural or word + 's'}"
 
 
-def charting_lines(player):
-    """Charted extras as plain counts. Coverage is 'charted in coverage', never 'allowed'."""
+def _stat_sentences(player):
+    """(sentences, source) pairs in reading order: receiving, rushing, passing, then defense."""
     c = player.get("charting") or {}
-    lines = []
+    ngs = statlines.tracking(player.get("next_gen"))
+    pairs = []
     if c.get("targets"):
-        t = c["targets"]
-        text = f"Targets: {t['catchable']} of {t['charted']} catchable, {_n(t['drops'], 'drop')}"
-        if t["contested"]:
-            text += f", {t['contested_catches']} of {t['contested']} contested caught"
-        lines.append(text)
-    if c.get("coverage"):
-        v = c["coverage"]
-        parts = [_n(v["targets"], "target"), _n(v["completions"], "completion"), _n(v["yards"], "yard")]
-        parts += [_n(v["touchdowns"], "touchdown")] if v["touchdowns"] else []
-        parts += [_n(v["interceptions"], "interception")] if v["interceptions"] else []
-        lines.append("Charted in coverage: " + ", ".join(parts))
-    if c.get("pass_rush"):
-        r = c["pass_rush"]
-        detail = ", ".join(_n(r[k], *w) for k, w in (("sacks", ("sack",)), ("qb_hits", ("QB hit",)), ("hurries", ("hurry", "hurries"))) if r[k])
-        text = f"Pass rush: {_n(r['pressures'], 'pressure')}" + (f" ({detail})" if detail else "")
-        if r["blitzes"]:
-            text += f", blitzed {_n(r['blitzes'], 'time')}"
-        lines.append(text)
-    if c.get("tackling"):
-        lines.append(f"Tackling: {c['tackling']['missed']} missed in {_n(c['tackling']['attempts'], 'attempt')}")
-    if c.get("rushing"):
-        u = c["rushing"]
-        lines.append(f"Rushing: {u['after_contact']} of {_n(u['before_contact'] + u['after_contact'], 'yard')} after contact, {_n(u['broken_tackles'], 'broken tackle')}")
+        pairs.append((statlines.targets(c["targets"]), statlines.FTN))
+    pairs += [(s, statlines.NGS) for s in ngs["ngs_receiving"]]
     if c.get("broken_tackles"):
-        lines.append(f"Broken tackles after the catch: {c['broken_tackles']}")
-    return lines
+        pairs.append((statlines.broken_after_catch(c["broken_tackles"]), statlines.PFR))
+    if c.get("rushing"):
+        pairs.append((statlines.rushing(c["rushing"]), statlines.PFR))
+    pairs += [(s, statlines.NGS) for s in ngs["ngs_rushing"] + ngs["ngs_passing"]]
+    if c.get("coverage"):
+        pairs.append((statlines.coverage(c["coverage"]), statlines.PFR))
+    if c.get("pass_rush"):
+        pairs.append((statlines.pass_rush(c["pass_rush"]), statlines.PFR))
+    if c.get("tackling"):
+        pairs.append((statlines.tackling(c["tackling"]["missed"], c["tackling"]["attempts"]), statlines.PFR))
+    return [(parts, source) for parts, source in pairs if parts]
+
+
+def charting_lines(player):
+    """Charted and tracking numbers as plain sentences (see statlines). Coverage is never 'allowed'."""
+    return [statlines.sentence(parts) for parts, _ in _stat_sentences(player)]
+
+
+def charting_sources(player):
+    """The credit under the stat box, naming only the sources behind the lines shown."""
+    return statlines.credit({source for _, source in _stat_sentences(player)})
 
 
 def _sunday_on_or_after(day):
@@ -256,6 +255,7 @@ def player_view(player):
         snap_line=snap_line(player),
         participation=participation_line(player),
         charting_lines=charting_lines(player),
+        charting_sources=charting_sources(player),
         key_plays=[dict(k, impact=k.get("impact"), outcome=play_outcome(k, player)) for k in player.get("key_plays", [])],
         source_url=player["alumni_source"] if player["alumni_source"].startswith("https://") else "",
     )

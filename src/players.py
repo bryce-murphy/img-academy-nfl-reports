@@ -5,6 +5,7 @@ import re
 import unicodedata
 
 from . import evidence as ev
+from . import statlines
 
 SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 
@@ -207,8 +208,8 @@ def _receiver_lines(played, plays, plays_weeks, note):
     charted = [(p.get("charting") or {}).get("targets") for _, p in played]
     charted = [c for c in charted if c]
     if charted:
-        text = f"{sum(c['catchable'] for c in charted)} of {sum(c['charted'] for c in charted)} catchable, {_n(sum(c['drops'] for c in charted), 'drop', 'drops')}"
-        lines.append({"label": "Charted targets", "text": text + _based_on_note(len(charted), len(played)) + "."})
+        total = {key: sum(c[key] for c in charted) for key in ("charted", "catchable", "drops")}
+        lines.append({"label": "Pass catching", "text": statlines.sentence(statlines.targets(total), _based_on_note(len(charted), len(played)))})
     if plays_weeks:
         targeted = [q for q in plays if "receiver" in q.get("roles", [])]
         values = [q["epa"] for q in targeted if q.get("epa") is not None]
@@ -236,14 +237,14 @@ def _defense_lines(played, plays, plays_weeks, note):
     charting = [p.get("charting") or {} for _, p in played]
     cover = [c["coverage"] for c in charting if c.get("coverage")]
     if cover:
-        text = f"Charted in coverage: {_n(sum(c['targets'] for c in cover), 'target', 'targets')}, {_n(sum(c['completions'] for c in cover), 'completion', 'completions')}, {_n(sum(c['yards'] for c in cover), 'yard', 'yards')}"
-        lines.append({"label": "Coverage", "text": text + _based_on_note(len(cover), len(played)) + "."})
+        total = {key: sum(c.get(key, 0) for c in cover) for key in ("targets", "completions", "yards", "touchdowns", "interceptions")}
+        lines.append({"label": "Coverage", "text": statlines.sentence(statlines.coverage(total), _based_on_note(len(cover), len(played)))})
     rush = [c["pass_rush"] for c in charting if c.get("pass_rush")]
-    if rush:
-        text = f"{_n(sum(r['pressures'] for r in rush), 'pressure', 'pressures')}"
-        lines.append({"label": "Pass rush", "text": text + _based_on_note(len(rush), len(played)) + "."})
+    pressured = statlines.pressures(sum(r["pressures"] for r in rush))
+    if pressured:
+        lines.append({"label": "Pass rush", "text": statlines.sentence(pressured, _based_on_note(len(rush), len(played)))})
     tackling = [c["tackling"] for c in charting if c.get("tackling")]
     if tackling:
-        text = f"{sum(t['missed'] for t in tackling)} missed in {_n(sum(t['attempts'] for t in tackling), 'attempt', 'attempts')}"
-        lines.append({"label": "Tackling", "text": text + _based_on_note(len(tackling), len(played)) + "."})
+        parts = statlines.tackling(sum(t["missed"] for t in tackling), sum(t["attempts"] for t in tackling))
+        lines.append({"label": "Tackling", "text": statlines.sentence(parts, _based_on_note(len(tackling), len(played)))})
     return lines

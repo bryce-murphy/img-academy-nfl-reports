@@ -10,8 +10,7 @@
   {% endif %}
   {% if p.participation %}<p class="evidence">{{ p.participation }}</p>{% endif %}
   {% if p.injury_report %}<p class="availability-note">This week's injury report: {{ p.injury_report.designation or "no game designation" }} · {{ p.injury_report.primary_injury or "reason not supplied" }}. A pregame report, not a diagnosis or proof of absence.</p>{% endif %}
-  {% if p.next_gen %}<ul class="ngs">{% for m in p.next_gen %}<li>{{ m.label }}: <strong>{{ m.value }} {{ m.unit }}</strong></li>{% endfor %}</ul>{% endif %}
-  {% if p.charting_lines %}<ul class="ngs charted" aria-label="Charted by FTN Data and Pro Football Reference">{% for line in p.charting_lines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
+  {% if p.charting_lines %}<div class="stat-box"><ul class="ngs charted">{% for line in p.charting_lines %}<li>{{ line }}</li>{% endfor %}</ul><p class="stat-sources">{{ p.charting_sources }}</p></div>{% endif %}
   {% if p.key_plays %}
   <details>
     <summary>Key moments · {{ p.key_plays | length }}</summary>
