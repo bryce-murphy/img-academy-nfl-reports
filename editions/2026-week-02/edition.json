@@ -1,10 +1,10 @@
 {
-  "schema_version": 2,
+  "schema_version": 4,
   "id": "2026-week-02",
   "season": 2026,
   "week": 2,
   "season_type": "REG",
-  "generated_at": "2026-09-30T17:56:28+00:00",
+  "generated_at": "2026-10-01T15:07:34+00:00",
   "label": "Historical replay",
   "historical": true,
   "games": [
@@ -137,6 +137,136 @@
       "home_score": 28
     }
   ],
+  "teams": {
+    "ARI": {
+      "name": "Arizona Cardinals",
+      "color": "#97233F"
+    },
+    "ATL": {
+      "name": "Atlanta Falcons",
+      "color": "#A71930"
+    },
+    "BAL": {
+      "name": "Baltimore Ravens",
+      "color": "#241773"
+    },
+    "BUF": {
+      "name": "Buffalo Bills",
+      "color": "#00338D"
+    },
+    "CAR": {
+      "name": "Carolina Panthers",
+      "color": "#0085CA"
+    },
+    "CHI": {
+      "name": "Chicago Bears",
+      "color": "#0B162A"
+    },
+    "CIN": {
+      "name": "Cincinnati Bengals",
+      "color": "#FB4F14"
+    },
+    "CLE": {
+      "name": "Cleveland Browns",
+      "color": "#FF3C00"
+    },
+    "DAL": {
+      "name": "Dallas Cowboys",
+      "color": "#002244"
+    },
+    "DEN": {
+      "name": "Denver Broncos",
+      "color": "#002244"
+    },
+    "DET": {
+      "name": "Detroit Lions",
+      "color": "#0076B6"
+    },
+    "GB": {
+      "name": "Green Bay Packers",
+      "color": "#203731"
+    },
+    "HOU": {
+      "name": "Houston Texans",
+      "color": "#03202F"
+    },
+    "IND": {
+      "name": "Indianapolis Colts",
+      "color": "#002C5F"
+    },
+    "JAX": {
+      "name": "Jacksonville Jaguars",
+      "color": "#006778"
+    },
+    "KC": {
+      "name": "Kansas City Chiefs",
+      "color": "#E31837"
+    },
+    "LA": {
+      "name": "Los Angeles Rams",
+      "color": "#003594"
+    },
+    "LAC": {
+      "name": "Los Angeles Chargers",
+      "color": "#007BC7"
+    },
+    "LV": {
+      "name": "Las Vegas Raiders",
+      "color": "#000000"
+    },
+    "MIA": {
+      "name": "Miami Dolphins",
+      "color": "#008E97"
+    },
+    "MIN": {
+      "name": "Minnesota Vikings",
+      "color": "#4F2683"
+    },
+    "NE": {
+      "name": "New England Patriots",
+      "color": "#002244"
+    },
+    "NO": {
+      "name": "New Orleans Saints",
+      "color": "#D3BC8D"
+    },
+    "NYG": {
+      "name": "New York Giants",
+      "color": "#0B2265"
+    },
+    "NYJ": {
+      "name": "New York Jets",
+      "color": "#003F2D"
+    },
+    "PHI": {
+      "name": "Philadelphia Eagles",
+      "color": "#004C54"
+    },
+    "PIT": {
+      "name": "Pittsburgh Steelers",
+      "color": "#000000"
+    },
+    "SEA": {
+      "name": "Seattle Seahawks",
+      "color": "#002244"
+    },
+    "SF": {
+      "name": "San Francisco 49ers",
+      "color": "#AA0000"
+    },
+    "TB": {
+      "name": "Tampa Bay Buccaneers",
+      "color": "#A71930"
+    },
+    "TEN": {
+      "name": "Tennessee Titans",
+      "color": "#4495D2"
+    },
+    "WAS": {
+      "name": "Washington Commanders",
+      "color": "#5A1414"
+    }
+  },
   "players": [
     {
       "id": "00-0040708",
@@ -273,7 +403,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(14:20) (Shotgun) 1-C.Ward pass short left to 20-T.Pollard pushed ob at TEN 30 for 1 yard (11-J.Campbell)."
+          "description": "(14:20) (Shotgun) 1-C.Ward pass short left to 20-T.Pollard pushed ob at TEN 30 for 1 yard (11-J.Campbell).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "T.Pollard"
         },
         {
           "play_id": "566",
@@ -311,7 +444,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(5:56) 20-T.Pollard right guard to PHI 5 for 5 yards (11-J.Campbell)."
+          "description": "(5:56) 20-T.Pollard right guard to PHI 5 for 5 yards (11-J.Campbell).",
+          "passer_name": null,
+          "rusher_name": "T.Pollard",
+          "receiver_name": null
         },
         {
           "play_id": "1692",
@@ -350,7 +486,10 @@
             "forced_fumble_player_1",
             "solo_tackle_1"
           ],
-          "description": "(1:45) (Shotgun) 1-C.Ward pass short right to 2-T.Spears to TEN 32 for 2 yards (11-J.Campbell). The Replay Official reviewed the runner was down by contact ruling, and the play was REVERSED. (Shotgun) 1-C.Ward pass short right to 2-T.Spears to TEN 32 for 2 yards (11-J.Campbell). FUMBLES (11-J.Campbell), ball out of bounds at TEN 32. 10-second runoff."
+          "description": "(1:45) (Shotgun) 1-C.Ward pass short right to 2-T.Spears to TEN 32 for 2 yards (11-J.Campbell). The Replay Official reviewed the runner was down by contact ruling, and the play was REVERSED. (Shotgun) 1-C.Ward pass short right to 2-T.Spears to TEN 32 for 2 yards (11-J.Campbell). FUMBLES (11-J.Campbell), ball out of bounds at TEN 32. 10-second runoff.",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "T.Spears"
         },
         {
           "play_id": "1982",
@@ -388,7 +527,10 @@
           "roles": [
             "assist_tackle_2"
           ],
-          "description": "(:30) (Shotgun) 20-T.Pollard left tackle to PHI 19 for 3 yards (53-Z.Baun; 11-J.Campbell)."
+          "description": "(:30) (Shotgun) 20-T.Pollard left tackle to PHI 19 for 3 yards (53-Z.Baun; 11-J.Campbell).",
+          "passer_name": null,
+          "rusher_name": "T.Pollard",
+          "receiver_name": null
         },
         {
           "play_id": "2290",
@@ -426,7 +568,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(11:40) 20-T.Pollard left tackle to TEN 16 for no gain (11-J.Campbell)."
+          "description": "(11:40) 20-T.Pollard left tackle to TEN 16 for no gain (11-J.Campbell).",
+          "passer_name": null,
+          "rusher_name": "T.Pollard",
+          "receiver_name": null
         },
         {
           "play_id": "2580",
@@ -464,7 +609,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(8:02) 32-N.Singleton up the middle to TEN 30 for -1 yards (53-Z.Baun, 11-J.Campbell)."
+          "description": "(8:02) 32-N.Singleton up the middle to TEN 30 for -1 yards (53-Z.Baun, 11-J.Campbell).",
+          "passer_name": null,
+          "rusher_name": "N.Singleton",
+          "receiver_name": null
         },
         {
           "play_id": "2726",
@@ -502,7 +650,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(4:07) 32-N.Singleton up the middle to PHI 15 for 1 yard (11-J.Campbell; 97-M.Ojomo)."
+          "description": "(4:07) 32-N.Singleton up the middle to PHI 15 for 1 yard (11-J.Campbell; 97-M.Ojomo).",
+          "passer_name": null,
+          "rusher_name": "N.Singleton",
+          "receiver_name": null
         },
         {
           "play_id": "2748",
@@ -540,7 +691,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(3:31) (Shotgun) 1-C.Ward pass short left to 84-G.Helm to PHI 7 for 8 yards (11-J.Campbell; 27-Q.Mitchell)."
+          "description": "(3:31) (Shotgun) 1-C.Ward pass short left to 84-G.Helm to PHI 7 for 8 yards (11-J.Campbell; 27-Q.Mitchell).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "G.Helm"
         },
         {
           "play_id": "3038",
@@ -578,7 +732,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(15:00) 20-T.Pollard right guard to TEN 21 for 2 yards (11-J.Campbell)."
+          "description": "(15:00) 20-T.Pollard right guard to TEN 21 for 2 yards (11-J.Campbell).",
+          "passer_name": null,
+          "rusher_name": "T.Pollard",
+          "receiver_name": null
         },
         {
           "play_id": "3531",
@@ -616,7 +773,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(4:31) 1-C.Ward pass deep right to 5-E.Ayomanor pushed ob at PHI 24 for 41 yards (11-J.Campbell)."
+          "description": "(4:31) 1-C.Ward pass deep right to 5-E.Ayomanor pushed ob at PHI 24 for 41 yards (11-J.Campbell).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "E.Ayomanor"
         }
       ],
       "next_gen": [],
@@ -652,7 +812,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 8.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036282",
@@ -789,7 +950,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(5:37) (Shotgun) 6-B.Mayfield pass short left to 7-B.Irving to CLE 30 for 3 yards (9-G.Delpit)."
+          "description": "(5:37) (Shotgun) 6-B.Mayfield pass short left to 7-B.Irving to CLE 30 for 3 yards (9-G.Delpit).",
+          "passer_name": "B.Mayfield",
+          "rusher_name": null,
+          "receiver_name": "B.Irving"
         },
         {
           "play_id": "842",
@@ -829,7 +993,10 @@
             "qb_hit_1",
             "solo_tackle_1"
           ],
-          "description": "(2:28) 6-B.Mayfield sacked at TB 17 for 0 yards (9-G.Delpit)."
+          "description": "(2:28) 6-B.Mayfield sacked at TB 17 for 0 yards (9-G.Delpit).",
+          "passer_name": "B.Mayfield",
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "1905",
@@ -867,7 +1034,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(1:56) (No Huddle, Shotgun) 1-K.Gainwell right tackle to CLE 22 for 4 yards (9-G.Delpit)."
+          "description": "(1:56) (No Huddle, Shotgun) 1-K.Gainwell right tackle to CLE 22 for 4 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": "K.Gainwell",
+          "receiver_name": null
         },
         {
           "play_id": "2344",
@@ -905,7 +1075,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(10:20) (Shotgun) 6-B.Mayfield scrambles up the middle pushed ob at CLE 5 for 9 yards (9-G.Delpit)."
+          "description": "(10:20) (Shotgun) 6-B.Mayfield scrambles up the middle pushed ob at CLE 5 for 9 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": "B.Mayfield",
+          "receiver_name": null
         },
         {
           "play_id": "3344",
@@ -943,7 +1116,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(12:44) (Shotgun) 6-B.Mayfield pass short middle to 14-C.Godwin to TB 30 for 14 yards (9-G.Delpit)."
+          "description": "(12:44) (Shotgun) 6-B.Mayfield pass short middle to 14-C.Godwin to TB 30 for 14 yards (9-G.Delpit).",
+          "passer_name": "B.Mayfield",
+          "rusher_name": null,
+          "receiver_name": "C.Godwin"
         }
       ],
       "next_gen": [],
@@ -979,7 +1155,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 6.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036941",
@@ -1116,7 +1293,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(:02) 26-K.Johnson left guard to GB 48 for 12 yards (8-A.Cisco)."
+          "description": "(:02) 26-K.Johnson left guard to GB 48 for 12 yards (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": "K.Johnson",
+          "receiver_name": null
         },
         {
           "play_id": "1302",
@@ -1154,7 +1334,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(11:06) 32-M.Lloyd up the middle to NYJ 8 for 7 yards (8-A.Cisco; 44-J.Sherwood)."
+          "description": "(11:06) 32-M.Lloyd up the middle to NYJ 8 for 7 yards (8-A.Cisco; 44-J.Sherwood).",
+          "passer_name": null,
+          "rusher_name": "M.Lloyd",
+          "receiver_name": null
         },
         {
           "play_id": "1661",
@@ -1194,7 +1377,10 @@
             "forced_fumble_player_1",
             "solo_tackle_1"
           ],
-          "description": "(5:58) 26-K.Johnson up the middle to GB 43 for -3 yards (8-A.Cisco). FUMBLES (8-A.Cisco), touched at GB 42, recovered by GB-10-J.Love at GB 38."
+          "description": "(5:58) 26-K.Johnson up the middle to GB 43 for -3 yards (8-A.Cisco). FUMBLES (8-A.Cisco), touched at GB 42, recovered by GB-10-J.Love at GB 38.",
+          "passer_name": null,
+          "rusher_name": "K.Johnson",
+          "receiver_name": null
         },
         {
           "play_id": "2654",
@@ -1232,7 +1418,10 @@
           "roles": [
             "pass_defense_1"
           ],
-          "description": "(7:44) 10-J.Love pass incomplete deep left to 9-C.Watson (8-A.Cisco)."
+          "description": "(7:44) 10-J.Love pass incomplete deep left to 9-C.Watson (8-A.Cisco).",
+          "passer_name": "J.Love",
+          "rusher_name": null,
+          "receiver_name": "C.Watson"
         },
         {
           "play_id": "2677",
@@ -1270,7 +1459,10 @@
           "roles": [
             "qb_hit_1"
           ],
-          "description": "(7:39) (Shotgun) 10-J.Love pass incomplete short right to 9-C.Watson [8-A.Cisco]."
+          "description": "(7:39) (Shotgun) 10-J.Love pass incomplete short right to 9-C.Watson [8-A.Cisco].",
+          "passer_name": "J.Love",
+          "rusher_name": null,
+          "receiver_name": "C.Watson"
         },
         {
           "play_id": "4627",
@@ -1308,7 +1500,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(7:29) 26-K.Johnson left end pushed ob at GB 45 for 11 yards (8-A.Cisco)."
+          "description": "(7:29) 26-K.Johnson left end pushed ob at GB 45 for 11 yards (8-A.Cisco).",
+          "passer_name": null,
+          "rusher_name": "K.Johnson",
+          "receiver_name": null
         },
         {
           "play_id": "4724",
@@ -1346,7 +1541,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(5:54) 10-J.Love pass short left to 0-M.Golden pushed ob at NYJ 8 for 14 yards (8-A.Cisco)."
+          "description": "(5:54) 10-J.Love pass short left to 0-M.Golden pushed ob at NYJ 8 for 14 yards (8-A.Cisco).",
+          "passer_name": "J.Love",
+          "rusher_name": null,
+          "receiver_name": "M.Golden"
         }
       ],
       "next_gen": [],
@@ -1376,7 +1574,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 6.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0039013",
@@ -1513,7 +1712,10 @@
           "roles": [
             "assist_tackle_2"
           ],
-          "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith)."
+          "description": "(5:11) (Shotgun) 1-C.Ward scrambles right end pushed ob at PHI 1 for 4 yards (53-Z.Baun; 3-N.Smith).",
+          "passer_name": null,
+          "rusher_name": "C.Ward",
+          "receiver_name": null
         },
         {
           "play_id": "1717",
@@ -1554,7 +1756,10 @@
             "tackle_for_loss_1",
             "solo_tackle_1"
           ],
-          "description": "(1:26) (Shotgun) 1-C.Ward sacked at TEN 27 for -5 yards (3-N.Smith)."
+          "description": "(1:26) (Shotgun) 1-C.Ward sacked at TEN 27 for -5 yards (3-N.Smith).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": null
         },
         {
           "play_id": "3082",
@@ -1593,7 +1798,10 @@
             "tackle_for_loss_1",
             "solo_tackle_1"
           ],
-          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith)."
+          "description": "(13:45) 20-T.Pollard right tackle to TEN 37 for -2 yards (3-N.Smith).",
+          "passer_name": null,
+          "rusher_name": "T.Pollard",
+          "receiver_name": null
         }
       ],
       "next_gen": [],
@@ -1623,7 +1831,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 5.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0038549",
@@ -1760,7 +1969,10 @@
           "roles": [
             "pass_defense_1"
           ],
-          "description": "(13:29) (No Huddle, Shotgun) 7-C.Stroud pass incomplete short left to 19-X.Hutchinson (0-D.Turner)."
+          "description": "(13:29) (No Huddle, Shotgun) 7-C.Stroud pass incomplete short left to 19-X.Hutchinson (0-D.Turner).",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "X.Hutchinson"
         },
         {
           "play_id": "961",
@@ -1798,7 +2010,10 @@
           "roles": [
             "assist_tackle_1"
           ],
-          "description": "(2:07) 13-J.Noel right end to CIN 32 for 13 yards (0-D.Turner; 35-J.Davis)."
+          "description": "(2:07) 13-J.Noel right end to CIN 32 for 13 yards (0-D.Turner; 35-J.Davis).",
+          "passer_name": null,
+          "rusher_name": "J.Noel",
+          "receiver_name": null
         },
         {
           "play_id": "1474",
@@ -1836,7 +2051,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(8:45) (No Huddle, Shotgun) 7-C.Stroud pass short right to 14-K.Boutte to CIN 26 for 1 yard (0-D.Turner)."
+          "description": "(8:45) (No Huddle, Shotgun) 7-C.Stroud pass short right to 14-K.Boutte to CIN 26 for 1 yard (0-D.Turner).",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "K.Boutte"
         },
         {
           "play_id": "1850",
@@ -1874,7 +2092,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(2:05) (Shotgun) 7-C.Stroud pass short right to 19-X.Hutchinson to CIN 39 for 6 yards (0-D.Turner)."
+          "description": "(2:05) (Shotgun) 7-C.Stroud pass short right to 19-X.Hutchinson to CIN 39 for 6 yards (0-D.Turner).",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "X.Hutchinson"
         },
         {
           "play_id": "2421",
@@ -1912,7 +2133,10 @@
           "roles": [
             "pass_defense_1"
           ],
-          "description": "(14:54) (Shotgun) 7-C.Stroud pass incomplete short middle to 19-X.Hutchinson (0-D.Turner)."
+          "description": "(14:54) (Shotgun) 7-C.Stroud pass incomplete short middle to 19-X.Hutchinson (0-D.Turner).",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "X.Hutchinson"
         },
         {
           "play_id": "4132",
@@ -1950,7 +2174,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(4:44) (No Huddle, Shotgun) 7-C.Stroud pass short right to 86-D.Schultz to HOU 32 for 2 yards (0-D.Turner)."
+          "description": "(4:44) (No Huddle, Shotgun) 7-C.Stroud pass short right to 86-D.Schultz to HOU 32 for 2 yards (0-D.Turner).",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "D.Schultz"
         },
         {
           "play_id": "4606",
@@ -1988,7 +2215,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(1:01) (Shotgun) 7-C.Stroud pass short left to 17-J.Wayne to CIN 25 for 15 yards (0-D.Turner). PENALTY on CIN-0-D.Turner, Face Mask, 13 yards, enforced at CIN 25."
+          "description": "(1:01) (Shotgun) 7-C.Stroud pass short left to 17-J.Wayne to CIN 25 for 15 yards (0-D.Turner). PENALTY on CIN-0-D.Turner, Face Mask, 13 yards, enforced at CIN 25.",
+          "passer_name": "C.Stroud",
+          "rusher_name": null,
+          "receiver_name": "J.Wayne"
         }
       ],
       "next_gen": [],
@@ -2018,7 +2248,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 4.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036996",
@@ -2155,7 +2386,10 @@
           "roles": [
             "pass_defense_1"
           ],
-          "description": "(10:02) (Shotgun) 9-M.Stafford pass incomplete short right to 17-D.Adams (20-G.Newsome)."
+          "description": "(10:02) (Shotgun) 9-M.Stafford pass incomplete short right to 17-D.Adams (20-G.Newsome).",
+          "passer_name": "M.Stafford",
+          "rusher_name": null,
+          "receiver_name": "D.Adams"
         },
         {
           "play_id": "1936",
@@ -2193,7 +2427,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(:25) (Shotgun) 23-K.Williams right guard pushed ob at LA 48 for 13 yards (20-G.Newsome)."
+          "description": "(:25) (Shotgun) 23-K.Williams right guard pushed ob at LA 48 for 13 yards (20-G.Newsome).",
+          "passer_name": null,
+          "rusher_name": "K.Williams",
+          "receiver_name": null
         },
         {
           "play_id": "1963",
@@ -2231,7 +2468,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(:19) (Shotgun) 9-M.Stafford pass deep right to 17-D.Adams to NYG 25 for 27 yards (20-G.Newsome)."
+          "description": "(:19) (Shotgun) 9-M.Stafford pass deep right to 17-D.Adams to NYG 25 for 27 yards (20-G.Newsome).",
+          "passer_name": "M.Stafford",
+          "rusher_name": null,
+          "receiver_name": "D.Adams"
         },
         {
           "play_id": "2449",
@@ -2269,7 +2509,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(9:29) (Shotgun) 9-M.Stafford pass short left to 17-D.Adams to LA 35 for 16 yards (20-G.Newsome)."
+          "description": "(9:29) (Shotgun) 9-M.Stafford pass short left to 17-D.Adams to LA 35 for 16 yards (20-G.Newsome).",
+          "passer_name": "M.Stafford",
+          "rusher_name": null,
+          "receiver_name": "D.Adams"
         },
         {
           "play_id": "3195",
@@ -2307,7 +2550,10 @@
           "roles": [
             "solo_tackle_1"
           ],
-          "description": "(14:33) 9-M.Stafford pass short right to 18-T.Ferguson pushed ob at LA 45 for 9 yards (20-G.Newsome)."
+          "description": "(14:33) 9-M.Stafford pass short right to 18-T.Ferguson pushed ob at LA 45 for 9 yards (20-G.Newsome).",
+          "passer_name": "M.Stafford",
+          "rusher_name": null,
+          "receiver_name": "T.Ferguson"
         },
         {
           "play_id": "3361",
@@ -2345,7 +2591,10 @@
           "roles": [
             "assist_tackle_2"
           ],
-          "description": "(10:34) (Shotgun) 9-M.Stafford pass short left to 24-B.Corum to NYG 8 for 13 yards (49-T.Edmunds; 20-G.Newsome)."
+          "description": "(10:34) (Shotgun) 9-M.Stafford pass short left to 24-B.Corum to NYG 8 for 13 yards (49-T.Edmunds; 20-G.Newsome).",
+          "passer_name": "M.Stafford",
+          "rusher_name": null,
+          "receiver_name": "B.Corum"
         }
       ],
       "next_gen": [],
@@ -2375,7 +2624,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 3.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041438",
@@ -2512,7 +2762,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(13:51) (Shotgun) 1-C.Ward pass incomplete short middle to 14-C.Tate."
+          "description": "(13:51) (Shotgun) 1-C.Ward pass incomplete short middle to 14-C.Tate.",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "C.Tate"
         },
         {
           "play_id": "2312",
@@ -2550,7 +2803,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(11:00) (Shotgun) 1-C.Ward pass short middle to 14-C.Tate to TEN 22 for 6 yards (2-T.Woolen)."
+          "description": "(11:00) (Shotgun) 1-C.Ward pass short middle to 14-C.Tate to TEN 22 for 6 yards (2-T.Woolen).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "C.Tate"
         },
         {
           "play_id": "3126",
@@ -2588,7 +2844,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(12:54) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate (2-T.Woolen)."
+          "description": "(12:54) (No Huddle, Shotgun) 1-C.Ward pass incomplete short left to 14-C.Tate (2-T.Woolen).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "C.Tate"
         },
         {
           "play_id": "3639",
@@ -2626,7 +2885,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(3:29) (Shotgun) 1-C.Ward pass short left to 14-C.Tate to PHI 36 for 6 yards (27-Q.Mitchell)."
+          "description": "(3:29) (Shotgun) 1-C.Ward pass short left to 14-C.Tate to PHI 36 for 6 yards (27-Q.Mitchell).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "C.Tate"
         },
         {
           "play_id": "4131",
@@ -2664,7 +2926,10 @@
           "roles": [
             "receiver"
           ],
-          "description": "(:09) (Shotgun) 1-C.Ward pass short right to 14-C.Tate to 50 for 15 yards (2-T.Woolen)."
+          "description": "(:09) (Shotgun) 1-C.Ward pass short right to 14-C.Tate to 50 for 15 yards (2-T.Woolen).",
+          "passer_name": "C.Ward",
+          "rusher_name": null,
+          "receiver_name": "C.Tate"
         }
       ],
       "next_gen": [
@@ -2704,7 +2969,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 1.08,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0041096",
@@ -2841,7 +3107,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(3:01) (Shotgun) 31-K.Allen left end to 50 for 7 yards (53-D.Winters)."
+          "description": "(3:01) (Shotgun) 31-K.Allen left end to 50 for 7 yards (53-D.Winters).",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
         },
         {
           "play_id": "4117",
@@ -2879,7 +3148,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(2:23) 31-K.Allen left tackle to DAL 41 for 9 yards (53-D.Winters). WAS-76-S.Cosmi was injured during the play."
+          "description": "(2:23) 31-K.Allen left tackle to DAL 41 for 9 yards (53-D.Winters). WAS-76-S.Cosmi was injured during the play.",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
         },
         {
           "play_id": "4159",
@@ -2917,7 +3189,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(2:00) 31-K.Allen left tackle to DAL 40 for 1 yard (97-K.Clark)."
+          "description": "(2:00) 31-K.Allen left tackle to DAL 40 for 1 yard (97-K.Clark).",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
         },
         {
           "play_id": "4188",
@@ -2955,7 +3230,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(1:16) 31-K.Allen left tackle to DAL 36 for 4 yards (6-D.Ezeiruaku)."
+          "description": "(1:16) 31-K.Allen left tackle to DAL 36 for 4 yards (6-D.Ezeiruaku).",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
         },
         {
           "play_id": "4210",
@@ -2993,7 +3271,10 @@
           "roles": [
             "rusher"
           ],
-          "description": "(:37) 31-K.Allen left tackle to DAL 33 for 3 yards (28-S.Revel)."
+          "description": "(:37) 31-K.Allen left tackle to DAL 33 for 3 yards (28-S.Revel).",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
         }
       ],
       "next_gen": [],
@@ -3019,7 +3300,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.96,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0036408",
@@ -3081,7 +3363,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0040007",
@@ -3143,7 +3426,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041505",
@@ -3205,7 +3489,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0036985",
@@ -3267,7 +3552,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0039731",
@@ -3329,7 +3615,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0035258",
@@ -3391,7 +3678,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041393",
@@ -3463,7 +3751,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0038118",
@@ -3525,7 +3814,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041079",
@@ -3597,7 +3887,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0040016",
@@ -3672,7 +3963,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0040371",
@@ -3744,7 +4036,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0037612",
@@ -3806,7 +4099,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036345",
@@ -3878,7 +4172,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/"
+      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/",
+      "move": null
     },
     {
       "id": "00-0039923",
@@ -3950,7 +4245,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0039367",
@@ -4015,7 +4311,8 @@
       "team_changed": false,
       "next_game": null,
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     }
   ],
   "featured_ranking": [
