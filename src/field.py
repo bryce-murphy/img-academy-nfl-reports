@@ -147,26 +147,28 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     color = f' style="color:{escape(path_color)}"' if helped else ""
     parts.append(f'<g class="path path-{state}"{color}>')
     head = 9 if detailed else 6
+    radius = 5 if detailed else 4
+    origin = x(g["x0"])
     if g["air_end"] is not None:
         top = max(6, mid - height * 0.32)
-        parts.append(f'<path class="air" d="M{x(g["x0"])} {mid} Q{round((x(g["x0"]) + x(g["air_end"])) / 2, 1)} {round(top, 1)} {x(g["air_end"])} {mid}"/>')
-        start = x(g["air_end"])
-    else:
-        start = x(g["x0"])
-    end = x(g["end"])
+        parts.append(f'<path class="air" d="M{origin} {mid} Q{round((origin + x(g["air_end"])) / 2, 1)} {round(top, 1)} {x(g["air_end"])} {mid}"/>')
+    gained = play["yards_gained"]
     if g["kind"] == "incomplete":
-        parts.append(f'<circle class="target" cx="{x(g["air_end"])}" cy="{mid}" r="{5 if detailed else 4}"/>')
+        parts.append(f'<circle class="target" cx="{x(g["air_end"])}" cy="{mid}" r="{radius}"/>')
         tip = x(g["air_end"])
-    elif end == start == x(g["x0"]):
-        parts.append(f'<circle class="ball" cx="{end}" cy="{mid}" r="{5 if detailed else 4}"/>')
-        tip = end
+    elif gained == 0:
+        parts.append(f'<circle class="ball" cx="{origin}" cy="{mid}" r="{radius}"/>')
+        tip = origin
     else:
-        direction = 1 if end >= start else -1
-        if abs(end - start) > head:
-            parts.append(f'<line class="run" x1="{start}" y1="{mid}" x2="{round(end - direction * head, 1)}" y2="{mid}"/>')
+        end = x(g["end"])
+        direction = 1 if gained > 0 else -1
         back = round(end - direction * head, 1)
+        if abs(end - origin) > head:
+            parts.append(f'<line class="run" x1="{origin}" y1="{mid}" x2="{back}" y2="{mid}"/>')
         parts.append(f'<polygon class="arrow" points="{end},{mid} {back},{round(mid - head * 0.65, 1)} {back},{round(mid + head * 0.65, 1)}"/>')
         tip = end
+    if g["kind"] == "complete":
+        parts.append(f'<circle class="catch" cx="{x(g["air_end"])}" cy="{mid}" r="{4 if detailed else 3}"/>')
     parts.append("</g>")
     text = yardage_label(play)
     if text:

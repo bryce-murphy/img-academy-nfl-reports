@@ -200,8 +200,10 @@ class FaceliftTests(unittest.TestCase):
     def test_numbers_and_hashes_only_on_detailed_sizes_and_inside_the_window(self):
         markup = field.svg(base(), "large")
         g = field.geometry(base())
-        for yard in re.findall(r'class="yard-number" x="[\d.]+" y="[\d.]+" text-anchor="middle">(\d+)<', markup):
+        numbers = re.findall(r'class="yard-number" x="([\d.]+)" y="[\d.]+" text-anchor="middle">(\d+)<', markup)
+        for x, yard in numbers:
             self.assertTrue(int(yard) % 10 == 0)
+            self.assertTrue(0 < float(x) < 960)
         self.assertIn('class="hash"', markup)
         self.assertGreaterEqual(markup.count('class="yard-number"'), 2)
         strip = field.svg(base(), "strip")
@@ -228,3 +230,30 @@ class FaceliftTests(unittest.TestCase):
     def test_text_only_plays_still_have_no_drawing(self):
         self.assertIsNone(field.svg(base(penalty=1), "medium"))
         self.assertIsNone(field.yardage_label(base(penalty=1)))
+
+    def catch(self, air, gained):
+        return pass_play(complete_pass=1, air_yards=air, yards_gained=gained)
+
+    def test_completion_arrow_shows_the_net_result_not_the_catch_point(self):
+        markup = field.svg(self.catch(12, 10), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertGreater(tip, back)
+        self.assertIn(">+10</text>", markup)
+
+    def test_completion_behind_the_line_for_a_loss_points_left(self):
+        markup = field.svg(self.catch(-3, -2), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertLess(tip, back)
+        self.assertIn(">−2</text>", markup)
+
+    def test_completion_for_no_gain_has_a_ball_and_no_arrow(self):
+        markup = field.svg(self.catch(5, 0), "medium")
+        self.assertNotIn('class="arrow"', markup)
+        self.assertIn('class="ball"', markup)
+        self.assertIn(">0</text>", markup)
+
+    def test_completion_marks_the_catch_point(self):
+        markup = field.svg(self.catch(4, 15), "medium")
+        self.assertIn('class="catch"', markup)
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertGreater(tip, back)
