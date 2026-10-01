@@ -106,11 +106,17 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 @media (max-width:640px){.masthead,main,.site-footer{padding-left:16px;padding-right:16px}.masthead{grid-template-columns:1fr}.masthead nav{grid-column:1;grid-row:2;justify-self:start;gap:16px}.independent{grid-row:3}.brand svg{height:40px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.section-head{flex-direction:column}.section-head p{text-align:left}.availability>div{grid-template-columns:1fr}.availability dd.note{grid-column:1}.method{padding:20px}.monogram{font-size:96px}.featured{grid-template-columns:auto 1fr;align-items:center;column-gap:16px}.featured .scorebug{grid-column:1/-1}.featured .monogram{font-size:56px;margin:0;grid-row:span 2}.season{grid-template-columns:1fr;gap:2px}.season dd{margin-bottom:10px}.player-mark{width:84px}.player-mark .monogram{font-size:44px}.player-head h1{font-size:34px}}
 @media print{details{display:block}.card{break-inside:avoid}}
 .field{display:block;width:100%;height:auto;margin:6px 0}
-.field .turf{fill:var(--wash)}.field .endzone{fill:var(--light)}.field .endzone-label{font:700 12px var(--display);fill:var(--navy)}
-.field .yard-minor{stroke:var(--light);stroke-width:1}.field .yard-major{stroke:var(--warm);stroke-width:1.5}
-.field .los{stroke:var(--navy);stroke-width:2}.field .marker{stroke:var(--first-down);stroke-width:2}
-.field .air{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4}.field .run{stroke:var(--navy);stroke-width:4;stroke-linecap:round}
-.field .ball{fill:var(--navy)}.field .target{fill:#fff;stroke:var(--muted);stroke-width:2}
+.field .turf{fill:var(--wash)}.field .endzone{fill:var(--light)}
+.field .endzone-label{font:800 16px var(--display);fill:var(--navy);letter-spacing:1px}
+.field .yard-minor{stroke:var(--navy);stroke-opacity:.15;stroke-width:1}.field .yard-major{stroke:var(--navy);stroke-opacity:.3;stroke-width:1.5}
+.field .hash{stroke:var(--navy);stroke-opacity:.25;stroke-width:1.5}
+.field .yard-number{font:700 15px var(--display);fill:var(--navy);fill-opacity:.45}
+.field .los{stroke:var(--navy);stroke-width:2.5}.field .marker{stroke:var(--first-down);stroke-width:2.5}
+.field .path{color:var(--navy)}.field .path-hurt{color:var(--muted)}
+.field .run{stroke:currentColor;stroke-width:4;stroke-linecap:round}.field .air{fill:none;stroke:currentColor;stroke-width:2.5;stroke-dasharray:6 5}
+.field .arrow,.field .ball{fill:currentColor}.field .target{fill:#fff;stroke:currentColor;stroke-width:2.5}
+.field .yardage{font:800 17px var(--display);fill:var(--navy)}
+.field-strip .yardage{font-size:13px}
 .js-explorer .explorer-list .field{display:none}
 .play[aria-current="true"]{background:var(--wash);border-left:3px solid var(--brand)}
 .explorer-filters button[aria-pressed="true"]{background:var(--brand);color:#fff}
