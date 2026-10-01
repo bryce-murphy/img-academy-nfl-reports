@@ -238,6 +238,38 @@ class FaceliftTests(unittest.TestCase):
         self.assertEqual(label.group(2), "start")
         self.assertGreater(float(label.group(1)), float(zone.group(1)) + float(zone.group(2)))
 
+    def test_short_play_labels_clear_the_line_of_scrimmage(self):
+        # Rendered label sizes from styles.css; a glyph is at most about 0.6 em wide.
+        fonts = {"card": 16, "medium": 17, "large": 26}
+        plays = {"loss of 2": pass_play(sack=1, yards_gained=-2), "gain of 1": base(yards_gained=1), "gain of 2": base(yards_gained=2),
+                 "no gain": base(yards_gained=0), "short incompletion": pass_play(air_yards=2, yards_gained=0, complete_pass=0),
+                 "incompletion behind the line": pass_play(air_yards=-2, yards_gained=0, complete_pass=0)}
+        for size, font in fonts.items():
+            for name, play in plays.items():
+                with self.subTest(size=size, play=name):
+                    markup = field.svg(play, size)
+                    los = float(re.search(r'class="los" x1="([\d.]+)"', markup).group(1))
+                    x, anchor, text = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)">([^<]+)<', markup).groups()
+                    x, width = float(x), len(text) * font * 0.6
+                    left = {"start": x, "middle": x - width / 2, "end": x - width}[anchor]
+                    self.assertFalse(left <= los <= left + width, f"{text!r} spans {left:.0f}-{left + width:.0f}, LOS at {los}")
+
+    def test_short_loss_label_sits_on_the_play_line_past_the_arrowhead(self):
+        # Jihaad Campbell, 2026 Week 3: a 2-yard loss at the PHI 7 whose centered label sat on the 10-yard line.
+        play = pass_play(sack=1, down=1, ydstogo=7, goal_to_go=1, yardline_100=7, yards_gained=-2)
+        markup = field.svg(play, "card")
+        tip, _ = map(float, ARROW.search(markup).groups())
+        x, y, anchor = re.search(r'<text class="yardage" x="([\d.]+)" y="([\d.]+)" text-anchor="(\w+)"', markup).groups()
+        self.assertEqual(anchor, "end")
+        self.assertLess(float(x), tip)
+        self.assertAlmostEqual(float(y), field.SIZES["card"][1] * 0.45 + field.LABEL_FONT["card"] * 0.35, delta=0.1)
+        # The wider week-page fields leave room to keep it centered over the tip.
+        self.assertIn('text-anchor="middle">−2<', field.svg(play, "medium"))
+
+    def test_long_play_label_stays_centered_over_the_tip(self):
+        markup = field.svg(base(yards_gained=9), "medium")
+        self.assertIn('text-anchor="middle">+9<', markup)
+
     def test_aria_label_carries_the_tag(self):
         self.assertIn("Big play", field.svg(base(), "medium", outcome="Big play"))
 
