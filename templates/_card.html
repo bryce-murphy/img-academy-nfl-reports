@@ -15,7 +15,7 @@
   {% if p.key_plays %}
   <details>
     <summary>Key moments · {{ p.key_plays | length }}</summary>
-    <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }}{% if k.impact %} · {{ k.impact }}{% endif %}</span>{{ k.description }}<span class="play-outcome">{{ k.outcome }}</span></li>{% endfor %}</ol>
+    <ol class="plays">{% for k in p.key_plays %}<li><span class="play-meta">{{ k.quarter }} · {{ k.clock }}{% if k.impact %} · {{ k.impact }}{% endif %}</span>{{ k.description | safe_description }}<span class="play-outcome">{{ k.outcome }}</span></li>{% endfor %}</ol>
   </details>
   {% endif %}
   {% if p.strip %}<a class="strip" href="{{ p.page }}#play-{{ p.strip_play_id }}">{{ p.strip }}<span class="play-outcome">{{ p.strip_outcome }}</span></a>{% endif %}

@@ -125,7 +125,7 @@ class TextLineTests(unittest.TestCase):
 class SvgTests(unittest.TestCase):
     def test_svg_is_labeled_and_sized(self):
         markup = field.svg(base(down=1, offense="CLE", defense="TB"), "medium")
-        self.assertTrue(markup.startswith('<svg class="field field-medium" viewBox="0 0 480 90"'))
+        self.assertTrue(markup.startswith('<svg class="field field-medium" viewBox="0 0 480 120"'))
         self.assertIn('role="img"', markup)
         self.assertIn('aria-label="1st &amp; 10 at the CLE 35. Run for 4 yards"', markup)
         self.assertEqual(markup.count("<svg"), 1)
@@ -154,10 +154,132 @@ class SvgTests(unittest.TestCase):
         markup = field.svg(base(down=1, offense="CLE", defense="TB"), "medium", outcome="4th down stop")
         self.assertIn('aria-label="1st &amp; 10 at the CLE 35. Run for 4 yards. 4th down stop"', markup)
 
-    def test_team_color_marks_only_the_players_side_end_label(self):
-        own_side = field.svg(base(yardline_100=95, ydstogo=10, yards_gained=-8, offense="CLE", defense="TB"), "large", team_color="#aa0000")
-        self.assertRegex(own_side, r'<text class="endzone-label"[^>]*style="fill:#aa0000"[^>]*>CLE<')
-        self.assertNotIn("stroke:#aa0000", own_side)
-        opp_side = field.svg(base(down=1, ydstogo=3, goal_to_go=1, yardline_100=3, yards_gained=3, offense="CLE", defense="TB", side="defense"), "large", team_color="#aa0000")
-        self.assertRegex(opp_side, r'<text class="endzone-label"[^>]*style="fill:#aa0000"[^>]*>TB<')
-        self.assertNotIn("stroke:#aa0000", opp_side)
+
+ARROW = re.compile(r'<polygon class="arrow" points="([\d.]+),[\d.]+ ([\d.]+),')
+
+
+def pass_play(**overrides):
+    return base(play_type="pass", rush_attempt=0, pass_attempt=1, **overrides)
+
+
+class FaceliftTests(unittest.TestCase):
+    def test_sizes(self):
+        self.assertIn('viewBox="0 0 720 300"', field.svg(base(), "large"))
+        self.assertIn('viewBox="0 0 480 120"', field.svg(base(), "medium"))
+        self.assertIn('viewBox="0 0 320 56"', field.svg(base(), "strip"))
+
+    def test_gain_points_right_with_a_plus_label(self):
+        markup = field.svg(base(yards_gained=4), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertGreater(tip, back)
+        self.assertIn(">+4</text>", markup)
+
+    def test_loss_points_left_with_a_minus_label(self):
+        markup = field.svg(pass_play(sack=1, yards_gained=-10), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertLess(tip, back)
+        self.assertIn(">−10</text>", markup)
+
+    def test_no_gain_has_a_ball_and_a_zero_label(self):
+        markup = field.svg(base(yards_gained=0), "medium")
+        self.assertNotIn('class="arrow"', markup)
+        self.assertIn('class="ball"', markup)
+        self.assertIn(">0</text>", markup)
+
+    def test_incomplete_has_a_target_and_label(self):
+        markup = field.svg(pass_play(air_yards=12, yards_gained=0, complete_pass=0), "medium")
+        self.assertNotIn('class="arrow"', markup)
+        self.assertIn('class="target"', markup)
+        self.assertIn(">Incomplete</text>", markup)
+
+    def test_path_color_follows_the_outcome(self):
+        self.assertIn('<g class="path path-helped" style="color:#0B2265">', field.svg(base(), "medium", helped=True, path_color="#0B2265"))
+        self.assertIn('<g class="path path-hurt">', field.svg(base(), "medium", helped=False, path_color="#0B2265"))
+        self.assertIn('<g class="path path-neutral">', field.svg(base(), "medium"))
+
+    def test_numbers_and_hashes_only_on_detailed_sizes_and_inside_the_window(self):
+        markup = field.svg(base(), "large")
+        g = field.geometry(base())
+        numbers = re.findall(r'class="yard-number" x="([\d.]+)" y="[\d.]+" text-anchor="middle">(\d+)<', markup)
+        for x, yard in numbers:
+            self.assertTrue(int(yard) % 10 == 0)
+            self.assertTrue(0 < float(x) < 720)
+        self.assertIn('class="hash"', markup)
+        self.assertGreaterEqual(markup.count('class="yard-number"'), 2)
+        strip = field.svg(base(), "strip")
+        self.assertNotIn('class="yard-number"', strip)
+        self.assertNotIn('class="hash"', strip)
+        self.assertLess(g["lo"], g["hi"])
+
+    def test_end_zones_use_the_given_team_colors(self):
+        goal_line = base(yardline_100=4, ydstogo=4, goal_to_go=1, yards_gained=4)
+        markup = field.svg(goal_line, "medium", zones={"offense": ("#0B2265", "#ffffff"), "defense": ("#191711", "#D3BC8D")})
+        self.assertIn('class="endzone" x=', markup)
+        self.assertIn("fill:#191711", markup)
+        self.assertIn("fill:#D3BC8D", markup)
+
+    def test_yardage_label_stays_inside(self):
+        long_gain = base(yardline_100=40, ydstogo=10, yards_gained=38)
+        markup = field.svg(long_gain, "medium")
+        x = float(re.search(r'<text class="yardage" x="([\d.]+)"', markup).group(1))
+        self.assertTrue(24 <= x <= 480 - 24)
+
+    def test_touchdown_label_sits_on_the_field_not_the_end_zone(self):
+        markup = field.svg(base(yardline_100=12, ydstogo=10, goal_to_go=0, yards_gained=12), "medium")
+        label = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)"', markup)
+        goal_x = float(re.findall(r'class="endzone" x="([\d.]+)"', markup)[0])
+        self.assertEqual(label.group(2), "end")
+        self.assertLess(float(label.group(1)), goal_x)
+
+    def test_safety_depth_loss_label_sits_on_the_field(self):
+        markup = field.svg(pass_play(sack=1, yardline_100=95, ydstogo=10, goal_to_go=0, yards_gained=-8), "medium")
+        label = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)"', markup)
+        zone = re.search(r'class="endzone" x="([\d.]+)" y="0" width="([\d.]+)"', markup)
+        self.assertEqual(label.group(2), "start")
+        self.assertGreater(float(label.group(1)), float(zone.group(1)) + float(zone.group(2)))
+
+    def test_aria_label_carries_the_tag(self):
+        self.assertIn("Big play", field.svg(base(), "medium", outcome="Big play"))
+
+    def test_text_only_plays_still_have_no_drawing(self):
+        self.assertIsNone(field.svg(base(penalty=1), "medium"))
+        self.assertIsNone(field.yardage_label(base(penalty=1)))
+
+    def catch(self, air, gained):
+        return pass_play(complete_pass=1, air_yards=air, yards_gained=gained)
+
+    def test_completion_arrow_shows_the_net_result_not_the_catch_point(self):
+        markup = field.svg(self.catch(12, 10), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertGreater(tip, back)
+        self.assertIn(">+10</text>", markup)
+
+    def test_completion_behind_the_line_for_a_loss_points_left(self):
+        markup = field.svg(self.catch(-3, -2), "medium")
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertLess(tip, back)
+        self.assertIn(">−2</text>", markup)
+
+    def test_completion_for_no_gain_has_a_ball_and_no_arrow(self):
+        markup = field.svg(self.catch(5, 0), "medium")
+        self.assertNotIn('class="arrow"', markup)
+        self.assertIn('class="ball"', markup)
+        self.assertIn(">0</text>", markup)
+
+    def test_completion_label_sits_below_the_arc_and_catch_marker(self):
+        markup = field.svg(self.catch(4, 15), "medium")
+        y = float(re.search(r'<text class="yardage" x="[\d.]+" y="([\d.]+)"', markup).group(1))
+        self.assertGreater(y, 54.0)
+
+    def test_large_drawing_uses_a_bigger_arrowhead(self):
+        def head(size):
+            tip, back = map(float, ARROW.search(field.svg(base(yards_gained=10), size)).groups())
+            return tip - back
+        self.assertEqual(head("large"), 12)
+        self.assertEqual(head("medium"), 9)
+
+    def test_completion_marks_the_catch_point(self):
+        markup = field.svg(self.catch(4, 15), "medium")
+        self.assertIn('class="catch"', markup)
+        tip, back = map(float, ARROW.search(markup).groups())
+        self.assertGreater(tip, back)

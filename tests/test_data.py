@@ -73,6 +73,9 @@ class LoadSourcesTests(unittest.TestCase):
 
 
 class PlayColumnTests(unittest.TestCase):
+    def test_pbp_requires_the_three_player_name_columns(self):
+        self.assertTrue({"passer_player_name", "rusher_player_name", "receiver_player_name"} <= specifications(2026)["pbp"][2])
+
     def test_pbp_requires_every_column_player_pages_read(self):
         self.assertTrue(set(PLAY_COLUMNS) <= specifications(2026)["pbp"][2])
 

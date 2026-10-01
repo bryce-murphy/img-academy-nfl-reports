@@ -280,8 +280,8 @@ class PlaysTests(unittest.TestCase):
         self.assertIsNone(record["air_yards"])
         self.assertIsNone(record["sack"])
 
-    def test_schema_version_is_three(self):
-        self.assertEqual(build()["schema_version"], 3)
+    def test_schema_version_is_four(self):
+        self.assertEqual(build()["schema_version"], 4)
 
     def test_a_player_without_recorded_plays_has_an_empty_list(self):
         self.assertEqual(player(build(), "Tyler Booker")["plays"], [])
@@ -301,6 +301,29 @@ class PlaysTests(unittest.TestCase):
         self.assertIsNone(lateral("0", None))
         self.assertIsNone(lateral(None, "0"))
         self.assertIsNone(lateral(None, None))
+
+
+class PlayNamesAndTeamsTests(unittest.TestCase):
+    def test_play_records_keep_passer_rusher_and_receiver_names(self):
+        data, _, _ = fixture_data.load()
+        row = dict(data["pbp"][0], passer_player_name="J.Goff", rusher_player_name="", receiver_player_name="A.St. Brown")
+        record = ed.play_record(row, "00-0000000", row["defteam"], lambda t: t)
+        self.assertEqual((record["passer_name"], record["rusher_name"], record["receiver_name"]), ("J.Goff", None, "A.St. Brown"))
+
+    def test_na_and_nan_name_cells_are_missing_not_names(self):
+        data, _, _ = fixture_data.load()
+        row = dict(data["pbp"][0], passer_player_name=" J.Goff ", rusher_player_name="NA", receiver_player_name="NaN")
+        record = ed.play_record(row, "00-0000000", row["defteam"], lambda t: t)
+        self.assertEqual((record["passer_name"], record["rusher_name"], record["receiver_name"]), ("J.Goff", None, None))
+
+    def test_edition_has_a_color_for_every_team_this_week(self):
+        edition = build()
+        teams = {g["home_team"] for g in edition["games"]} | {g["away_team"] for g in edition["games"]}
+        self.assertEqual(set(edition["teams"]), teams)
+        for abbr, team in edition["teams"].items():
+            with self.subTest(abbr=abbr):
+                self.assertRegex(team["color"], r"^#[0-9a-fA-F]{6}$")
+                self.assertTrue(team["name"])
 
 
 class MainHeadlineTests(unittest.TestCase):
@@ -382,9 +405,9 @@ class MoveAttachTests(unittest.TestCase):
     def build(self, **kwargs):
         return build(**kwargs)
 
-    def test_schema_3_every_player_has_a_move_key(self):
+    def test_every_player_has_a_move_key(self):
         e = self.build()
-        self.assertEqual(e["schema_version"], 3)
+        self.assertEqual(e["schema_version"], 4)
         self.assertTrue(all("move" in p for p in e["players"]))
 
     def test_history_produces_first_week_moves(self):

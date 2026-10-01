@@ -26,6 +26,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - `site.py` with `templates/` and `static/`: the renderer.
 - `players.py`: player page addresses (slugs), game logs and season lines.
 - `field.py`: which plays get a field diagram, and the diagram SVG.
+- `playtext.py`: plain-language play lines, outcome tags and the game summary for week pages.
 - `moves.py`: roster moves (detection against earlier editions), allowed sources and move sentences.
 - `pipeline.py`: one scheduled attempt.
 - `github.py`: API calls.

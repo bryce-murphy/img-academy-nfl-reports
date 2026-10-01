@@ -6,7 +6,8 @@ import unittest
 from pathlib import Path
 
 import fixture_data
-from src import editorial, site
+from src import editorial, playtext, site
+from src import players as players_mod
 from src import evidence as ev
 from src.edition import load_registry
 
@@ -335,11 +336,11 @@ class PlayerPageTests(SiteTestCase):
     def test_week_page_lists_every_recorded_play_with_diagrams(self):
         page = self.read(self.render() / "players" / "carnell-tate" / "2026-week-02" / "index.html")
         self.assertIn("Recorded plays (5)", page)
-        self.assertEqual(page.count('class="play '), 5)
+        self.assertEqual(page.count('<li class="play'), 5)
         self.assertIn('class="field field-medium"', page)
-        self.assertIn("Expected points describe the whole play, not the player named on it.", page)
-        self.assertIn("Positive plays for the Titans", page)
-        self.assertIn("not a tracking diagram", page)
+        self.assertIn("Expected points describe the whole play, not one player.", page)
+        self.assertIn("Helped the Titans", page)
+        self.assertIn("not player tracking", page)
 
     def test_lineman_with_no_recorded_plays(self):
         page = self.read(self.render() / "players" / "tyler-booker" / "2026-week-02" / "index.html")
@@ -353,8 +354,8 @@ class PlayerPageTests(SiteTestCase):
         first_key = tate["key_plays"][0]["play_id"]  # key moments are listed first
         next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = None
         page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive=""', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertIn('data-tag=""', first)
         self.assertNotIn("expected point", first)
 
     def test_play_with_zero_epa_is_neutral_not_negative(self):
@@ -363,8 +364,8 @@ class PlayerPageTests(SiteTestCase):
         first_key = tate["key_plays"][0]["play_id"]
         next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = 0
         page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive=""', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertIn('data-tag=""', first)
 
     def test_play_side_falls_back_to_position_when_missing(self):
         edition = fixture_data.golden_edition()
@@ -374,8 +375,8 @@ class PlayerPageTests(SiteTestCase):
         play.pop("side", None)
         play["epa"] = -0.6  # good for the defense; a schema-1-shaped play with no `side` must still mark positive
         page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive="1"', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertRegex(first, r'data-tag="(big|helped)"')
 
     def test_schema_one_edition_renders_from_key_moments(self):
         edition = fixture_data.golden_edition()
@@ -384,7 +385,7 @@ class PlayerPageTests(SiteTestCase):
             p.pop("plays", None)
         page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
         self.assertIn("The full play list was not saved for this week", page)
-        self.assertIn("Sack", page)
+        self.assertIn("sacked at TB 17", page)
 
     def test_player_added_later_has_only_his_weeks(self):
         edition = fixture_data.golden_edition()
@@ -727,3 +728,111 @@ class DesignPassTests(SiteTestCase):
         out = self.render()
         for page in (out / "index.html", out / "players" / "grant-delpit" / "index.html"):
             self.assertNotIn("--ink:", self.read(page))
+
+
+class KeepYardsTests(unittest.TestCase):
+    def test_n_yard_never_breaks_and_text_is_escaped(self):
+        out = site.environment().filters["keep_yards"]("Cisco brought down Wright after a 2-yard catch & more")
+        self.assertIn('<span class="nowrap">2-yard</span>', out)
+        self.assertIn("&amp;", out)
+
+
+class PlayViewFaceliftTests(SiteTestCase):
+    def defender_play(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if any(q.get("side") == "defense" and q.get("epa") for q in p.get("plays") or []))
+        play = next(q for q in player["plays"] if q.get("side") == "defense" and q.get("epa"))
+        return edition, player, play
+
+    def test_play_view_has_line_tag_and_details(self):
+        edition, player, play = self.defender_play()
+        view = site.play_view(play, player, teams=site.team_colors(edition))
+        self.assertTrue(view["line"])
+        self.assertEqual(view["tag"], playtext.tag(play, "defense", players_mod.nickname(player["team_name"])))
+        self.assertEqual(view["epa_text"], playtext.epa_sentence(play))
+        if view["svg_medium"]:
+            self.assertIn('class="path path-', str(view["svg_medium"]))
+
+    def test_team_colors_come_from_the_edition_with_player_fallback(self):
+        edition = fixture_data.golden_edition()
+        colors = site.team_colors(edition)
+        self.assertEqual(set(colors), set(edition["teams"]))
+        self.assertEqual(site.team_colors({"players": [{"team": "NYG", "team_color": "#0B2265"}]}), {"NYG": "#0B2265"})
+
+    def test_week_page_has_summary_and_plain_lines(self):
+        edition, player, _ = self.defender_play()
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertIn('class="game-summary"', page)
+        self.assertIn(playtext.summary(site.week_plays(player)[1]), page)
+
+    def test_schema_3_editions_still_render(self):
+        edition = fixture_data.golden_edition()
+        edition.pop("teams")
+        edition["schema_version"] = 3
+        for p in edition["players"]:
+            for q in p.get("plays") or []:
+                for key in ("passer_name", "rusher_name", "receiver_name"):
+                    q.pop(key, None)
+        out = self.render(edition)
+        self.assertTrue((out / "index.html").exists())
+
+
+class WeekPageLayoutTests(SiteTestCase):
+    def week_page(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays"))
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        return player, self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+
+    def test_layout_filters_and_cards(self):
+        player, page = self.week_page()
+        nick = players_mod.nickname(player["team_name"])
+        for needle in ('class="game-summary"', 'class="explorer-body"', 'data-filter="impact"', 'data-filter="helped"',
+                       'data-filter="hurt"', f">Helped the {nick}<", f">Hurt the {nick}<", 'class="play-line"', '<details class="play-more">'):
+            self.assertIn(needle, page)
+        self.assertNotIn("Positive plays for the", page)
+        self.assertEqual(page.count('class="about-drawings"'), 1)
+        self.assertNotIn("Expected points describe the whole play, not the player named on it.", page)
+
+    def test_more_holds_the_play_by_play_and_numbers(self):
+        player, page = self.week_page()
+        play = next(p for p in player["plays"] if p.get("epa") is not None and p.get("offense_name"))
+        card = page.split(f'id="play-{play["play_id"]}"')[1].split("</li>")[0]
+        more = card.split('<details class="play-more">')[1].split("</details>")[0]
+        self.assertIn("<summary>More</summary>", more)
+        self.assertIn(playtext.epa_sentence(play), more)
+
+    def test_injury_sentence_in_play_by_play_never_appears(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays"))
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        player["plays"][0]["description"] += " X.Player was injured during the play."
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertNotIn("injured", page)
+
+    def test_card_key_moments_never_show_injury_sentences(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("key_plays"))
+        player["key_plays"][0]["description"] = "(2:00) 16-J.Goff pass short left to 18-I.TeSlaa for 5 yards (8-A.Cisco). 18-I.TeSlaa was injured during the play."
+        out = self.render(edition)
+        self.assertNotIn("injured", self.read(out / "index.html"))
+        self.assertNotIn("injured", self.read(out / "editions" / edition["id"] / "index.html"))
+
+    def test_key_moments_only_edition_has_no_game_summary(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays") and p["availability"]["label"] == ev.PLAYED)
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        player.pop("plays")
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertNotIn('class="game-summary"', page)
+
+    def test_hidden_attribute_is_not_overridden_and_grid_waits_for_script(self):
+        css = (site.ROOT / "static" / "styles.css").read_text(encoding="utf-8")
+        self.assertIn("[hidden]{display:none !important}", css)
+        self.assertIn(".js-explorer .explorer-body{", css)
+
+    def test_explorer_script_uses_the_new_filters(self):
+        script = (site.ROOT / "static" / "explorer.js").read_text(encoding="utf-8")
+        for needle in ('"helped"', '"hurt"', "data-tag", ".play-line", "play-more", "getComputedStyle"):
+            self.assertIn(needle, script)

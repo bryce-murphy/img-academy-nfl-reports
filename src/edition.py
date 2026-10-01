@@ -17,7 +17,7 @@ from .players import SLUG
 from .upnext import next_game
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 EDITIONS_ROOT = ROOT / "editions"
 KEEP_FIELDS = ("current", "position", "team_changed")
 _INTS = ("down", "ydstogo", "yardline_100", "yards_gained", "air_yards", "yards_after_catch")
@@ -147,6 +147,17 @@ def _int_or_none(value):
     return int(number) if number is not None else None
 
 
+_MISSING_TEXT = ("", "NA", "NaN")
+
+
+def _text_or_none(value):
+    """A play-by-play text cell, or None when it is blank or an NA/NaN placeholder."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return None if text in _MISSING_TEXT else text
+
+
 def _flag_or_none(value):
     number = ev.num(value)
     return None if number is None else int(number == 1)
@@ -180,6 +191,9 @@ def play_record(play, pid, team, team_name):
         "impact": impact,
         "roles": ev.recorded_roles(play, pid),
         "description": play.get("desc", ""),
+        "passer_name": _text_or_none(play.get("passer_player_name")),
+        "rusher_name": _text_or_none(play.get("rusher_player_name")),
+        "receiver_name": _text_or_none(play.get("receiver_player_name")),
     }
 
 
@@ -450,6 +464,10 @@ def build_edition(data, registry, games, season, week, *, generated_at, historic
              "home_team": g["home_team"], "home_score": ev.clean(g["home_score"])}
             for g in sorted(games, key=lambda g: (g["gameday"], g["game_id"]))
         ],
+        "teams": {
+            abbr: {"name": wk.team_name(abbr), "color": wk.team_color(abbr)}
+            for abbr in sorted({g["home_team"] for g in games} | {g["away_team"] for g in games})
+        },
         "players": players,
         "featured_ranking": ranking,
         "counts": {"followed": len(players), "played": labels[ev.PLAYED], "by_label": dict(sorted(labels.items()))},
