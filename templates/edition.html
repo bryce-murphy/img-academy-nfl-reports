@@ -10,16 +10,17 @@
 <p class="as-of">Data as of {{ data_as_of }}. The NFL can correct statistics later in the week.</p>
 <section class="hero" aria-labelledby="headline">
   <div class="hero-copy">
-    <h1 id="headline">{{ editorial.headline }}</h1>
-    <p class="dek">{{ editorial.dek }}</p>
-    <p class="lead">{{ editorial.lead }}</p>
+    <h1 id="headline">{{ editorial.headline | scores }}</h1>
+    <p class="dek">{{ editorial.dek | scores }}</p>
+    <p class="lead">{{ editorial.lead | scores }}</p>
     {% if featured %}<a class="cta" href="#player-{{ featured.id }}">{{ featured.name }}'s week →</a>{% endif %}
   </div>
   {% if featured %}
-  <aside class="featured" style="--team: {{ featured.team_color }}" aria-label="Featured player">
+  <aside class="featured" style="--bar: {{ featured.bar }}; --bar-ink: {{ featured.ink }}" aria-label="Featured player">
     <p class="scorebug">{{ featured.score_line }}</p>
     <div class="monogram" aria-hidden="true">{{ featured.initials }}</div>
-    <p class="featured-name">{{ featured.name }} · {{ featured.team_name }}</p>
+    <p class="featured-name"><strong>{{ featured.name }}</strong> · {{ featured.team_name }}</p>
+    <p class="featured-line">{{ featured.contribution }}</p>
   </aside>
   {% endif %}
 </section>

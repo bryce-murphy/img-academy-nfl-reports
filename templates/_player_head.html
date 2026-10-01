@@ -1,11 +1,13 @@
-<header class="player-head" style="--team: {{ player.team_color }}">
-  <p class="eyebrow">{{ player.team }} / {{ player.position }}{% if eyebrow_suffix %} · {{ eyebrow_suffix }}{% endif %}</p>
-  {% if show_monogram is defined and show_monogram %}<div class="player-mark"><div class="monogram" aria-hidden="true">{{ player.initials }}</div></div>{% endif %}
-  <h1>{{ player.name }}</h1>
+<header class="player-head" style="--team: {{ player.team_color }}; --bar: {{ player.bar }}; --bar-ink: {{ player.ink }}">
+  <p class="team-bar">{{ player.team }} · {{ player.position }}{% if eyebrow_suffix %} · {{ eyebrow_suffix }}{% endif %}</p>
+  <div class="who">
+    {% if show_monogram is defined and show_monogram %}<div class="player-mark"><div class="monogram" aria-hidden="true">{{ player.initials }}</div></div>{% endif %}
+    <h1>{{ player.name }}</h1>
+  </div>
   <p class="score">{{ player.score_line }}</p>
   {% if player.move %}{% set move = player.move %}{% include "_move.html" %}{% endif %}
   {% if player.participation %}<p class="evidence">{{ player.participation }}</p>{% endif %}
-  <div class="metrics">{% for m in player.metrics %}<div><strong>{{ m.value | num }}</strong><span>{{ m.label }}</span></div>{% endfor %}</div>
+  {% if played %}<div class="metrics">{% for m in player.metrics %}<div><strong>{{ m.value | num }}</strong><span>{{ m.label }}</span></div>{% endfor %}</div>{% endif %}
   {% if player.charting_lines %}<ul class="ngs charted">{% for line in player.charting_lines %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
   <p class="caption">{{ player.context }}{% if player.source_url %} · <a href="{{ player.source_url }}" rel="noopener">IMG Academy affiliation source</a>{% endif %}</p>
 </header>

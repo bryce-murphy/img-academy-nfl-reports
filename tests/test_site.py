@@ -236,7 +236,7 @@ class RenderTests(SiteTestCase):
         out = self.render()
         home = self.read(out / "index.html")
         self.assertIn(">This Week</a>", home)
-        self.assertIn("CLE / S</p>", home)
+        self.assertIn("CLE · S</p>", home)
         self.assertNotIn("/ SAF", home)
         self.assertIn("<h1>Methodology</h1>", self.read(out / "methodology" / "index.html"))
         delpit = next(p for p in fixture_data.golden_edition()["players"] if p["name"] == "Grant Delpit")
@@ -397,7 +397,7 @@ class PlayerPageTests(SiteTestCase):
 
     def test_evergreen_page_has_season_and_game_log(self):
         page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
-        for text in ("Grant Delpit", "CLE / S", "Season", "Impact plays", "Game log", 'href="2026-week-02/"', "See all", "Data as of"):
+        for text in ("Grant Delpit", "CLE · S", "Season", "Impact plays", "Game log", 'href="2026-week-02/"', "See all", "Data as of"):
             self.assertIn(text, page)
 
     def test_up_next_appears_only_when_the_edition_has_it(self):
@@ -649,3 +649,66 @@ class MoveRenderTests(SiteTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DesignPassTests(SiteTestCase):
+    def test_team_bar_text_reaches_aa_contrast_for_every_team(self):
+        import csv
+        with (fixture_data.FIXTURES / "teams.csv").open(encoding="utf-8", newline="") as handle:
+            colors = [row["team_color"] for row in csv.DictReader(handle)]
+        self.assertGreaterEqual(len(colors), 32)
+        for color in colors:
+            bar, ink = site.team_bar(color)
+            with self.subTest(color=color):
+                self.assertGreaterEqual(site.contrast(bar, ink), 4.5)
+
+    def test_team_bar_keeps_the_team_color_when_it_can(self):
+        self.assertEqual(site.team_bar("#0B2265"), ("#0B2265", "#ffffff"))  # Giants: white text
+        self.assertEqual(site.team_bar("#D3BC8D"), ("#D3BC8D", site.NAVY))  # Saints gold: navy text
+        bar, ink = site.team_bar("#FB4F14")  # Bengals orange: deepened just enough for white text
+        self.assertEqual(ink, "#ffffff")
+        self.assertNotEqual(bar, "#FB4F14")
+        self.assertEqual(site.team_bar("not a color"), site.team_bar("#0057b8"))
+
+    def test_scores_never_split_and_text_stays_escaped(self):
+        html = str(site.environment().filters["scores"]("Giants' <b>12-7</b> win"))
+        self.assertIn('<span class="nowrap">12-7</span>', html)
+        self.assertIn("&lt;b&gt;", html)
+
+    def test_headline_keeps_scores_together(self):
+        edition = fixture_data.golden_edition()
+        copy_ = dict(editorial.fallback(edition), headline="Browns edge Panthers 21-18", lead="The Browns held on, 21-18.")
+        home = self.read(self.render(edition, copy_) / "index.html")
+        self.assertIn('Browns edge Panthers <span class="nowrap">21-18</span>', home)
+        self.assertIn('The Browns held on, <span class="nowrap">21-18</span>.', home)
+
+    def test_cards_have_a_team_bar_and_no_final_suffix(self):
+        out = self.render()
+        home = self.read(out / "index.html")
+        self.assertNotIn("— Final", home)
+        self.assertIn('class="team-bar"', home)
+        self.assertNotIn("— Final", self.read(out / "players" / "grant-delpit" / "index.html"))
+
+    def test_featured_panel_has_the_contribution_line(self):
+        edition = fixture_data.golden_edition()
+        copy_ = editorial.fallback(edition)
+        featured = next(p for p in edition["players"] if p["id"] == copy_["featured_player_id"])
+        home = self.read(self.render(edition, copy_) / "index.html")
+        hero = home.split('class="featured"')[1].split("</aside>")[0]
+        self.assertIn(site.contribution(featured).split(" · ")[0], hero)
+
+    def test_players_who_did_not_play_have_no_stat_tiles(self):
+        edition = fixture_data.golden_edition()
+        absent = next(p for p in edition["players"] if p["availability"]["label"] == "Inactive for the game")
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == absent["id"])
+        page = self.read(self.render(edition) / "players" / slug / "index.html")
+        self.assertNotIn('class="metrics"', page.split('class="player-head"')[1].split("</header>")[0])
+        self.assertIn("No games played yet (1 week).", page)
+        self.assertIn(">Week 2</a>", page)
+
+    def test_templates_never_override_the_body_ink_token(self):
+        # --ink is the site's body text color; a team bar's text color must use its own token,
+        # or every line inside a card or player header turns the bar's text color.
+        out = self.render()
+        for page in (out / "index.html", out / "players" / "grant-delpit" / "index.html"):
+            self.assertNotIn("--ink:", self.read(page))
