@@ -17,7 +17,12 @@
 <section class="section status"><h2>Week {{ latest_edition.week }} status</h2><p><strong>{{ player.availability.label }}</strong></p><p class="evidence">{{ player.availability.evidence }}</p><p><a href="{{ latest_edition.id }}/">Week {{ latest_edition.week }} page →</a></p></section>
 {% endif %}
 {% if next_text %}<section class="section"><h2>Up next</h2><p>{{ next_text }}</p></section>{% endif %}
-<section class="section"><h2>Season</h2><dl class="season">{% for line in season %}<dt>{{ line.label }}</dt><dd>{{ line.text }}</dd>{% endfor %}</dl></section>
+<section class="section"><h2>Season</h2><dl class="season">{% for line in season %}<dt>{{ line.label }}</dt><dd>{{ line.text }}</dd>{% endfor %}</dl>
+{% if numbers %}<details class="by-numbers"><summary>By the numbers</summary>
+<div class="table-wrap"><table class="numbers"><thead><tr><th scope="col">Measure</th><th scope="col">Value</th><th scope="col">Sample</th></tr></thead>
+<tbody>{% for r in numbers %}<tr><th scope="row">{{ r.label }}<span class="definition">{{ r.definition }}</span></th><td class="value">{{ r.value }}</td><td>{{ r.sample }}</td></tr>{% endfor %}</tbody></table></div>
+<p class="numbers-note">The same season in analytics terms. A rate shows a dash until it has its minimum sample. <a href="{{ root }}methodology/#by-the-numbers">How these are computed</a>.</p>
+</details>{% endif %}</section>
 <section class="section"><h2>Game log</h2>
 <div class="table-wrap"><table class="log"><thead><tr><th scope="col">Week</th><th scope="col">Team</th><th scope="col">Opp.</th><th scope="col">Result</th><th scope="col">Status</th><th scope="col">Snaps</th><th scope="col">Contribution</th></tr></thead>
 <tbody>{% for r in log %}<tr><td><a href="{{ r.edition_id }}/">Week {{ r.week }}</a></td><td>{{ r.team }}</td><td>{{ r.opponent }}</td><td>{{ r.result }}</td><td>{{ r.status }}</td><td>{{ r.snaps_text }}</td><td>{{ r.contribution }}</td></tr>{% endfor %}</tbody></table></div>

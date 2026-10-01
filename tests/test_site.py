@@ -463,6 +463,17 @@ class PlayerPageTests(SiteTestCase):
         for text in ("Grant Delpit", "CLE · S", "Season", "Impact plays", "Game log", 'href="2026-week-02/"', "See all", "Data as of"):
             self.assertIn(text, page)
 
+    def test_season_has_a_closed_by_the_numbers_table(self):
+        page = self.read(self.render() / "players" / "grant-delpit" / "index.html")
+        numbers = page.split('<details class="by-numbers">')[1].split("</details>")[0]
+        self.assertIn("<summary>By the numbers</summary>", numbers)
+        self.assertIn('<th scope="row">Defensive snap share<span class="definition">', numbers)
+        self.assertIn("Impact plays per 100 snaps", numbers)
+        self.assertIn("(shown from 100)", numbers)
+        self.assertIn('href="../../methodology/#by-the-numbers"', numbers)
+        self.assertNotIn('<details class="by-numbers" open', page)
+        self.assertIn('id="by-the-numbers"', self.read(self.render() / "methodology" / "index.html"))
+
     def test_up_next_appears_only_when_the_edition_has_it(self):
         edition = fixture_data.golden_edition()
         delpit = next(p for p in edition["players"] if p["name"] == "Grant Delpit")
