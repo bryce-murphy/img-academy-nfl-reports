@@ -1,10 +1,10 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "id": "2026-week-03",
   "season": 2026,
   "week": 3,
   "season_type": "REG",
-  "generated_at": "2026-09-30T17:56:52+00:00",
+  "generated_at": "2026-10-01T00:29:12+00:00",
   "label": "Verified source snapshot",
   "historical": false,
   "games": [
@@ -513,7 +513,8 @@
         "team_color": "#003F2D"
       },
       "score": 7.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0040708",
@@ -979,7 +980,8 @@
         "team_color": "#004C54"
       },
       "score": 4.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036996",
@@ -1309,7 +1311,8 @@
         "team_color": "#0B2265"
       },
       "score": 3.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041438",
@@ -1801,7 +1804,8 @@
         "team_color": "#4495D2"
       },
       "score": 2.32,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0036282",
@@ -2096,7 +2100,8 @@
         "team_color": "#FF3C00"
       },
       "score": 2.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0039013",
@@ -2283,7 +2288,8 @@
         "team_color": "#004C54"
       },
       "score": 1.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041393",
@@ -2486,7 +2492,8 @@
         "team_color": "#000000"
       },
       "score": 1.5,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0038549",
@@ -2638,7 +2645,8 @@
         "team_color": "#FB4F14"
       },
       "score": 1.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0035258",
@@ -2711,7 +2719,8 @@
         "team_color": "#97233F"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0040007",
@@ -2784,7 +2793,8 @@
         "team_color": "#002244"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036408",
@@ -2857,7 +2867,8 @@
         "team_color": "#D3BC8D"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041505",
@@ -2930,7 +2941,8 @@
         "team_color": "#0B2265"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0039731",
@@ -3003,7 +3015,8 @@
         "team_color": "#4495D2"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036985",
@@ -3076,7 +3089,8 @@
         "team_color": "#006778"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0041096",
@@ -3159,7 +3173,8 @@
         "team_color": "#5A1414"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0038118",
@@ -3232,7 +3247,8 @@
         "team_color": "#006778"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0039923",
@@ -3315,7 +3331,19 @@
         "team_color": "#0B2265"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": {
+        "kind": "moved_after_game",
+        "from": "MIN",
+        "to": "NYG",
+        "from_name": "Minnesota Vikings",
+        "to_name": "New York Giants",
+        "from_color": "#4F2683",
+        "to_color": "#0B2265",
+        "status": null,
+        "last_week_with_old_team": 3,
+        "last_game_date": "2026-09-27"
+      }
     },
     {
       "id": "00-0040016",
@@ -3401,7 +3429,8 @@
         "team_color": "#203731"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0040371",
@@ -3484,7 +3513,8 @@
         "team_color": "#002244"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0037612",
@@ -3557,7 +3587,8 @@
         "team_color": "#000000"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     },
     {
       "id": "00-0036345",
@@ -3640,7 +3671,8 @@
         "team_color": "#4495D2"
       },
       "score": 0.0,
-      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/"
+      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/",
+      "move": null
     },
     {
       "id": "00-0041079",
@@ -3723,7 +3755,8 @@
         "team_color": "#A71930"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
     },
     {
       "id": "00-0039367",
@@ -3793,7 +3826,8 @@
         "team_color": "#123d35"
       },
       "score": 0.0,
-      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/"
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
     }
   ],
   "featured_ranking": [
