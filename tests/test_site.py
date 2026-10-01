@@ -789,11 +789,27 @@ class WeekPageLayoutTests(SiteTestCase):
         self.assertNotIn("Expected points describe the whole play, not the player named on it.", page)
 
     def test_more_holds_the_play_by_play_and_numbers(self):
-        _, page = self.week_page()
-        more = page.split('<details class="play-more">')[1].split("</details>")[0]
+        player, page = self.week_page()
+        play = next(p for p in player["plays"] if p.get("epa") is not None and p.get("offense_name"))
+        card = page.split(f'id="play-{play["play_id"]}"')[1].split("</li>")[0]
+        more = card.split('<details class="play-more">')[1].split("</details>")[0]
         self.assertIn("<summary>More</summary>", more)
+        self.assertIn(playtext.epa_sentence(play), more)
+
+    def test_injury_sentence_in_play_by_play_never_appears(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays"))
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        player["plays"][0]["description"] += " X.Player was injured during the play."
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertNotIn("injured", page)
+
+    def test_hidden_attribute_is_not_overridden_and_grid_waits_for_script(self):
+        css = (site.ROOT / "static" / "styles.css").read_text(encoding="utf-8")
+        self.assertIn("[hidden]{display:none !important}", css)
+        self.assertIn(".js-explorer .explorer-body{", css)
 
     def test_explorer_script_uses_the_new_filters(self):
         script = (site.ROOT / "static" / "explorer.js").read_text(encoding="utf-8")
-        for needle in ('"helped"', '"hurt"', "data-tag", ".play-line"):
+        for needle in ('"helped"', '"hurt"', "data-tag", ".play-line", "play-more", "getComputedStyle"):
             self.assertIn(needle, script)
