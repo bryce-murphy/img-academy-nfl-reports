@@ -15,7 +15,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from markupsafe import Markup, escape
 
-from . import editorial, field, moves
+from . import editorial, field, moves, playtext
 from . import evidence as ev
 from . import players as pl
 from .edition import load_config, load_registry
@@ -268,24 +268,42 @@ def next_line(player):
     return "Next game unconfirmed" if info.get("kind") == "unconfirmed" else "Season complete"
 
 
-def play_view(play, player, key_ids=()):
+def team_colors(edition_data):
+    """abbr -> team color for every team in the edition; older editions fall back to the alumni's own teams."""
+    colors = {p["team"]: p["team_color"] for p in edition_data.get("players", []) if p.get("team") and p.get("team_color")}
+    colors.update({abbr: t["color"] for abbr, t in (edition_data.get("teams") or {}).items()})
+    return colors
+
+
+def _drawings(play, player, tag, good, teams):
+    colors = dict(teams or {})
+    colors.setdefault(player.get("team"), player.get("team_color"))
+    zones = {side: team_bar(colors.get(play.get(side)))[:2] for side in ("offense", "defense")}
+    path = team_bar(player.get("team_color"))[0]
+    return lambda size: field.svg(play, size, outcome=tag["text"] if tag else "", helped=good, path_color=path, zones=zones)
+
+
+def play_view(play, player, key_ids=(), teams=None):
     """`positive` is three-way: True, False, or None (unknown epa, or neutral: it rounds to 0.0 as shown)."""
     epa = play.get("epa")
     side = play.get("side") or ("defense" if player["position"] in DEFENSIVE_POSITIONS else "offense")
-    positive = None if epa is None or round(abs(epa), 1) == 0 else (epa > 0 if side == "offense" else epa < 0)
-    outcome = play_outcome(play, player) if epa is not None else ""
-    color = player.get("team_color", "#0057b8")
-    medium, large = field.svg(play, "medium", color, outcome=outcome), field.svg(play, "large", color, outcome=outcome)
+    good = playtext.helped(play, side)
+    tag = playtext.tag(play, side, pl.nickname(player["team_name"]))
+    draw = _drawings(play, player, tag, good, teams)
+    medium, large = draw("medium"), draw("large")
     return dict(
         play,
-        outcome=outcome,
+        outcome=play_outcome(play, player) if epa is not None else "",
         spot=field.spot_line(play), result=field.result_line(play) or "",
         svg_medium=Markup(medium) if medium else None, svg_large=Markup(large) if large else None,
-        positive=positive, key=play.get("play_id") in key_ids,
+        positive=good, key=play.get("play_id") in key_ids,
+        line=playtext.play_line(play, player), tag=tag,
+        epa_text=playtext.epa_sentence(play), air_text=playtext.air_sentence(play),
+        pbp_text=playtext.safe_description(play.get("description", "")),
     )
 
 
-def week_plays(player):
+def week_plays(player, teams=None):
     """Recorded plays for a week page: key moments first, then game order. Schema-1 editions have only key moments.
 
     A key moment can be missing from `plays` (credited through a role outside the recorded-play roles, or on a
@@ -300,7 +318,7 @@ def week_plays(player):
     else:
         source = key_plays
     ordered = sorted(source, key=lambda q: (q["play_id"] not in key_ids, key_ids.index(q["play_id"]) if q["play_id"] in key_ids else 0, float(q["play_id"])))
-    return saved, [play_view(q, player, set(key_ids)) for q in ordered]
+    return saved, [play_view(q, player, set(key_ids), teams) for q in ordered]
 
 
 def up_next_groups(players):
@@ -340,6 +358,7 @@ def top_drawable_play(player):
 
 def edition_context(edition, *, root, data_path, slugs, notes=None):
     players = [player_view(p) for p in edition.data["players"]]
+    teams = team_colors(edition.data)
     for raw, view in zip(edition.data["players"], players):
         view["move"] = moves.view(raw, notes or {}, edition.data["season"])
         slug = slugs.get(raw["id"])
@@ -348,7 +367,10 @@ def edition_context(edition, *, root, data_path, slugs, notes=None):
         view["strip"] = None
         if top is not None:
             outcome = play_outcome(top, raw) if top.get("epa") is not None else ""
-            view["strip"] = Markup(field.svg(top, "strip", raw.get("team_color", "#0057b8"), outcome=outcome))
+            side = top.get("side") or ("defense" if raw["position"] in DEFENSIVE_POSITIONS else "offense")
+            good = playtext.helped(top, side)
+            tag = playtext.tag(top, side, pl.nickname(raw["team_name"]))
+            view["strip"] = Markup(_drawings(top, raw, tag, good, teams)("strip"))
             view["strip_play_id"] = top["play_id"]
             view["strip_outcome"] = outcome
     by_id = {p["id"]: p for p in players}
@@ -459,17 +481,18 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         for e_data, p in apps:
             view = player_view(p)
             view["move"] = moves.view(p, notes, e_data["season"])
-            saved, plays = week_plays(p)
+            teams = team_colors(e_data)
+            saved, plays = week_plays(p, teams)
             page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
                  player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
                  nickname=pl.nickname(p["team_name"]), caption=field.CAPTION, data_as_of=eastern_label(e_data["generated_at"]),
-                 next_text=next_line(p))
+                 next_text=next_line(p), summary=playtext.summary(plays) if p["availability"]["label"] == ev.PLAYED else "")
             urls.append(f"{site_url}{base_url}{e_data['id']}/")
         log = pl.game_log(apps)
         for row, (_, p) in zip(log, apps):
             row["contribution"] = contribution(p)
         latest_edition = apps[-1][0] if apps else None
-        latest_saved, latest_plays = week_plays(latest) if latest else (False, [])
+        latest_saved, latest_plays = week_plays(latest, team_colors(latest_edition)) if latest else (False, [])
         top = top_drawable_play(latest) if latest else None
         latest_view = player_view(latest) if latest else None
         if latest_view:
@@ -478,7 +501,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
              player=latest_view, latest_edition=latest_edition,
              played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
              season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
-             top_play=play_view(top, latest) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,
+             top_play=play_view(top, latest, teams=team_colors(latest_edition)) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,
              next_text=next_line(latest) if latest and not latest_edition.get("historical") else "",
              data_as_of=eastern_label(latest_edition["generated_at"]) if apps else "")
         urls.append(site_url + base_url)

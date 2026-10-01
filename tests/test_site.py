@@ -6,7 +6,8 @@ import unittest
 from pathlib import Path
 
 import fixture_data
-from src import editorial, site
+from src import editorial, playtext, site
+from src import players as players_mod
 from src import evidence as ev
 from src.edition import load_registry
 
@@ -203,7 +204,7 @@ class RenderTests(SiteTestCase):
     def test_methodology_explains_player_pages(self):
         page = self.read(self.render() / "methodology" / "index.html")
         self.assertIn('id="player-pages"', page)
-        self.assertIn("not a tracking diagram", page)
+        self.assertIn("not player tracking", page)
         self.assertIn("rarely named in play-by-play", page)
 
     def test_eastern_time_label_follows_daylight_saving(self):
@@ -339,7 +340,7 @@ class PlayerPageTests(SiteTestCase):
         self.assertIn('class="field field-medium"', page)
         self.assertIn("Expected points describe the whole play, not the player named on it.", page)
         self.assertIn("Positive plays for the Titans", page)
-        self.assertIn("not a tracking diagram", page)
+        self.assertIn("not player tracking", page)
 
     def test_lineman_with_no_recorded_plays(self):
         page = self.read(self.render() / "players" / "tyler-booker" / "2026-week-02" / "index.html")
@@ -727,3 +728,44 @@ class DesignPassTests(SiteTestCase):
         out = self.render()
         for page in (out / "index.html", out / "players" / "grant-delpit" / "index.html"):
             self.assertNotIn("--ink:", self.read(page))
+
+
+class PlayViewFaceliftTests(SiteTestCase):
+    def defender_play(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if any(q.get("side") == "defense" and q.get("epa") for q in p.get("plays") or []))
+        play = next(q for q in player["plays"] if q.get("side") == "defense" and q.get("epa"))
+        return edition, player, play
+
+    def test_play_view_has_line_tag_and_details(self):
+        edition, player, play = self.defender_play()
+        view = site.play_view(play, player, teams=site.team_colors(edition))
+        self.assertTrue(view["line"])
+        self.assertEqual(view["tag"], playtext.tag(play, "defense", players_mod.nickname(player["team_name"])))
+        self.assertEqual(view["epa_text"], playtext.epa_sentence(play))
+        if view["svg_medium"]:
+            self.assertIn('class="path path-', str(view["svg_medium"]))
+
+    def test_team_colors_come_from_the_edition_with_player_fallback(self):
+        edition = fixture_data.golden_edition()
+        colors = site.team_colors(edition)
+        self.assertEqual(set(colors), set(edition["teams"]))
+        self.assertEqual(site.team_colors({"players": [{"team": "NYG", "team_color": "#0B2265"}]}), {"NYG": "#0B2265"})
+
+    def test_week_page_has_summary_and_plain_lines(self):
+        edition, player, _ = self.defender_play()
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertIn('class="game-summary"', page)
+        self.assertIn(playtext.summary(site.week_plays(player)[1]), page)
+
+    def test_schema_3_editions_still_render(self):
+        edition = fixture_data.golden_edition()
+        edition.pop("teams")
+        edition["schema_version"] = 3
+        for p in edition["players"]:
+            for q in p.get("plays") or []:
+                for key in ("passer_name", "rusher_name", "receiver_name"):
+                    q.pop(key, None)
+        out = self.render(edition)
+        self.assertTrue((out / "index.html").exists())

@@ -9,6 +9,7 @@
 {% if played %}
 <section class="section explorer" aria-labelledby="plays-head">
   <div class="section-head"><h2 id="plays-head">{{ "Recorded plays" if plays_saved else "Key moments" }} ({{ plays | length }})</h2></div>
+  {% if summary %}<p class="game-summary">{{ summary }}</p>{% endif %}
   <p class="section-note">The play-by-play names a player only when he throws, runs, is targeted, makes a tackle or a charted defensive play. Most snaps never appear here; see his snaps above.{% if lineman %} Offensive linemen are rarely named in play-by-play; their snaps and team results tell more.{% endif %}</p>
   {% if not plays_saved %}<p class="section-note">The full play list was not saved for this week; these are its key moments.</p>{% endif %}
   {% if plays %}
