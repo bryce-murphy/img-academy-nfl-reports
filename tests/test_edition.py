@@ -310,6 +310,12 @@ class PlayNamesAndTeamsTests(unittest.TestCase):
         record = ed.play_record(row, "00-0000000", row["defteam"], lambda t: t)
         self.assertEqual((record["passer_name"], record["rusher_name"], record["receiver_name"]), ("J.Goff", None, "A.St. Brown"))
 
+    def test_na_and_nan_name_cells_are_missing_not_names(self):
+        data, _, _ = fixture_data.load()
+        row = dict(data["pbp"][0], passer_player_name=" J.Goff ", rusher_player_name="NA", receiver_player_name="NaN")
+        record = ed.play_record(row, "00-0000000", row["defteam"], lambda t: t)
+        self.assertEqual((record["passer_name"], record["rusher_name"], record["receiver_name"]), ("J.Goff", None, None))
+
     def test_edition_has_a_color_for_every_team_this_week(self):
         edition = build()
         teams = {g["home_team"] for g in edition["games"]} | {g["away_team"] for g in edition["games"]}

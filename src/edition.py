@@ -147,6 +147,17 @@ def _int_or_none(value):
     return int(number) if number is not None else None
 
 
+_MISSING_TEXT = ("", "NA", "NaN")
+
+
+def _text_or_none(value):
+    """A play-by-play text cell, or None when it is blank or an NA/NaN placeholder."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return None if text in _MISSING_TEXT else text
+
+
 def _flag_or_none(value):
     number = ev.num(value)
     return None if number is None else int(number == 1)
@@ -180,9 +191,9 @@ def play_record(play, pid, team, team_name):
         "impact": impact,
         "roles": ev.recorded_roles(play, pid),
         "description": play.get("desc", ""),
-        "passer_name": play.get("passer_player_name") or None,
-        "rusher_name": play.get("rusher_player_name") or None,
-        "receiver_name": play.get("receiver_player_name") or None,
+        "passer_name": _text_or_none(play.get("passer_player_name")),
+        "rusher_name": _text_or_none(play.get("rusher_player_name")),
+        "receiver_name": _text_or_none(play.get("receiver_player_name")),
     }
 
 
