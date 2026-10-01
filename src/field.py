@@ -16,7 +16,7 @@ SIZES = {"card": (240, 90), "medium": (480, 120), "large": (720, 300)}
 MINUS = "−"
 LABEL_FONT = {"card": 16, "medium": 17, "large": 26}  # rendered .yardage sizes in static/styles.css
 LABEL_GAP = 4
-LABEL_CLEARANCE = 8  # room a centered label keeps from the line of scrimmage
+LABEL_CLEARANCE = 8  # room a centered label keeps from the line of scrimmage and the first-down line
 ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
 
 
@@ -107,6 +107,35 @@ def yardage_label(play):
     return f"+{gained}" if gained > 0 else ("0" if gained == 0 else f"{MINUS}{abs(gained)}")
 
 
+def _clear_label(text, font, width, lx, ly, tip, origin, marker, reach, on_line):
+    """Place a yardage label clear of the line of scrimmage and the first-down line. Centered over the tip first;
+    then on the play's own line just past the arrowhead, ball or target, away from the line of scrimmage; then on
+    the play's line just across the line of scrimmage."""
+    span = len(text) * font * 0.6  # a glyph is at most about 0.6 em wide, even in a fallback font
+    forward = tip >= origin
+    beyond = tip + reach + LABEL_GAP if forward else tip - reach - LABEL_GAP - span
+    across = origin - LABEL_GAP - span if forward else origin + LABEL_GAP
+    candidates = [(lx - span / 2, ly, LABEL_CLEARANCE), (beyond, on_line, 1), (across, on_line, 1)]
+
+    def place(index, left, y):
+        if index == 0:
+            return "middle", lx, ly
+        # Anchor the edge nearest the line it sits beside, so the gap holds whatever the font.
+        return ("start", round(left, 1), y) if left > origin else ("end", round(left + span, 1), y)
+
+    fits = [(index, left, y, [left - pad < line < left + span + pad for line in (origin, marker)])
+            for index, (left, y, pad) in enumerate(candidates) if 0 <= left and left + span <= width]
+    for index, left, y, crossed in fits:
+        if not any(crossed):
+            return place(index, left, y)
+    if fits:
+        # No clear place (a wide label on a narrow field): keep off the line of scrimmage if the first-down line will
+        # do, and cross as few lines as possible. The label's halo (styles.css) breaks the line beneath it.
+        index, left, y, _ = min(fits, key=lambda fit: (fit[3][0], sum(fit[3]), fit[0]))
+        return place(index, left, y)
+    return "middle", lx, ly
+
+
 def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     """Broadcast view: the offense moves left to right. `helped` colors the ball's path (the alum's team bar color when
     True, slate when False, navy when unknown); `zones` gives each end zone its team bar (fill, ink)."""
@@ -179,23 +208,12 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
                 anchor, lx = "end", round(max(x(100) - 6, 24), 1)
             elif g["end"] <= 0:
                 anchor, lx = "start", round(min(x(0) + 6, width - 24), 1)
-        font = LABEL_FONT[size]
-        span = len(text) * font * 0.6  # a glyph is at most about 0.6 em wide
-        inline = anchor == "middle" and abs(lx - origin) < span / 2 + LABEL_CLEARANCE
         # A completion's air arc and catch marker sit above the mid line, so its label goes below it.
         ly = mid + head + 18 if g["kind"] == "complete" else mid - head - 6
-        if inline:
-            # Centered over a short play, the label would crowd the line of scrimmage. Set it on the play's own line,
-            # just past the arrowhead, ball or target, on the side away from the line of scrimmage.
-            reach = radius if g["kind"] == "incomplete" or gained == 0 else 0  # an arrow ends at its point
-            # Without room there (a pass thrown behind the line near the edge), it goes just across the line of scrimmage.
-            behind, ahead = tip - reach - LABEL_GAP, tip + reach + LABEL_GAP
-            if tip < origin:
-                anchor, lx = ("end", behind) if behind >= span else ("start", origin + LABEL_GAP)
-            else:
-                anchor, lx = ("start", ahead) if ahead + span <= width else ("end", origin - LABEL_GAP)
-            lx = round(lx, 1)
-            ly = mid + font * 0.35
+        if anchor == "middle":  # goal-line labels keep their place beside the end zone
+            anchor, lx, ly = _clear_label(text, LABEL_FONT[size], width, lx, ly, tip, origin, x(g["marker"]),
+                                          reach=radius if g["kind"] == "incomplete" or gained == 0 else 0,  # an arrow ends at its point
+                                          on_line=mid + LABEL_FONT[size] * 0.35)
         parts.append(f'<text class="yardage" x="{lx}" y="{round(ly, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")
     return "".join(parts)
