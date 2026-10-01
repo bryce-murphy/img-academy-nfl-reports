@@ -528,21 +528,38 @@ class PlayerPageTests(SiteTestCase):
         self.assertIn("players/grant-delpit/", self.read(out / "sitemap.xml"))
 
 
-class CardStripTests(SiteTestCase):
-    def test_card_strip_links_to_the_play(self):
+class CardPlayTests(SiteTestCase):
+    def card(self, name):
         home = self.read(self.render() / "index.html")
-        delpit = home.split('id="player-00-0036282"')[1].split("</article>")[0]
-        self.assertIn('class="field field-strip"', delpit)
+        return next(c.split("</article>")[0] for c in home.split('<article class="card"')[1:] if name in c)
+
+    def test_card_play_links_to_the_play(self):
+        delpit = self.card("Grant Delpit")
+        self.assertIn('class="field field-card"', delpit)
         self.assertIn('href="players/grant-delpit/2026-week-02/#play-', delpit)
         self.assertIn("See every play", delpit)
-        strip_fragment = delpit.split('class="strip" href="')[1].split('"')[0]
-        self.assertIn(f'<h3><a href="{strip_fragment}">Grant Delpit</a></h3>', delpit)
+        fragment = delpit.split('class="card-play" href="')[1].split('"')[0]
+        self.assertIn(f'<h3><a href="{fragment}">Grant Delpit</a></h3>', delpit)
 
-    def test_cards_without_drawable_plays_have_no_strip(self):
-        home = self.read(self.render() / "index.html")
-        cards = home.split('<article class="card"')[1:]
-        booker = next(c.split("</article>")[0] for c in cards if "Tyler Booker" in c)
-        self.assertNotIn("field-strip", booker)
+    def test_card_play_has_the_week_page_detail(self):
+        delpit = self.card("Grant Delpit")
+        play = delpit.split('class="card-play"')[1].split("</a>")[0]
+        for part in ('class="play-meta"', 'class="play-line"', 'class="play-spot"', 'class="hash"', 'class="yard-number"', 'class="play-outcome"'):
+            self.assertIn(part, play)
+
+    def test_card_play_matches_the_week_page_row(self):
+        out = self.render()
+        delpit = self.card("Grant Delpit")
+        play_id = delpit.split('class="card-play" href="')[1].split('#play-')[1].split('"')[0]
+        week = self.read(out / "players/grant-delpit/2026-week-02/index.html")
+        row = week.split(f'id="play-{play_id}"')[1].split("</li>")[0]
+        line = row.split('class="play-line">')[1].split("</span>")[0]
+        self.assertIn(f'class="play-line">{line}</span>', delpit)
+
+    def test_cards_without_drawable_plays_have_no_card_play(self):
+        booker = self.card("Tyler Booker")
+        self.assertNotIn("card-play", booker)
+        self.assertNotIn("field-card", booker)
         self.assertIn("See every play", booker)
 
 
