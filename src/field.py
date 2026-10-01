@@ -14,6 +14,9 @@ MIN_WIDTH = 30
 CAPTION = "Each drawing shows where the play started and ended, not player tracking."
 SIZES = {"card": (240, 90), "medium": (480, 120), "large": (720, 300)}
 MINUS = "−"
+LABEL_FONT = {"card": 16, "medium": 17, "large": 26}  # rendered .yardage sizes in static/styles.css
+LABEL_GAP = 4
+LABEL_CLEARANCE = 8  # room a centered label keeps from the line of scrimmage
 ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
 
 
@@ -176,8 +179,23 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
                 anchor, lx = "end", round(max(x(100) - 6, 24), 1)
             elif g["end"] <= 0:
                 anchor, lx = "start", round(min(x(0) + 6, width - 24), 1)
+        font = LABEL_FONT[size]
+        span = len(text) * font * 0.6  # a glyph is at most about 0.6 em wide
+        inline = anchor == "middle" and abs(lx - origin) < span / 2 + LABEL_CLEARANCE
         # A completion's air arc and catch marker sit above the mid line, so its label goes below it.
         ly = mid + head + 18 if g["kind"] == "complete" else mid - head - 6
+        if inline:
+            # Centered over a short play, the label would crowd the line of scrimmage. Set it on the play's own line,
+            # just past the arrowhead, ball or target, on the side away from the line of scrimmage.
+            reach = radius if g["kind"] == "incomplete" or gained == 0 else 0  # an arrow ends at its point
+            # Without room there (a pass thrown behind the line near the edge), it goes just across the line of scrimmage.
+            behind, ahead = tip - reach - LABEL_GAP, tip + reach + LABEL_GAP
+            if tip < origin:
+                anchor, lx = ("end", behind) if behind >= span else ("start", origin + LABEL_GAP)
+            else:
+                anchor, lx = ("start", ahead) if ahead + span <= width else ("end", origin - LABEL_GAP)
+            lx = round(lx, 1)
+            ly = mid + font * 0.35
         parts.append(f'<text class="yardage" x="{lx}" y="{round(ly, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")
     return "".join(parts)
