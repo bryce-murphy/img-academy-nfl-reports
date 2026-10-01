@@ -6,6 +6,7 @@ simpler sentence, never a zero. When no template fits, the play-by-play text is 
 from __future__ import annotations
 
 import re
+from collections import Counter
 
 from .editorial import BLOCKED_TERMS, NAME_SUFFIXES
 from .players import nickname
@@ -179,3 +180,99 @@ def play_line(play, player):
     if play.get("impact") in STOPS and play.get("offense_name"):
         line = f"{line[:-1]}, stopping the {nickname(play['offense_name'])} on {play['impact'][:3]} down."
     return line
+
+
+BIG_PLAY = 2.0
+COUNT_WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+CATEGORIES = (
+    ("Sack", "sack", "sacks"), ("Interception", "interception", "interceptions"), ("Forced fumble", "forced fumble", "forced fumbles"),
+    ("Fumble recovery", "fumble recovery", "fumble recoveries"), ("Safety", "safety", "safeties"),
+    ("Pass defended", "pass breakup", "pass breakups"), ("Tackle for loss", "tackle for loss", "tackles for loss"),
+    ("QB hit", "QB hit", "QB hits"), ("tackle", "tackle", "tackles"),
+    ("3rd-down stop", "3rd-down stop", "3rd-down stops"), ("4th-down stop", "4th-down stop", "4th-down stops"),
+    ("Touchdown", "touchdown", "touchdowns"), ("catch", "catch", "catches"),
+    ("carry", "carry", "carries"), ("pass", "pass", "passes"), ("target", "target", "targets"), ("other", "other play", "other plays"),
+)
+KNOWN = {key for key, _, _ in CATEGORIES}
+
+
+def helped(play, side):
+    """True when the play helped the alum's team, False when it hurt, None when unknown or neutral (rounds to 0.0)."""
+    epa = play.get("epa")
+    if epa is None or round(abs(epa), 1) == 0:
+        return None
+    return epa > 0 if side == "offense" else epa < 0
+
+
+def tag(play, side, nick):
+    good = helped(play, side)
+    if good is None:
+        return None
+    if not good:
+        return {"key": "hurt", "text": f"Hurt the {nick}"}
+    if abs(play["epa"]) >= BIG_PLAY:
+        return {"key": "big", "text": "Big play"}
+    return {"key": "helped", "text": f"Helped the {nick}"}
+
+
+def epa_sentence(play):
+    epa, offense = play.get("epa"), play.get("offense_name")
+    if epa is None or not offense:
+        return ""
+    team, value = nickname(offense), round(abs(epa), 1)
+    if value == 0:
+        return f"The {team}' expected points barely moved on the play."
+    points = "1 expected point" if value == 1 else f"{value:.1f} expected points"
+    return f"The {team} {'lost' if epa < 0 else 'gained'} {points} on the play."
+
+
+def air_sentence(play):
+    air = play.get("air_yards")
+    if play.get("pass_attempt") != 1 or air is None:
+        return ""
+    where = f"{_yards(air)} past the line" if air > 0 else ("at the line" if air == 0 else f"{_yards(abs(air))} behind the line")
+    text = f"Thrown {where}"
+    after = play.get("yards_after_catch")
+    if play.get("complete_pass") == 1 and after is not None:
+        text += f"; {_yards(after)} after the catch" if after >= 0 else f"; lost {_yards(abs(after))} after the catch"
+    return text + "."
+
+
+def _category(play):
+    impact = play.get("impact")
+    if impact:
+        return impact if impact in KNOWN else "other"
+    roles = set(play.get("roles") or [])
+    if roles & (SOLO | ASSISTS | LOSS_TACKLES):
+        return "tackle"
+    if "receiver" in roles:
+        return "catch" if play.get("complete_pass") == 1 else "target"
+    if "rusher" in roles:
+        return "carry"
+    if "passer" in roles:
+        return "pass"
+    return "other"
+
+
+def _word(n):
+    return COUNT_WORDS[n] if n <= 10 else str(n)
+
+
+def _count(n, one, many):
+    if n > 1:
+        return f"{_word(n)} {many}"
+    if one == "other play":
+        return "one other play"
+    return f"an {one}" if one[0] in "aeiou" else f"a {one}"
+
+
+def summary(plays):
+    """'Six plays with his name on them: a sack, four tackles and a 3rd-down stop.' One category per play."""
+    if not plays:
+        return ""
+    counts = Counter(_category(p) for p in plays)
+    parts = [_count(counts[key], one, many) for key, one, many in CATEGORIES if counts[key]]
+    n = len(plays)
+    lead = f"{_word(n).capitalize()} play with his name on it" if n == 1 else f"{_word(n).capitalize()} plays with his name on them"
+    listed = parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]
+    return f"{lead}: {listed}."

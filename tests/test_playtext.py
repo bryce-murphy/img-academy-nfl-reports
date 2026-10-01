@@ -167,3 +167,52 @@ class FixRoundTests(unittest.TestCase):
     def test_no_touchdown_add_on_for_a_flat_carry(self):
         line = playtext.play_line(run(roles=["rusher", "td"], rusher_name="K.Allen", yards_gained=0), ALLEN)
         self.assertEqual(line, "Allen was stopped for no gain.")
+
+
+class TagTests(unittest.TestCase):
+    def test_helped_follows_the_expected_points_rule(self):
+        self.assertTrue(playtext.helped({"epa": 0.5}, "offense"))
+        self.assertTrue(playtext.helped({"epa": -2.46}, "defense"))
+        self.assertFalse(playtext.helped({"epa": 0.8}, "defense"))
+        self.assertIsNone(playtext.helped({"epa": 0.04}, "defense"))
+        self.assertIsNone(playtext.helped({"epa": None}, "offense"))
+
+    def test_tags(self):
+        self.assertEqual(playtext.tag({"epa": -2.46}, "defense", "Jets"), {"key": "big", "text": "Big play"})
+        self.assertEqual(playtext.tag({"epa": -2.0}, "defense", "Jets"), {"key": "big", "text": "Big play"})
+        self.assertEqual(playtext.tag({"epa": -1.99}, "defense", "Jets"), {"key": "helped", "text": "Helped the Jets"})
+        self.assertEqual(playtext.tag({"epa": 0.8}, "defense", "Jets"), {"key": "hurt", "text": "Hurt the Jets"})
+        self.assertEqual(playtext.tag({"epa": 2.0}, "offense", "Titans"), {"key": "big", "text": "Big play"})
+        self.assertIsNone(playtext.tag({"epa": 0.03}, "offense", "Titans"))
+        self.assertIsNone(playtext.tag({"epa": None}, "offense", "Titans"))
+
+
+class DetailTests(unittest.TestCase):
+    def test_expected_points_sentence(self):
+        self.assertEqual(playtext.epa_sentence({"epa": -2.46, "offense_name": "Detroit Lions"}), "The Lions lost 2.5 expected points on the play.")
+        self.assertEqual(playtext.epa_sentence({"epa": 1.0, "offense_name": "Detroit Lions"}), "The Lions gained 1 expected point on the play.")
+        self.assertEqual(playtext.epa_sentence({"epa": 0.04, "offense_name": "Detroit Lions"}), "The Lions' expected points barely moved on the play.")
+        self.assertEqual(playtext.epa_sentence({"epa": None, "offense_name": "Detroit Lions"}), "")
+
+    def test_air_sentence(self):
+        self.assertEqual(playtext.air_sentence({"pass_attempt": 1, "complete_pass": 1, "air_yards": 8, "yards_after_catch": 6}), "Thrown 8 yards past the line; 6 yards after the catch.")
+        self.assertEqual(playtext.air_sentence({"pass_attempt": 1, "complete_pass": 1, "air_yards": -2, "yards_after_catch": 15}), "Thrown 2 yards behind the line; 15 yards after the catch.")
+        self.assertEqual(playtext.air_sentence({"pass_attempt": 1, "complete_pass": 0, "air_yards": 12, "yards_after_catch": None}), "Thrown 12 yards past the line.")
+        self.assertEqual(playtext.air_sentence({"pass_attempt": 0, "air_yards": None}), "")
+
+
+class SummaryTests(unittest.TestCase):
+    def test_counts_one_category_per_play(self):
+        plays = [{"impact": "Sack", "roles": ["sack", "solo_tackle_1"]}] + [{"impact": None, "roles": ["solo_tackle_1"]}] * 4 + [{"impact": "3rd-down stop", "roles": ["solo_tackle_1"]}]
+        self.assertEqual(playtext.summary(plays), "Six plays with his name on them: a sack, four tackles and a 3rd-down stop.")
+
+    def test_one_play_and_none(self):
+        self.assertEqual(playtext.summary([{"impact": "Pass defended", "roles": ["pass_defense_1"]}]), "One play with his name on it: a pass breakup.")
+        self.assertEqual(playtext.summary([{"impact": "Interception", "roles": ["interception"]}]), "One play with his name on it: an interception.")
+        self.assertEqual(playtext.summary([]), "")
+
+    def test_offense_and_large_counts(self):
+        plays = [{"impact": None, "roles": ["receiver"], "complete_pass": 1}] * 11
+        self.assertEqual(playtext.summary(plays), "11 plays with his name on them: 11 catches.")
+        mixed = [{"impact": None, "roles": ["rusher"]}, {"impact": None, "roles": ["receiver"], "complete_pass": 0}, {"impact": "Blocked kick", "roles": ["blocked"]}]
+        self.assertEqual(playtext.summary(mixed), "Three plays with his name on them: a carry, a target and one other play.")
