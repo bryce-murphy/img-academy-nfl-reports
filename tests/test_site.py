@@ -336,10 +336,10 @@ class PlayerPageTests(SiteTestCase):
     def test_week_page_lists_every_recorded_play_with_diagrams(self):
         page = self.read(self.render() / "players" / "carnell-tate" / "2026-week-02" / "index.html")
         self.assertIn("Recorded plays (5)", page)
-        self.assertEqual(page.count('class="play '), 5)
+        self.assertEqual(page.count('<li class="play'), 5)
         self.assertIn('class="field field-medium"', page)
-        self.assertIn("Expected points describe the whole play, not the player named on it.", page)
-        self.assertIn("Positive plays for the Titans", page)
+        self.assertIn("Expected points describe the whole play, not one player.", page)
+        self.assertIn("Helped the Titans", page)
         self.assertIn("not player tracking", page)
 
     def test_lineman_with_no_recorded_plays(self):
@@ -354,8 +354,8 @@ class PlayerPageTests(SiteTestCase):
         first_key = tate["key_plays"][0]["play_id"]  # key moments are listed first
         next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = None
         page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive=""', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertIn('data-tag=""', first)
         self.assertNotIn("expected point", first)
 
     def test_play_with_zero_epa_is_neutral_not_negative(self):
@@ -364,8 +364,8 @@ class PlayerPageTests(SiteTestCase):
         first_key = tate["key_plays"][0]["play_id"]
         next(q for q in tate["plays"] if q["play_id"] == first_key)["epa"] = 0
         page = self.read(self.render(edition) / "players" / "carnell-tate" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive=""', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertIn('data-tag=""', first)
 
     def test_play_side_falls_back_to_position_when_missing(self):
         edition = fixture_data.golden_edition()
@@ -375,8 +375,8 @@ class PlayerPageTests(SiteTestCase):
         play.pop("side", None)
         play["epa"] = -0.6  # good for the defense; a schema-1-shaped play with no `side` must still mark positive
         page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
-        first = page.split('class="play ')[1].split("</li>")[0]
-        self.assertIn('data-positive="1"', first)
+        first = page.split('<li class="play')[1].split("</li>")[0]
+        self.assertRegex(first, r'data-tag="(big|helped)"')
 
     def test_schema_one_edition_renders_from_key_moments(self):
         edition = fixture_data.golden_edition()
@@ -385,7 +385,7 @@ class PlayerPageTests(SiteTestCase):
             p.pop("plays", None)
         page = self.read(self.render(edition) / "players" / "grant-delpit" / "2026-week-02" / "index.html")
         self.assertIn("The full play list was not saved for this week", page)
-        self.assertIn("Sack", page)
+        self.assertIn("sacked at TB 17", page)
 
     def test_player_added_later_has_only_his_weeks(self):
         edition = fixture_data.golden_edition()
@@ -769,3 +769,31 @@ class PlayViewFaceliftTests(SiteTestCase):
                     q.pop(key, None)
         out = self.render(edition)
         self.assertTrue((out / "index.html").exists())
+
+
+class WeekPageLayoutTests(SiteTestCase):
+    def week_page(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays"))
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        return player, self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+
+    def test_layout_filters_and_cards(self):
+        player, page = self.week_page()
+        nick = players_mod.nickname(player["team_name"])
+        for needle in ('class="game-summary"', 'class="explorer-body"', 'data-filter="impact"', 'data-filter="helped"',
+                       'data-filter="hurt"', f">Helped the {nick}<", f">Hurt the {nick}<", 'class="play-line"', '<details class="play-more">'):
+            self.assertIn(needle, page)
+        self.assertNotIn("Positive plays for the", page)
+        self.assertEqual(page.count('class="about-drawings"'), 1)
+        self.assertNotIn("Expected points describe the whole play, not the player named on it.", page)
+
+    def test_more_holds_the_play_by_play_and_numbers(self):
+        _, page = self.week_page()
+        more = page.split('<details class="play-more">')[1].split("</details>")[0]
+        self.assertIn("<summary>More</summary>", more)
+
+    def test_explorer_script_uses_the_new_filters(self):
+        script = (site.ROOT / "static" / "explorer.js").read_text(encoding="utf-8")
+        for needle in ('"helped"', '"hurt"', "data-tag", ".play-line"):
+            self.assertIn(needle, script)

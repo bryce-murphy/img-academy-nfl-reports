@@ -14,15 +14,16 @@
     item.setAttribute("aria-current", "true");
     var large = item.querySelector("template.play-large");
     stage.innerHTML = large ? large.innerHTML : "";
-    var text = item.querySelector(".play-result, .play-outcome");
+    var text = item.querySelector(".play-line");
     if (!large && text) stage.textContent = text.textContent;
     if (updateHash) history.replaceState(null, "", "#" + item.id);
   }
 
   function matches(item, filter) {
+    var tag = item.getAttribute("data-tag");
     if (filter === "impact") return item.classList.contains("impact");
-    if (filter === "positive") return item.getAttribute("data-positive") === "1";
-    if (filter === "negative") return item.getAttribute("data-positive") === "0";
+    if (filter === "helped") return tag === "big" || tag === "helped";
+    if (filter === "hurt") return tag === "hurt";
     return true;
   }
 

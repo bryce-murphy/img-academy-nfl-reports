@@ -117,9 +117,26 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .field .arrow,.field .ball{fill:currentColor}.field .target,.field .catch{fill:#fff;stroke:currentColor;stroke-width:2.5}
 .field .yardage{font:800 17px var(--display);fill:var(--navy)}
 .field-strip .yardage{font-size:13px}
-.js-explorer .explorer-list .field{display:none}
-.play[aria-current="true"]{background:var(--wash);border-left:3px solid var(--brand)}
-.explorer-filters button[aria-pressed="true"]{background:var(--brand);color:#fff}
-.play-pick{all:unset;cursor:pointer;display:block}
-.play-result{display:block;font-size:12px}
+
 .move,.desk-move{margin:4px 0 0;padding-left:10px;border-left:3px solid var(--move,var(--brand));font-size:14px;color:var(--ink)}
+.game-summary{margin:0 0 10px;font-size:18px;font-weight:600;color:var(--navy)}
+.explorer-filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+.explorer-filters button{font:600 14px Inter,Arial,sans-serif;padding:7px 14px;border:1px solid var(--line);background:var(--card);color:var(--navy);cursor:pointer}
+.explorer-filters button[aria-pressed="true"]{background:var(--bar,var(--brand));color:var(--bar-ink,#fff);border-color:var(--bar,var(--brand))}
+.explorer-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.explorer-list .play{background:var(--card);border:1px solid var(--line);border-left:4px solid transparent;padding:12px 14px;margin:0}
+.explorer-list .play[aria-current="true"]{border-left-color:var(--bar,var(--brand))}
+.play-pick{all:unset;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 12px;width:100%}
+.play-pick:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+.play-pick .play-meta{grid-column:1;grid-row:1}
+.tag{grid-column:2;grid-row:1;justify-self:end;align-self:start;font-size:12px;font-weight:700;padding:2px 8px;border:1.5px solid var(--line);color:var(--navy);white-space:nowrap}
+.tag-big{background:var(--bar,var(--brand));border-color:var(--bar,var(--brand));color:var(--bar-ink,#fff)}
+.tag-helped{border-color:var(--team,var(--brand))}
+.tag-hurt{border-color:var(--muted);color:var(--muted)}
+.play-line{grid-column:1/-1;font-size:16px;font-weight:600;line-height:1.4;color:var(--navy)}
+.play-spot{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.play-more{margin-top:6px;font-size:13px}.play-more summary{font-weight:600;color:var(--brand)}.play-more p{margin:4px 0}
+.about-drawings{margin:18px 0 0;font-size:12px;color:var(--muted)}
+.play-stage .field{margin:0}
+@media (min-width:900px){.explorer-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:start}.play-stage{position:sticky;top:16px}.js-explorer .explorer-list .field{display:none}}
+@media (max-width:899px){.play-stage{display:none !important}}
