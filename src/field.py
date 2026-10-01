@@ -12,7 +12,7 @@ TEXT_ONLY_FLAGS = ("penalty", "fumble", "interception", "lateral", "qb_kneel", "
 DOMAIN = (-10, 110)
 MIN_WIDTH = 30
 CAPTION = "Each drawing shows where the play started and ended, not player tracking."
-SIZES = {"strip": (320, 56), "medium": (480, 120), "large": (720, 300)}
+SIZES = {"card": (240, 90), "medium": (480, 120), "large": (720, 300)}
 MINUS = "−"
 ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
 
@@ -111,11 +111,10 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     if g is None:
         return None
     width, height = SIZES[size]
-    detailed = size != "strip"
     scale = width / (g["hi"] - g["lo"])
     clamp = lambda yards: max(g["lo"], min(g["hi"], yards))
     x = lambda yards: round((clamp(yards) - g["lo"]) * scale, 1)
-    mid = round(height * 0.45, 1) if detailed else height / 2
+    mid = round(height * 0.45, 1)
     label = escape(". ".join(t for t in (spot_line(play), result_line(play), outcome) if t), quote=True)
     parts = [f'<svg class="field field-{size}" viewBox="0 0 {width} {height}" role="img" aria-label="{label}" xmlns="http://www.w3.org/2000/svg">',
              f'<rect class="turf" x="0" y="0" width="{width}" height="{height}"/>']
@@ -127,27 +126,25 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
                 fill, ink = zones.get(zone_side, (None, None))
                 fill_style = f' style="fill:{escape(fill)}"' if fill else ""
                 parts.append(f'<rect class="endzone" x="{left}" y="0" width="{round(right - left, 1)}" height="{height}"{fill_style}/>')
-                if detailed:
-                    ink_style = f' style="fill:{escape(ink)}"' if ink else ""
-                    parts.append(f'<text class="endzone-label" x="{round((left + right) / 2, 1)}" y="{mid + 5}" text-anchor="middle"{ink_style}>{escape(team)}</text>')
+                ink_style = f' style="fill:{escape(ink)}"' if ink else ""
+                parts.append(f'<text class="endzone-label" x="{round((left + right) / 2, 1)}" y="{mid + 5}" text-anchor="middle"{ink_style}>{escape(team)}</text>')
     for yard in range(0, 101, 5):
         if g["lo"] <= yard <= g["hi"]:
             parts.append(f'<line class="{"yard-major" if yard % 10 == 0 else "yard-minor"}" x1="{x(yard)}" y1="0" x2="{x(yard)}" y2="{height}"/>')
-    if detailed:
-        for yard in range(1, 100):
-            if yard % 5 and g["lo"] < yard < g["hi"]:
-                for top in (round(height * 0.25, 1), round(height * 0.62, 1)):
-                    parts.append(f'<line class="hash" x1="{x(yard)}" y1="{top}" x2="{x(yard)}" y2="{round(top + 6, 1)}"/>')
-        for yard in range(10, 100, 10):
-            if g["lo"] + 2 <= yard <= g["hi"] - 2:
-                parts.append(f'<text class="yard-number" x="{x(yard)}" y="{height - 8}" text-anchor="middle">{yard if yard <= 50 else 100 - yard}</text>')
+    for yard in range(1, 100):
+        if yard % 5 and g["lo"] < yard < g["hi"]:
+            for top in (round(height * 0.25, 1), round(height * 0.62, 1)):
+                parts.append(f'<line class="hash" x1="{x(yard)}" y1="{top}" x2="{x(yard)}" y2="{round(top + 6, 1)}"/>')
+    for yard in range(10, 100, 10):
+        if g["lo"] + 2 <= yard <= g["hi"] - 2:
+            parts.append(f'<text class="yard-number" x="{x(yard)}" y="{height - 8}" text-anchor="middle">{yard if yard <= 50 else 100 - yard}</text>')
     parts.append(f'<line class="los" x1="{x(g["x0"])}" y1="0" x2="{x(g["x0"])}" y2="{height}"/>')
     parts.append(f'<line class="marker" x1="{x(g["marker"])}" y1="0" x2="{x(g["marker"])}" y2="{height}"/>')
     state = "helped" if helped else ("hurt" if helped is False else "neutral")
     color = f' style="color:{escape(path_color)}"' if helped else ""
     parts.append(f'<g class="path path-{state}"{color}>')
-    head = {"large": 12, "medium": 9}.get(size, 6)
-    radius = 5 if detailed else 4
+    head = {"large": 12, "medium": 9, "card": 8}[size]
+    radius = 5
     origin = x(g["x0"])
     if g["air_end"] is not None:
         top = max(6, mid - height * 0.32)
@@ -168,7 +165,7 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
         parts.append(f'<polygon class="arrow" points="{end},{mid} {back},{round(mid - head * 0.65, 1)} {back},{round(mid + head * 0.65, 1)}"/>')
         tip = end
     if g["kind"] == "complete":
-        parts.append(f'<circle class="catch" cx="{x(g["air_end"])}" cy="{mid}" r="{4 if detailed else 3}"/>')
+        parts.append(f'<circle class="catch" cx="{x(g["air_end"])}" cy="{mid}" r="4"/>')
     parts.append("</g>")
     text = yardage_label(play)
     if text:
@@ -180,7 +177,7 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
             elif g["end"] <= 0:
                 anchor, lx = "start", round(min(x(0) + 6, width - 24), 1)
         # A completion's air arc and catch marker sit above the mid line, so its label goes below it.
-        ly = mid + head + 18 if g["kind"] == "complete" and detailed else mid - head - 6
+        ly = mid + head + 18 if g["kind"] == "complete" else mid - head - 6
         parts.append(f'<text class="yardage" x="{lx}" y="{round(ly, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")
     return "".join(parts)

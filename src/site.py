@@ -309,6 +309,13 @@ def play_view(play, player, key_ids=(), teams=None):
     )
 
 
+def card_play(play, player, teams=None):
+    """A card's featured play: the same row the week page shows, drawn on the card-sized field."""
+    view = play_view(play, player, teams=teams)
+    view["svg_card"] = Markup(_drawings(play, player, view["tag"], view["positive"], teams)("card"))
+    return view
+
+
 def week_plays(player, teams=None):
     """Recorded plays for a week page: key moments first, then game order. Schema-1 editions have only key moments.
 
@@ -370,15 +377,7 @@ def edition_context(edition, *, root, data_path, slugs, notes=None):
         slug = slugs.get(raw["id"])
         view["page"] = f"{root}players/{slug}/{edition.id}/" if slug else None
         top = top_drawable_play(raw)
-        view["strip"] = None
-        if top is not None:
-            outcome = play_outcome(top, raw) if top.get("epa") is not None else ""
-            side = top.get("side") or ("defense" if raw["position"] in DEFENSIVE_POSITIONS else "offense")
-            good = playtext.helped(top, side)
-            tag = playtext.tag(top, side, pl.nickname(raw["team_name"]))
-            view["strip"] = Markup(_drawings(top, raw, tag, good, teams)("strip"))
-            view["strip_play_id"] = top["play_id"]
-            view["strip_outcome"] = outcome
+        view["card_play"] = card_play(top, raw, teams) if top is not None else None
     by_id = {p["id"]: p for p in players}
     featured = by_id.get(edition.editorial.get("featured_player_id", ""))
     if featured and featured["availability"]["label"] != ev.PLAYED:

@@ -136,11 +136,11 @@ class SvgTests(unittest.TestCase):
         self.assertIn(">TB<", markup)
 
     def test_text_is_escaped(self):
-        markup = field.svg(base(down=1, offense='<b>', defense="TB"), "strip")
+        markup = field.svg(base(down=1, offense='<b>', defense="TB"), "card")
         self.assertNotIn("<b>", markup)
 
     def test_no_svg_for_text_only_plays(self):
-        self.assertIsNone(field.svg(base(penalty=1), "strip"))
+        self.assertIsNone(field.svg(base(penalty=1), "card"))
 
     def test_coordinates_are_clamped_to_the_viewbox(self):
         play = base(play_type="pass", sack=1, rush_attempt=0, pass_attempt=1, yardline_100=98, yards_gained=-20)
@@ -166,7 +166,7 @@ class FaceliftTests(unittest.TestCase):
     def test_sizes(self):
         self.assertIn('viewBox="0 0 720 300"', field.svg(base(), "large"))
         self.assertIn('viewBox="0 0 480 120"', field.svg(base(), "medium"))
-        self.assertIn('viewBox="0 0 320 56"', field.svg(base(), "strip"))
+        self.assertIn('viewBox="0 0 240 90"', field.svg(base(), "card"))
 
     def test_gain_points_right_with_a_plus_label(self):
         markup = field.svg(base(yards_gained=4), "medium")
@@ -197,7 +197,7 @@ class FaceliftTests(unittest.TestCase):
         self.assertIn('<g class="path path-hurt">', field.svg(base(), "medium", helped=False, path_color="#0B2265"))
         self.assertIn('<g class="path path-neutral">', field.svg(base(), "medium"))
 
-    def test_numbers_and_hashes_only_on_detailed_sizes_and_inside_the_window(self):
+    def test_numbers_and_hashes_inside_the_window(self):
         markup = field.svg(base(), "large")
         g = field.geometry(base())
         numbers = re.findall(r'class="yard-number" x="([\d.]+)" y="[\d.]+" text-anchor="middle">(\d+)<', markup)
@@ -206,9 +206,9 @@ class FaceliftTests(unittest.TestCase):
             self.assertTrue(0 < float(x) < 720)
         self.assertIn('class="hash"', markup)
         self.assertGreaterEqual(markup.count('class="yard-number"'), 2)
-        strip = field.svg(base(), "strip")
-        self.assertNotIn('class="yard-number"', strip)
-        self.assertNotIn('class="hash"', strip)
+        card = field.svg(base(), "card")
+        self.assertIn('class="yard-number"', card)
+        self.assertIn('class="hash"', card)
         self.assertLess(g["lo"], g["hi"])
 
     def test_end_zones_use_the_given_team_colors(self):
