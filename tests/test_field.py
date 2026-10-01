@@ -164,7 +164,7 @@ def pass_play(**overrides):
 
 class FaceliftTests(unittest.TestCase):
     def test_sizes(self):
-        self.assertIn('viewBox="0 0 960 240"', field.svg(base(), "large"))
+        self.assertIn('viewBox="0 0 720 300"', field.svg(base(), "large"))
         self.assertIn('viewBox="0 0 480 120"', field.svg(base(), "medium"))
         self.assertIn('viewBox="0 0 320 56"', field.svg(base(), "strip"))
 
@@ -203,7 +203,7 @@ class FaceliftTests(unittest.TestCase):
         numbers = re.findall(r'class="yard-number" x="([\d.]+)" y="[\d.]+" text-anchor="middle">(\d+)<', markup)
         for x, yard in numbers:
             self.assertTrue(int(yard) % 10 == 0)
-            self.assertTrue(0 < float(x) < 960)
+            self.assertTrue(0 < float(x) < 720)
         self.assertIn('class="hash"', markup)
         self.assertGreaterEqual(markup.count('class="yard-number"'), 2)
         strip = field.svg(base(), "strip")
@@ -265,6 +265,18 @@ class FaceliftTests(unittest.TestCase):
         self.assertNotIn('class="arrow"', markup)
         self.assertIn('class="ball"', markup)
         self.assertIn(">0</text>", markup)
+
+    def test_completion_label_sits_below_the_arc_and_catch_marker(self):
+        markup = field.svg(self.catch(4, 15), "medium")
+        y = float(re.search(r'<text class="yardage" x="[\d.]+" y="([\d.]+)"', markup).group(1))
+        self.assertGreater(y, 54.0)
+
+    def test_large_drawing_uses_a_bigger_arrowhead(self):
+        def head(size):
+            tip, back = map(float, ARROW.search(field.svg(base(yards_gained=10), size)).groups())
+            return tip - back
+        self.assertEqual(head("large"), 12)
+        self.assertEqual(head("medium"), 9)
 
     def test_completion_marks_the_catch_point(self):
         markup = field.svg(self.catch(4, 15), "medium")

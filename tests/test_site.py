@@ -730,6 +730,13 @@ class DesignPassTests(SiteTestCase):
             self.assertNotIn("--ink:", self.read(page))
 
 
+class KeepYardsTests(unittest.TestCase):
+    def test_n_yard_never_breaks_and_text_is_escaped(self):
+        out = site.environment().filters["keep_yards"]("Cisco brought down Wright after a 2-yard catch & more")
+        self.assertIn('<span class="nowrap">2-yard</span>', out)
+        self.assertIn("&amp;", out)
+
+
 class PlayViewFaceliftTests(SiteTestCase):
     def defender_play(self):
         edition = fixture_data.golden_edition()

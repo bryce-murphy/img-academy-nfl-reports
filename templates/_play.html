@@ -2,7 +2,7 @@
   <button type="button" class="play-pick" aria-controls="play-stage">
     <span class="play-meta">{{ p.quarter }} · {{ p.clock }}</span>
     {% if p.tag %}<span class="tag tag-{{ p.tag.key }}">{{ p.tag.text }}</span>{% endif %}
-    <span class="play-line">{{ p.line }}</span>
+    <span class="play-line">{{ p.line | keep_yards }}</span>
     {% if p.spot %}<span class="play-spot">{{ p.spot }}</span>{% endif %}
   </button>
   {% if p.svg_medium %}{{ p.svg_medium }}{% endif %}

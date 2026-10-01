@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BRAND = "#0057b8"
 HEX = re.compile(r"#[0-9a-fA-F]{6}")
 SCORE = re.compile(r"\b\d+-\d+\b")
+YARDS = re.compile(r"\b\d+-yard\b")
 EDITION_DIR = re.compile(r"(\d{4})-week-(\d{2})")
 SNAP_ABBREVIATIONS = (("offense", "OFF"), ("defense", "DEF"), ("st", "ST"))
 # Display labels where the feed's code differs from the usual shorthand; the data keeps the feed's code.
@@ -234,6 +235,11 @@ def keep_scores(text):
     return Markup(SCORE.sub(lambda m: f'<span class="nowrap">{m.group(0)}</span>', str(escape(text))))
 
 
+def keep_yards(text):
+    """Escape the text, then keep phrases like 2-yard on one line."""
+    return Markup(YARDS.sub(lambda m: f'<span class="nowrap">{m.group(0)}</span>', str(escape(text))))
+
+
 def asset_version(path):
     """A short content fingerprint for cache-busting URLs: a changed file gets a new URL."""
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:10]
@@ -423,6 +429,7 @@ def environment():
     )
     env.filters["num"] = ev.fmt
     env.filters["scores"] = keep_scores
+    env.filters["keep_yards"] = keep_yards
     env.filters["safe_description"] = playtext.safe_description
     env.globals["asset_version"] = asset_version(ROOT / "static" / "styles.css")
     env.globals["explorer_version"] = asset_version(ROOT / "static" / "explorer.js")

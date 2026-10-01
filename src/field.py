@@ -12,7 +12,7 @@ TEXT_ONLY_FLAGS = ("penalty", "fumble", "interception", "lateral", "qb_kneel", "
 DOMAIN = (-10, 110)
 MIN_WIDTH = 30
 CAPTION = "Each drawing shows where the play started and ended, not player tracking."
-SIZES = {"strip": (320, 56), "medium": (480, 120), "large": (960, 240)}
+SIZES = {"strip": (320, 56), "medium": (480, 120), "large": (720, 300)}
 MINUS = "−"
 ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
 
@@ -146,7 +146,7 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     state = "helped" if helped else ("hurt" if helped is False else "neutral")
     color = f' style="color:{escape(path_color)}"' if helped else ""
     parts.append(f'<g class="path path-{state}"{color}>')
-    head = 9 if detailed else 6
+    head = {"large": 12, "medium": 9}.get(size, 6)
     radius = 5 if detailed else 4
     origin = x(g["x0"])
     if g["air_end"] is not None:
@@ -179,6 +179,8 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
                 anchor, lx = "end", round(max(x(100) - 6, 24), 1)
             elif g["end"] <= 0:
                 anchor, lx = "start", round(min(x(0) + 6, width - 24), 1)
-        parts.append(f'<text class="yardage" x="{lx}" y="{round(mid - head - 6, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
+        # A completion's air arc and catch marker sit above the mid line, so its label goes below it.
+        ly = mid + head + 18 if g["kind"] == "complete" and detailed else mid - head - 6
+        parts.append(f'<text class="yardage" x="{lx}" y="{round(ly, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")
     return "".join(parts)
