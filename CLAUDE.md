@@ -46,7 +46,7 @@ A weekly, evidence-led web edition about NFL players who played football at IMG 
 - A move's reason (traded, claimed, signed, waived) appears only from an owner note with an allowed source; only the data's own statuses (released, retired) appear without one.
 - Public copy says "IMG Academy" in full, never "IMG" alone (brand guidelines' editorial rule).
 - The author works at IMG Academy: never write "not affiliated". The label is "Not an official IMG Academy or NFL publication"; the site does not mention the author's job.
-- Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders. Football-diagram conventions are the exception (the first-down marker is yellow, `--first-down`).
+- Site colors come from the official IMG Academy palette in `static/styles.css`; team colors are only bars and borders (a team bar carries white text at WCAG AA; `site.team_bar` deepens a color that needs it, and turns a light color like Saints gold into trim on a near-black bar). Football-diagram conventions are the exception (the first-down marker is yellow, `--first-down`).
 
 ## Git
 

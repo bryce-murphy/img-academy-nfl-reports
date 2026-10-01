@@ -13,7 +13,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from . import editorial, field, moves
 from . import evidence as ev
@@ -22,6 +22,9 @@ from .edition import load_config, load_registry
 from .upnext import DAYS, MONTHS, kickoff_label, matchup_label
 
 ROOT = Path(__file__).resolve().parents[1]
+BRAND = "#0057b8"
+HEX = re.compile(r"#[0-9a-fA-F]{6}")
+SCORE = re.compile(r"\b\d+-\d+\b")
 EDITION_DIR = re.compile(r"(\d{4})-week-(\d{2})")
 SNAP_ABBREVIATIONS = (("offense", "OFF"), ("defense", "DEF"), ("st", "ST"))
 # Display labels where the feed's code differs from the usual shorthand; the data keeps the feed's code.
@@ -73,7 +76,7 @@ def score_line(player):
     game = player.get("game")
     if not game:
         return "No game this week"
-    return f"{player['team']} {ev.fmt(game['team_score'])} · {game['opponent']} {ev.fmt(game['opp_score'])} — Final"
+    return f"{player['team']} {ev.fmt(game['team_score'])} · {game['opponent']} {ev.fmt(game['opp_score'])}"
 
 
 def result_line(player):
@@ -194,6 +197,43 @@ def eastern_label(timestamp):
     return f"{DAYS[local.weekday()]}, {MONTHS[local.month - 1]} {local.day}, {local.hour % 12 or 12}:{local.minute:02d} {suffix} ET"
 
 
+def _luminance(color):
+    channels = [int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, g, b = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(a, b):
+    """WCAG contrast ratio between two #rrggbb colors."""
+    light, dark = sorted((_luminance(a), _luminance(b)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
+
+
+def _shade(color, keep):
+    return "#" + "".join(f"{round(int(color[i:i + 2], 16) * keep):02x}" for i in (1, 3, 5))
+
+
+def team_bar(color):
+    """(background, text, outline) for a team-color bar at WCAG AA (4.5:1). White text when it passes. A light
+    color (like Saints gold) becomes trim: its own text and outline on a near-black shade of itself. Any other
+    color is deepened step by step until white text passes."""
+    color = color if isinstance(color, str) and HEX.fullmatch(color) else BRAND
+    if contrast(color, "#ffffff") >= 4.5:
+        return color, "#ffffff", None
+    if contrast(color, "#ffffff") < 3:
+        return _shade(color, 0.12), color, color
+    shade, step = color, 0
+    while contrast(shade, "#ffffff") < 4.5:
+        step += 1
+        shade = _shade(color, 1 - step / 20)
+    return shade, "#ffffff", None
+
+
+def keep_scores(text):
+    """Escape the text, then keep scores like 12-7 on one line."""
+    return Markup(SCORE.sub(lambda m: f'<span class="nowrap">{m.group(0)}</span>', str(escape(text))))
+
+
 def asset_version(path):
     """A short content fingerprint for cache-busting URLs: a changed file gets a new URL."""
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:10]
@@ -213,6 +253,7 @@ def player_view(player):
         key_plays=[dict(k, impact=k.get("impact"), outcome=play_outcome(k, player)) for k in player.get("key_plays", [])],
         source_url=player["alumni_source"] if player["alumni_source"].startswith("https://") else "",
     )
+    view["bar"], view["ink"], view["edge"] = team_bar(player.get("team_color"))
     return view
 
 
@@ -359,6 +400,7 @@ def environment():
         keep_trailing_newline=True,
     )
     env.filters["num"] = ev.fmt
+    env.filters["scores"] = keep_scores
     env.globals["asset_version"] = asset_version(ROOT / "static" / "styles.css")
     env.globals["explorer_version"] = asset_version(ROOT / "static" / "explorer.js")
     return env

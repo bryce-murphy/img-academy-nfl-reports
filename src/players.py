@@ -113,7 +113,11 @@ def _share_note(n, m):
 
 def season_lines(apps, position):
     played = [(e, p) for e, p in apps if p["availability"]["label"] == ev.PLAYED]
-    lines = [{"label": "Games", "text": f"Played in {_n(len(played), 'game', 'games')} of {len(apps)}."}]
+    if played:
+        games = f"Played in {_n(len(played), 'game', 'games')} of {len(apps)}."
+    else:
+        games = f"No games played yet ({_n(len(apps), 'week', 'weeks')})."
+    lines = [{"label": "Games", "text": games}]
     snap_parts = []
     for phase, team_key, word in PHASES:
         rows = [((p.get("snaps") or {}).get(phase), (p.get("snaps") or {}).get(team_key)) for _, p in apps]
