@@ -6,3 +6,12 @@ headline = "Greg Newsome II breaks up two passes in Giants' 12-7 win over Titans
 dek = "IMG Academy alumni lined up on both sides of Giants-Titans: Carnell Tate caught 6 passes for Tennessee, and Francis Mauigoa logged 64 snaps in the win."
 lead = "Greg Newsome II made Cam Ward's short throws harder than they looked. He broke up a pass intended for Wan'Dale Robinson in the first quarter, then got a hand on another with 2:22 left as Tennessee pushed to erase a 12-7 deficit. In a game where the Giants scored only 12, that coverage carried real weight. Andre Cisco added the week's lone alumni sack in the Jets' loss at Detroit. Fifteen IMG Academy alumni played in Week 3."
 alternates = ["Andre Cisco records a sack as the Jets fall 31-24 at Detroit", "Carnell Tate catches 6 passes in Titans' 12-7 loss to the Giants"]
+
+# Roster move: J.J. McCarthy, Vikings → Giants (moved after the game).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0039923"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
