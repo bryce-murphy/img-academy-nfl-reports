@@ -658,16 +658,31 @@ class DesignPassTests(SiteTestCase):
             colors = [row["team_color"] for row in csv.DictReader(handle)]
         self.assertGreaterEqual(len(colors), 32)
         for color in colors:
-            bar, ink = site.team_bar(color)
+            bar, ink, _ = site.team_bar(color)
             with self.subTest(color=color):
                 self.assertGreaterEqual(site.contrast(bar, ink), 4.5)
 
     def test_team_bar_keeps_the_team_color_when_it_can(self):
-        self.assertEqual(site.team_bar("#0B2265"), ("#0B2265", "#ffffff"))  # Giants: white text
-        self.assertEqual(site.team_bar("#D3BC8D"), ("#D3BC8D", site.NAVY))  # Saints gold: navy text
-        bar, ink = site.team_bar("#FB4F14")  # Bengals orange: deepened just enough for white text
-        self.assertEqual(ink, "#ffffff")
+        self.assertEqual(site.team_bar("#0B2265"), ("#0B2265", "#ffffff", None))  # Giants: white text
+        bar, ink, edge = site.team_bar("#FB4F14")  # Bengals orange: deepened just enough for white text
+        self.assertEqual((ink, edge), ("#ffffff", None))
         self.assertNotEqual(bar, "#FB4F14")
+
+    def test_light_team_colors_become_trim_on_a_dark_bar(self):
+        bar, ink, edge = site.team_bar("#D3BC8D")  # Saints gold: gold text and outline on near-black
+        self.assertEqual((ink, edge), ("#D3BC8D", "#D3BC8D"))
+        self.assertGreaterEqual(site.contrast(bar, "#D3BC8D"), 7)
+        self.assertLess(site._luminance(bar), 0.02)
+        home = self.read(self.render(self.saints_edition()) / "index.html")
+        card = next(c for c in home.split('<article class="card"')[1:] if "--bar-edge: #D3BC8D" in c)
+        self.assertIn("--bar-ink: #D3BC8D", card)
+
+    @staticmethod
+    def saints_edition():
+        edition = fixture_data.golden_edition()
+        played = next(p for p in edition["players"] if p["availability"]["label"] == "Played")
+        played["team_color"] = "#D3BC8D"
+        return edition
         self.assertEqual(site.team_bar("not a color"), site.team_bar("#0057b8"))
 
     def test_scores_never_split_and_text_stays_escaped(self):

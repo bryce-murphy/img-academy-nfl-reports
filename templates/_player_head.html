@@ -1,4 +1,4 @@
-<header class="player-head" style="--team: {{ player.team_color }}; --bar: {{ player.bar }}; --bar-ink: {{ player.ink }}">
+<header class="player-head" style="--team: {{ player.team_color }}; --bar: {{ player.bar }}; --bar-ink: {{ player.ink }}{% if player.edge %}; --bar-edge: {{ player.edge }}{% endif %}">
   <p class="team-bar">{{ player.team }} · {{ player.position }}{% if eyebrow_suffix %} · {{ eyebrow_suffix }}{% endif %}</p>
   <div class="who">
     {% if show_monogram is defined and show_monogram %}<div class="player-mark"><div class="monogram" aria-hidden="true">{{ player.initials }}</div></div>{% endif %}

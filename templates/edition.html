@@ -16,7 +16,7 @@
     {% if featured %}<a class="cta" href="#player-{{ featured.id }}">{{ featured.name }}'s week →</a>{% endif %}
   </div>
   {% if featured %}
-  <aside class="featured" style="--bar: {{ featured.bar }}; --bar-ink: {{ featured.ink }}" aria-label="Featured player">
+  <aside class="featured" style="--bar: {{ featured.bar }}; --bar-ink: {{ featured.ink }}{% if featured.edge %}; --bar-edge: {{ featured.edge }}{% endif %}" aria-label="Featured player">
     <p class="scorebug">{{ featured.score_line }}</p>
     <div class="monogram" aria-hidden="true">{{ featured.initials }}</div>
     <p class="featured-name"><strong>{{ featured.name }}</strong> · {{ featured.team_name }}</p>

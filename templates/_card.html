@@ -1,4 +1,4 @@
-<article class="card" id="player-{{ p.id }}" style="--team: {{ p.team_color }}; --bar: {{ p.bar }}; --bar-ink: {{ p.ink }}">
+<article class="card" id="player-{{ p.id }}" style="--team: {{ p.team_color }}; --bar: {{ p.bar }}; --bar-ink: {{ p.ink }}{% if p.edge %}; --bar-edge: {{ p.edge }}{% endif %}">
   <p class="team-bar">{{ p.team }} · {{ p.position }}</p>
   <h3>{% if p.page %}<a href="{{ p.page }}{% if p.strip %}#play-{{ p.strip_play_id }}{% endif %}">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</h3>
   <p class="score">{{ p.score_line }}</p>
