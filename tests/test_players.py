@@ -108,15 +108,15 @@ class SeasonLineTests(unittest.TestCase):
                 if p["name"] == "Grant Delpit":
                     p["snaps"]["defense"] = 60
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances(weeks, "00-0036282"), "SAF")}
-        self.assertIn("per 100 defensive snaps", lines["Impact plays"])
+        self.assertIn("about 1.7 for every 100 defensive snaps", lines["Impact plays"])
 
     def test_shares_are_ratios_of_sums(self):
         a = edition_with(2, **{"Carnell Tate": {"usage": {"targets": 5, "team_targets": 17, "air_yards": 50, "team_air_yards": 114}}})
         b = edition_with(3, **{"Carnell Tate": {"usage": {"targets": 10, "team_targets": 40, "air_yards": 100, "team_air_yards": 300}}})
         tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([a, b], tate), "WR")}
-        self.assertIn("15 targets", lines["Targets"])
-        self.assertIn("26% of team targets", lines["Targets"])  # 15/57, not the mean of 29% and 25%
+        self.assertIn("Thrown to 15 times", lines["Targets"])
+        self.assertIn("26% of the team's targets", lines["Targets"])  # 15/57, not the mean of 29% and 25%
 
     def test_cpoe_uses_only_rows_with_cp(self):
         plays = [{"roles": ["passer"], "qb_dropback": 1, "qb_kneel": 0, "qb_spike": 0, "qb_epa": 0.2, "epa": 0.2, "complete_pass": 1, "cp": 0.6}] * 30
@@ -126,7 +126,7 @@ class SeasonLineTests(unittest.TestCase):
         qb = next(p for p in e["players"] if p["name"] == "J.J. McCarthy")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], qb), "QB")}
         # 100 * ((30*0.4) + (20*-0.5)) / 50 = +4.0
-        self.assertIn("+4.0 percentage points", lines["Completion over expected"])
+        self.assertEqual(lines["Completion over expected"], "Completed passes at a rate 4.0 percentage points above expected, on 50 throws.")
 
     def test_lineman_lines_have_no_penalties(self):
         lines = players.season_lines(players.appearances([edition_with(2)], next(p["id"] for p in edition_with(2)["players"] if p["name"] == "Tyler Booker")), "G")
@@ -203,7 +203,7 @@ class SeasonLineTests(unittest.TestCase):
         qb = next(p for p in e["players"] if p["name"] == "J.J. McCarthy")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], qb), "QB")}
         self.assertIn("60 dropbacks", lines["Dropbacks"])
-        self.assertNotIn("Expected points per dropback", lines["Dropbacks"])
+        self.assertNotIn("expected points", lines["Dropbacks"])
 
     def test_rb_efficiency_threshold_counts_only_rows_with_epa(self):
         carries = [{"roles": ["rusher"], "rush_attempt": 1, "epa": 0.1}] * 20
@@ -212,7 +212,7 @@ class SeasonLineTests(unittest.TestCase):
         allen = next(p for p in e["players"] if p["name"] == "Kaytron Allen")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], allen), "RB")}
         self.assertIn("35 carries", lines["Carries"])
-        self.assertNotIn("Expected points per carry", lines["Carries"])
+        self.assertNotIn("expected points", lines["Carries"])
 
     def test_wr_when_targeted_threshold_counts_only_rows_with_epa(self):
         targets = [{"roles": ["receiver"], "epa": 0.2}] * 10
@@ -229,17 +229,16 @@ class SeasonLineTests(unittest.TestCase):
         e = edition_with(2, **{"Kaytron Allen": {"plays": targets}})
         allen = next(p for p in e["players"] if p["name"] == "Kaytron Allen")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], allen), "RB")}
-        self.assertIn("10 targets, 3 catches", lines["Receiving"])
-        self.assertIn("(catches known for 5 of 10 targets)", lines["Receiving"])
+        self.assertEqual(lines["Receiving"], "Thrown to 10 times; caught 3 of the 5 with a known result.")
 
     def test_receiver_shares_use_matched_pairs_with_their_own_notes(self):
         a = edition_with(2, **{"Carnell Tate": {"usage": {"targets": 5, "team_targets": None, "air_yards": 50, "team_air_yards": 100}}})
         b = edition_with(3, **{"Carnell Tate": {"usage": {"targets": 10, "team_targets": 40, "air_yards": 100, "team_air_yards": 300}}})
         tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([a, b], tate), "WR")}
-        self.assertIn("15 targets", lines["Targets"])
-        self.assertIn("25% of team targets", lines["Targets"])  # 10/40 only: the week without team_targets is excluded
-        self.assertIn("38% of team air yards", lines["Targets"])  # (50+100)/(100+300), both weeks matched
+        self.assertIn("Thrown to 15 times", lines["Targets"])
+        self.assertIn("25% of the team's targets", lines["Targets"])  # 10/40 only: the week without team_targets is excluded
+        self.assertIn("covered 38% of the distance the team threw downfield", lines["Targets"])  # (50+100)/(100+300), both weeks matched
         self.assertEqual(lines["Targets"].count("(share based on 1 of 2 weeks)"), 1)
 
     def test_defense_charting_lines_note_partial_weeks(self):
@@ -287,3 +286,71 @@ class SeasonLineTests(unittest.TestCase):
         lines = {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], "00-0036282"), "SAF")}
         self.assertIn("Tackles", lines)
         self.assertIn("4 tackles", lines["Tackles"])
+
+
+def qb_season(epas, cps=None):
+    plays = [{"roles": ["passer"], "qb_dropback": 1, "qb_kneel": 0, "qb_spike": 0, "qb_epa": v, "epa": v,
+              "complete_pass": 1 if cp is not None else None, "cp": cp} for v, cp in zip(epas, cps or [None] * len(epas))]
+    e = edition_with(2, **{"J.J. McCarthy": {"plays": plays, "availability": {"label": "Played", "evidence": "x"}}})
+    qb = next(p for p in e["players"] if p["name"] == "J.J. McCarthy")["id"]
+    return players.season(players.appearances([e], qb), "QB")
+
+
+class PlainSeasonTests(unittest.TestCase):
+    """Season efficiency in plain words, with the same numbers in the "By the numbers" table."""
+
+    def test_expected_points_read_as_added_cost_or_even(self):
+        def dropbacks(epas):
+            return {l["label"]: l["text"] for l in qb_season(epas)[0]}["Dropbacks"]
+
+        self.assertEqual(dropbacks([0.3] * 30 + [-0.2] * 30),
+                         "60 dropbacks. On average each added 0.05 expected points, and 50% left the offense better placed to score.")
+        self.assertEqual(dropbacks([0.1] * 20 + [-0.3] * 40),
+                         "60 dropbacks. On average each cost 0.17 expected points, and 33% left the offense better placed to score.")
+        self.assertEqual(dropbacks([0.2] * 30 + [-0.2] * 30),
+                         "60 dropbacks. On average each left expected points about even, and 50% left the offense better placed to score.")
+
+    def test_table_rows_carry_the_sentence_numbers(self):
+        lines, rows = qb_season([0.3] * 30 + [-0.2] * 30, [0.5] * 60)
+        table = {r["label"]: r for r in rows}
+        self.assertEqual((table["EPA per dropback"]["value"], table["EPA per dropback"]["sample"]), ("+0.05", "60 dropbacks"))
+        self.assertEqual((table["Success rate"]["value"], table["Success rate"]["sample"]), ("50%", "60 dropbacks"))
+        self.assertEqual((table["Completion % over expected"]["value"], table["Completion % over expected"]["sample"]), ("+50.0 pts", "60 throws"))
+        text = " ".join(l["text"] for l in lines)
+        self.assertIn("0.05 expected points", text)
+        self.assertIn("50.0 percentage points above expected, on 60 throws", text)
+        self.assertTrue(all(r["definition"] for r in rows))
+
+    def test_table_shows_a_dash_below_the_minimum_sample(self):
+        lines, rows = qb_season([0.4] * 21)
+        table = {r["label"]: r for r in rows}
+        self.assertEqual((table["EPA per dropback"]["value"], table["EPA per dropback"]["sample"]), ("—", "21 dropbacks (shown from 50)"))
+        self.assertEqual(table["Completion % over expected"]["sample"], "0 throws (shown from 50)")
+        self.assertNotIn("expected points", {l["label"]: l["text"] for l in lines}["Dropbacks"])
+
+    def test_receiver_and_defense_rows(self):
+        a = edition_with(2, **{"Carnell Tate": {"usage": {"targets": 5, "team_targets": 17, "air_yards": 50, "team_air_yards": 114},
+                                                "plays": [{"roles": ["receiver"], "epa": -0.1}] * 16}})
+        tate = next(p for p in a["players"] if p["name"] == "Carnell Tate")["id"]
+        lines, rows = players.season(players.appearances([a], tate), "WR")
+        table = {r["label"]: r for r in rows}
+        self.assertEqual((table["Target share"]["value"], table["Target share"]["sample"]), ("29%", "5 of 17 targets"))
+        self.assertEqual((table["Air-yards share"]["value"], table["Air-yards share"]["sample"]), ("44%", "50 of 114 air yards"))
+        self.assertEqual(table["EPA per target (team)"]["value"], "−0.10")
+        self.assertEqual({l["label"]: l["text"] for l in lines}["When targeted"], "Throws his way cost 0.10 expected points each, on average.")
+        self.assertEqual({l["label"]: l["text"] for l in lines}["Targets"],
+                         "Thrown to 5 times, 29% of the team's targets. Those passes covered 44% of the distance the team threw downfield.")
+        delpit = {r["label"]: r for r in players.season_numbers(players.appearances([edition_with(2)], "00-0036282"), "SAF")}
+        self.assertEqual(delpit["Impact plays per 100 snaps"]["value"], "—")
+        self.assertIn("Defensive snap share", delpit)
+
+    def test_running_back_receiving_reads_as_a_sentence(self):
+        def receiving(results):
+            e = edition_with(2, **{"Kaytron Allen": {"plays": [{"roles": ["receiver"], "complete_pass": r} for r in results]}})
+            allen = next(p for p in e["players"] if p["name"] == "Kaytron Allen")["id"]
+            return {l["label"]: l["text"] for l in players.season_lines(players.appearances([e], allen), "RB")}["Receiving"]
+
+        self.assertEqual(receiving([1, 1, 0]), "Caught 2 of the 3 passes thrown his way.")
+        self.assertEqual(receiving([1]), "Caught the 1 pass thrown his way.")
+        self.assertEqual(receiving([0]), "Did not catch the 1 pass thrown his way.")
+        self.assertEqual(receiving([]), "No passes thrown his way.")

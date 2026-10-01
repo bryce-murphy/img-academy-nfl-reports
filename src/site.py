@@ -507,7 +507,8 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
         page("player.html", base_url + "index.html", canonical=site_url + base_url, root="../../", alum=alum,
              player=latest_view, latest_edition=latest_edition,
              played=bool(latest) and latest["availability"]["label"] == ev.PLAYED,
-             season=pl.season_lines(apps, latest["position"]) if latest else [], log=log,
+             season=pl.season_lines(apps, latest["position"]) if latest else [],
+             numbers=pl.season_numbers(apps, latest["position"]) if latest else [], log=log,
              top_play=play_view(top, latest, teams=team_colors(latest_edition)) if top else None, recorded=len(latest_plays), plays_saved=latest_saved,
              next_text=next_line(latest) if latest and not latest_edition.get("historical") else "",
              data_as_of=eastern_label(latest_edition["generated_at"]) if apps else "")
