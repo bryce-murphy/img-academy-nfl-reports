@@ -180,11 +180,25 @@ class TagTests(unittest.TestCase):
     def test_tags(self):
         self.assertEqual(playtext.tag({"epa": -2.46}, "defense", "Jets"), {"key": "big", "text": "Big play"})
         self.assertEqual(playtext.tag({"epa": -2.0}, "defense", "Jets"), {"key": "big", "text": "Big play"})
-        self.assertEqual(playtext.tag({"epa": -1.99}, "defense", "Jets"), {"key": "helped", "text": "Helped the Jets"})
+        self.assertEqual(playtext.tag({"epa": -1.94}, "defense", "Jets"), {"key": "helped", "text": "Helped the Jets"})
         self.assertEqual(playtext.tag({"epa": 0.8}, "defense", "Jets"), {"key": "hurt", "text": "Hurt the Jets"})
         self.assertEqual(playtext.tag({"epa": 2.0}, "offense", "Titans"), {"key": "big", "text": "Big play"})
         self.assertIsNone(playtext.tag({"epa": 0.03}, "offense", "Titans"))
         self.assertIsNone(playtext.tag({"epa": None}, "offense", "Titans"))
+
+
+    def test_big_play_uses_the_rounded_value_the_sentence_shows(self):
+        self.assertEqual(playtext.tag({"epa": -1.96}, "defense", "Jets"), {"key": "big", "text": "Big play"})
+        self.assertEqual(playtext.tag({"epa": -1.94}, "defense", "Jets"), {"key": "helped", "text": "Helped the Jets"})
+
+
+class ClockAndSummaryFixTests(unittest.TestCase):
+    def test_last_minute_clock_is_stripped(self):
+        self.assertEqual(playtext.clean_description("(:02) K.Johnson left guard to NYJ 2 for 3 yards."), "K.Johnson left guard to NYJ 2 for 3 yards.")
+
+    def test_caught_deflection_is_not_a_pass_breakup(self):
+        plays = [{"impact": "Pass defended", "roles": ["pass_defense_1", "solo_tackle_1"], "complete_pass": 1}]
+        self.assertEqual(playtext.summary(plays), "One play with his name on it: a tackle.")
 
 
 class DetailTests(unittest.TestCase):

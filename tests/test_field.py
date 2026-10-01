@@ -224,6 +224,20 @@ class FaceliftTests(unittest.TestCase):
         x = float(re.search(r'<text class="yardage" x="([\d.]+)"', markup).group(1))
         self.assertTrue(24 <= x <= 480 - 24)
 
+    def test_touchdown_label_sits_on_the_field_not_the_end_zone(self):
+        markup = field.svg(base(yardline_100=12, ydstogo=10, goal_to_go=0, yards_gained=12), "medium")
+        label = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)"', markup)
+        goal_x = float(re.findall(r'class="endzone" x="([\d.]+)"', markup)[0])
+        self.assertEqual(label.group(2), "end")
+        self.assertLess(float(label.group(1)), goal_x)
+
+    def test_safety_depth_loss_label_sits_on_the_field(self):
+        markup = field.svg(pass_play(sack=1, yardline_100=95, ydstogo=10, goal_to_go=0, yards_gained=-8), "medium")
+        label = re.search(r'<text class="yardage" x="([\d.]+)" y="[\d.]+" text-anchor="(\w+)"', markup)
+        zone = re.search(r'class="endzone" x="([\d.]+)" y="0" width="([\d.]+)"', markup)
+        self.assertEqual(label.group(2), "start")
+        self.assertGreater(float(label.group(1)), float(zone.group(1)) + float(zone.group(2)))
+
     def test_aria_label_carries_the_tag(self):
         self.assertIn("Big play", field.svg(base(), "medium", outcome="Big play"))
 

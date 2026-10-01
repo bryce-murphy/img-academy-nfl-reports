@@ -423,6 +423,7 @@ def environment():
     )
     env.filters["num"] = ev.fmt
     env.filters["scores"] = keep_scores
+    env.filters["safe_description"] = playtext.safe_description
     env.globals["asset_version"] = asset_version(ROOT / "static" / "styles.css")
     env.globals["explorer_version"] = asset_version(ROOT / "static" / "explorer.js")
     return env
@@ -486,7 +487,7 @@ def build_site(out, editions_root=ROOT / "editions", config=None, registry=None)
             page("player_week.html", f"{base_url}{e_data['id']}/index.html", canonical=site_url + f"{base_url}{e_data['id']}/", root="../../../",
                  player=view, edition=e_data, plays=plays, plays_saved=saved, played=p["availability"]["label"] == ev.PLAYED, lineman=pl.group_of(p["position"]) == "Offensive line",
                  nickname=pl.nickname(p["team_name"]), caption=field.CAPTION, data_as_of=eastern_label(e_data["generated_at"]),
-                 next_text=next_line(p), summary=playtext.summary(plays) if p["availability"]["label"] == ev.PLAYED else "")
+                 next_text=next_line(p), summary=playtext.summary(plays) if saved and p["availability"]["label"] == ev.PLAYED else "")
             urls.append(f"{site_url}{base_url}{e_data['id']}/")
         log = pl.game_log(apps)
         for row, (_, p) in zip(log, apps):

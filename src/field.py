@@ -172,7 +172,13 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     parts.append("</g>")
     text = yardage_label(play)
     if text:
-        lx = round(min(max(tip, 24), width - 24), 1)
-        parts.append(f'<text class="yardage" x="{lx}" y="{round(mid - head - 6, 1)}" text-anchor="middle">{escape(text)}</text>')
+        anchor, lx = "middle", round(min(max(tip, 24), width - 24), 1)
+        if g["kind"] != "incomplete" and gained != 0:
+            # At a goal line the tip sits on the dark end zone; keep the label on the field beside it.
+            if g["end"] >= 100:
+                anchor, lx = "end", round(max(x(100) - 6, 24), 1)
+            elif g["end"] <= 0:
+                anchor, lx = "start", round(min(x(0) + 6, width - 24), 1)
+        parts.append(f'<text class="yardage" x="{lx}" y="{round(mid - head - 6, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")
     return "".join(parts)

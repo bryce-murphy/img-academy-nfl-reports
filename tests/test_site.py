@@ -804,6 +804,22 @@ class WeekPageLayoutTests(SiteTestCase):
         page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
         self.assertNotIn("injured", page)
 
+    def test_card_key_moments_never_show_injury_sentences(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("key_plays"))
+        player["key_plays"][0]["description"] = "(2:00) 16-J.Goff pass short left to 18-I.TeSlaa for 5 yards (8-A.Cisco). 18-I.TeSlaa was injured during the play."
+        out = self.render(edition)
+        self.assertNotIn("injured", self.read(out / "index.html"))
+        self.assertNotIn("injured", self.read(out / "editions" / edition["id"] / "index.html"))
+
+    def test_key_moments_only_edition_has_no_game_summary(self):
+        edition = fixture_data.golden_edition()
+        player = next(p for p in edition["players"] if p.get("plays") and p["availability"]["label"] == ev.PLAYED)
+        slug = next(a["slug"] for a in load_registry(fixture_data.FIXTURES / "alumni.json") if a["gsis_id"] == player["id"])
+        player.pop("plays")
+        page = self.read(self.render(edition) / "players" / slug / edition["id"] / "index.html")
+        self.assertNotIn('class="game-summary"', page)
+
     def test_hidden_attribute_is_not_overridden_and_grid_waits_for_script(self):
         css = (site.ROOT / "static" / "styles.css").read_text(encoding="utf-8")
         self.assertIn("[hidden]{display:none !important}", css)

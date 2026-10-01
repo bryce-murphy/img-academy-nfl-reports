@@ -11,7 +11,7 @@ from collections import Counter
 from .editorial import BLOCKED_TERMS, NAME_SUFFIXES
 from .players import nickname
 
-CLOCK = re.compile(r"^\(\d{1,2}:\d{2}\)\s*")
+CLOCK = re.compile(r"^\(\d{0,2}:\d{2}\)\s*")
 FORMATION = re.compile(r"\((?:No Huddle, )?Shotgun\)\s*|\(No Huddle\)\s*")
 JERSEY = re.compile(r"\b\d{1,2}-(?=[A-Z])")
 PBP_NAME = re.compile(r"[A-Z][a-z]{0,2}\.\s?(.+)")
@@ -210,7 +210,7 @@ def tag(play, side, nick):
         return None
     if not good:
         return {"key": "hurt", "text": f"Hurt the {nick}"}
-    if abs(play["epa"]) >= BIG_PLAY:
+    if round(abs(play["epa"]), 1) >= BIG_PLAY:
         return {"key": "big", "text": "Big play"}
     return {"key": "helped", "text": f"Helped the {nick}"}
 
@@ -240,6 +240,8 @@ def air_sentence(play):
 
 def _category(play):
     impact = play.get("impact")
+    if impact == "Pass defended" and play.get("complete_pass") == 1:
+        impact = None  # a caught deflection is not a breakup; fall through to the alum's role
     if impact:
         return impact if impact in KNOWN else "other"
     roles = set(play.get("roles") or [])
