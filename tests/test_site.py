@@ -204,7 +204,7 @@ class RenderTests(SiteTestCase):
     def test_methodology_explains_player_pages(self):
         page = self.read(self.render() / "methodology" / "index.html")
         self.assertIn('id="player-pages"', page)
-        self.assertIn("not player tracking", page)
+        self.assertIn("not a tracking diagram", page)
         self.assertIn("rarely named in play-by-play", page)
 
     def test_eastern_time_label_follows_daylight_saving(self):
