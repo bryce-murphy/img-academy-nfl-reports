@@ -58,7 +58,7 @@ def get_bytes(url):
 
 def specifications(season):
     return {
-        "schedule": ("schedules", "games.csv", {"game_id", "season", "game_type", "gameday", "home_score", "away_score"}),
+        "schedule": ("schedules", "games.csv.gz", {"game_id", "season", "game_type", "gameday", "home_score", "away_score"}),
         "rosters": ("weekly_rosters", f"roster_weekly_{season}.csv", {"gsis_id", "team", "week", "status"}),
         "current_rosters": ("rosters", f"roster_{season}.csv", {"gsis_id", "team", "status"}),
         "players": ("players", "players.csv", {"gsis_id", "display_name", "pfr_id"}),

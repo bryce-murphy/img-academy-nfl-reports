@@ -35,13 +35,16 @@ class ParseCsvTests(unittest.TestCase):
         self.assertIn("week", specifications(2026)["pbp"][2])
 
 
-SCHEDULE_V1 = b"game_id,season,game_type,gameday,home_score,away_score\n2026_02_PHI_TEN,2026,REG,2026-09-20,20,24\n"
-SCHEDULE_V2 = SCHEDULE_V1 + b"2026_02_CLE_TB,2026,REG,2026-09-20,19,23\n"
+SCHEDULE_V1_CSV = b"game_id,season,game_type,gameday,home_score,away_score\n2026_02_PHI_TEN,2026,REG,2026-09-20,20,24\n"
+SCHEDULE_V2_CSV = SCHEDULE_V1_CSV + b"2026_02_CLE_TB,2026,REG,2026-09-20,19,23\n"
+# nflverse publishes the schedule only as games.csv.gz (the plain games.csv was dropped)
+SCHEDULE_V1 = gzip.compress(SCHEDULE_V1_CSV, mtime=0)
+SCHEDULE_V2 = gzip.compress(SCHEDULE_V2_CSV, mtime=0)
 
 
 def release(payload):
     digest = "sha256:" + hashlib.sha256(payload).hexdigest()
-    return json.dumps({"assets": [{"name": "games.csv", "updated_at": "2026-09-27T21:46:18Z", "digest": digest}]}).encode()
+    return json.dumps({"assets": [{"name": "games.csv.gz", "updated_at": "2026-09-27T21:46:18Z", "digest": digest}]}).encode()
 
 
 class LoadSourcesTests(unittest.TestCase):
@@ -65,6 +68,12 @@ class LoadSourcesTests(unittest.TestCase):
         self.assertEqual(manifest["schedule"]["sha256"], hashlib.sha256(SCHEDULE_V2).hexdigest())
         self.assertEqual(len(calls), 4)
         pause.assert_called_once_with(data.RETRY_SECONDS)
+
+    def test_schedule_is_read_from_the_gzipped_asset(self):
+        self.assertEqual(specifications(2026)["schedule"][1], "games.csv.gz")
+        datasets, manifest, calls, _ = self.load([release(SCHEDULE_V1), SCHEDULE_V1])
+        self.assertEqual(len(datasets["schedule"]), 1)
+        self.assertTrue(manifest["schedule"]["url"].endswith("/schedules/games.csv.gz"))
 
     def test_persistent_checksum_mismatch_fails_closed(self):
         responses = [release(SCHEDULE_V2), SCHEDULE_V1] * data.DOWNLOAD_ATTEMPTS
