@@ -369,6 +369,14 @@ def top_drawable_play(player):
     return None
 
 
+def card_order(ranking, featured_id, override=None):
+    """Card and box-score order: the editor's `card_order` first when given, otherwise the featured player first;
+    everyone else follows in score order (`ranking`). Unknown and repeated ids are ignored."""
+    head = [pid for pid in (override or [featured_id]) if pid in ranking]
+    head = list(dict.fromkeys(head))
+    return head + [pid for pid in ranking if pid not in head]
+
+
 def edition_context(edition, *, root, data_path, slugs, notes=None):
     players = [player_view(p) for p in edition.data["players"]]
     teams = team_colors(edition.data)
@@ -391,7 +399,7 @@ def edition_context(edition, *, root, data_path, slugs, notes=None):
         "edition": edition.data,
         "editorial": edition.editorial,
         "featured": featured,
-        "played": [by_id[pid] for pid in edition.data["featured_ranking"] if pid in by_id],
+        "played": [by_id[pid] for pid in card_order(edition.data["featured_ranking"], edition.editorial.get("featured_player_id", ""), edition.editorial.get("card_order")) if pid in by_id],
         "availability": availability,
         "up_next": up_next_groups(players),
         "sources": sorted(edition.sources.items()),

@@ -17,6 +17,7 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
 1. Open the PR titled "Edition 2026 Week N: …". GitHub Mobile works.
 2. Read the headline, dek, lead and alternates. If Claude's draft was rejected, its text and the reasons sit in a collapsed section.
 3. To change the text: **Files changed** → `editions/<id>/editorial.toml` → **⋯ → Edit file**. Change only the text inside the quotes. To use an alternate, paste it into `headline`. To feature someone else, set `featured_player_id` to another ID from the "This week" table; only players who played are accepted.
+   To change the order of the player cards (and the box score), add a line `card_order = ["00-0036282", "00-0041438"]` with player IDs from the "This week" table. Those players come first in that order and everyone else follows by score. Without it the featured player is first. A refresh keeps the line.
 4. Commit to the same branch and wait for `tests` to pass. A structural mistake, such as a headline over 70 characters, fails the check with a message saying what to fix.
 5. Click **Squash and merge**. **Deploy site** runs automatically; the edition is live when it finishes, usually within 3 minutes.
 6. Post from the social drafts in the PR. The same text is on the site at `/editions/<id>/social-drafts.json`.
