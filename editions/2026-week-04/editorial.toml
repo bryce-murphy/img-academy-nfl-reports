@@ -6,6 +6,7 @@ headline = "Grant Delpit's late pick seals Browns' 27-24 win over Steelers"
 dek = "Carnell Tate had 9 catches for 145 yards in a Titans loss, and Greg Newsome II intercepted a pass in the Giants' 36-24 win over Arizona."
 lead = "Grant Delpit's interception with 10 seconds left in the fourth quarter ended Pittsburgh's drive and sealed a 27-24 Browns win. The Cleveland safety also had four solo tackles and two assists over 70 defensive snaps. Pittsburgh's Daylen Everette, another IMG Academy alum, had three solo tackles and a pass defended on the other side. Fifteen IMG Academy alumni played this week."
 alternates = ["Carnell Tate catches 9 for 145 yards in Titans' loss at Baltimore", "Greg Newsome II picks off a pass as Giants beat Cardinals 36-24"]
+card_order = ["00-0036282", "00-0041438"]
 
 # Roster move: J.J. McCarthy, Vikings → Giants (first week with the new team).
 # To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
