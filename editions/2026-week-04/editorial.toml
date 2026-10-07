@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0041438"
+headline = "Carnell Tate catches 9 for 145 yards in Titans' loss at Baltimore"
+dek = "Interceptions in wins for IMG Academy defensive backs: Greg Newsome II also broke up 3 passes, and Grant Delpit's late pick sealed Cleveland's win."
+lead = "Carnell Tate was Cam Ward's most reliable option in Baltimore, turning 12 targets into 9 catches and 145 yards. His biggest grab came late, a 33-yard catch down the left side that put Tennessee at the Baltimore 3 with 1:51 left. It wasn't enough. The Titans fell 24-18, with fellow IMG Academy alum JC Latham at tackle for 64 snaps. Fifteen IMG Academy alumni played this week."
+alternates = ["Greg Newsome II picks off a pass as Giants beat Cardinals 36-24", "Grant Delpit's late pick seals Browns' 27-24 win over Steelers"]
+
+# Roster move: J.J. McCarthy, Vikings → Giants (first week with the new team).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0039923"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
