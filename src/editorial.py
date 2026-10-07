@@ -95,6 +95,8 @@ def dumps(copy, stubs=()):
         f"lead = {_toml_string(copy['lead'])}",
         "alternates = [" + ", ".join(_toml_string(a) for a in copy.get("alternates", [])) + "]",
     ]
+    if copy.get("card_order"):
+        lines.append("card_order = [" + ", ".join(_toml_string(i) for i in copy["card_order"]) + "]")
     notes = copy.get("roster_moves") or []
     for entry in notes:
         lines += _note_lines(entry)
@@ -309,6 +311,7 @@ def review(copy, edition):
             result.errors.append("featured_player_id is not a player in this edition")
         elif players[featured]["availability"]["label"] != ev.PLAYED:
             result.errors.append(f"featured player {players[featured]['name']} did not play in this edition")
+    result.errors.extend(check_card_order(copy.get("card_order"), players))
     facts = fact_sheet(edition)
     text = fact_text(facts)
     body = " ".join([copy["headline"], copy["dek"], copy["lead"], *alternates])
@@ -327,6 +330,23 @@ def review(copy, edition):
     result.notes.extend(f"name not found in the data: {phrase}" for phrase in _unknown_names([copy["headline"], copy["dek"], copy["lead"], *alternates], text))
     result.errors.extend(check_roster_notes(copy.get("roster_moves", []), edition))
     return result
+
+
+def check_card_order(order, players):
+    """Errors for the optional `card_order` list: player IDs who played, each at most once."""
+    if order is None:
+        return []
+    if not isinstance(order, list) or not all(isinstance(i, str) for i in order):
+        return ["card_order must be a list of player IDs"]
+    errors = []
+    for pid in order:
+        if pid not in players:
+            errors.append(f"card_order: {pid} is not a player in this edition")
+        elif players[pid]["availability"]["label"] != ev.PLAYED:
+            errors.append(f"card_order: {players[pid]['name']} did not play in this edition")
+    if len(set(order)) != len(order):
+        errors.append("card_order lists a player more than once")
+    return errors
 
 
 def _details_problems(details, move):
@@ -614,11 +634,10 @@ def main(argv=None):
         copy, report = produce(edition, model=config["editorial_model"])
         target = args.directory / "editorial.toml"
         try:
-            kept = loads(target.read_text(encoding="utf-8")).get("roster_moves")
+            previous = loads(target.read_text(encoding="utf-8"))
         except (OSError, ValueError):
-            kept = None  # no file, or it does not parse: start without notes
-        if kept:
-            copy = {**copy, "roster_moves": kept}
+            previous = {}  # no file, or it does not parse: start without notes or a card order
+        copy = {**copy, **{key: previous[key] for key in ("roster_moves", "card_order") if previous.get(key)}}
         target.write_bytes(dumps(copy, stubs=moves.moved_players(edition)).encode("utf-8"))
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
