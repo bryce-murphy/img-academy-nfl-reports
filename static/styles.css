@@ -132,7 +132,7 @@ details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--navy)}
 .field .los{stroke:var(--navy);stroke-width:2.5}.field .marker{stroke:var(--first-down);stroke-width:2.5}
 .field .path{color:var(--navy)}.field .path-hurt{color:var(--muted)}
 .field .run{stroke:currentColor;stroke-width:4;stroke-linecap:round}.field .air{fill:none;stroke:currentColor;stroke-width:2.5;stroke-dasharray:6 5}
-.field .arrow,.field .ball{fill:currentColor}.field .target,.field .catch{fill:#fff;stroke:currentColor;stroke-width:2.5}
+.field .arrow,.field .ball{fill:currentColor}.field .target,.field .catch{fill:#fff;stroke:currentColor;stroke-width:2.5}.field .pick{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}
 .field .yardage{font:800 17px var(--display);fill:var(--navy);paint-order:stroke;stroke:var(--light);stroke-width:4px;stroke-linejoin:round}
 .field-card .yard-number{font-size:13px}.field-card .endzone-label{font-size:14px}.field-card .yardage{font-size:16px}
 .field-large .yard-number{font-size:20px}.field-large .yardage{font-size:26px}.field-large .endzone-label{font-size:22px}

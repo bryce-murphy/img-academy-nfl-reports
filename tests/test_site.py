@@ -636,6 +636,60 @@ class CardPlayTests(SiteTestCase):
         self.assertIn("See every play", booker)
 
 
+class CardOrderTests(SiteTestCase):
+    RANKING = ["a", "b", "c", "d"]
+
+    def test_featured_player_leads_and_the_rest_keep_their_score_order(self):
+        self.assertEqual(site.card_order(self.RANKING, "c", None), ["c", "a", "b", "d"])
+
+    def test_no_featured_player_keeps_the_score_order(self):
+        self.assertEqual(site.card_order(self.RANKING, "", None), self.RANKING)
+        self.assertEqual(site.card_order(self.RANKING, "zz", None), self.RANKING)
+
+    def test_card_order_overrides_the_featured_default(self):
+        self.assertEqual(site.card_order(self.RANKING, "c", ["c", "d", "b"]), ["c", "d", "b", "a"])
+        self.assertEqual(site.card_order(self.RANKING, "c", ["d", "c"]), ["d", "c", "a", "b"])
+
+    def test_card_order_ignores_unknown_and_repeated_ids(self):
+        self.assertEqual(site.card_order(self.RANKING, "a", ["zz", "d", "d"]), ["d", "a", "b", "c"])
+
+    def test_empty_card_order_falls_back_to_featured_first(self):
+        self.assertEqual(site.card_order(self.RANKING, "c", []), ["c", "a", "b", "d"])
+
+    def names(self, html):
+        return re.findall(r'<article class="card" id="player-[^"]+"[^>]*>.*?<h3>(?:<a [^>]*>)?([^<]+)<', html, re.S)
+
+    def test_cards_and_box_score_follow_the_featured_player_then_card_order(self):
+        edition = fixture_data.golden_edition()
+        by_id = {p["id"]: p["name"] for p in edition["players"]}
+        ranking = edition["featured_ranking"]
+        self.assertGreaterEqual(len(ranking), 3)
+        last = ranking[-1]
+        copy_ = dict(editorial.fallback(edition), featured_player_id=last)
+        html = self.read(self.render(edition, copy_) / "index.html")
+        self.assertEqual(self.names(html)[0], by_id[last])
+        self.assertEqual(self.names(html)[1:], [by_id[i] for i in ranking[:-1]])
+        order = [ranking[2], ranking[0]]
+        html = self.read(self.render(edition, dict(copy_, card_order=order)) / "index.html")
+        self.assertEqual(self.names(html)[:3], [by_id[order[0]], by_id[order[1]], by_id[ranking[1]]])
+
+
+class InterceptionCardPlayTests(unittest.TestCase):
+    @staticmethod
+    def record(play_id, **overrides):
+        play = {"play_id": play_id, "play_type": "pass", "down": 1, "ydstogo": 10, "goal_to_go": 0, "yardline_100": 65, "yards_gained": 0,
+                "air_yards": 47, "yards_after_catch": None, "pass_attempt": 1, "rush_attempt": 0, "complete_pass": 0, "sack": 0,
+                "interception": 1, "fumble": 0, "lateral": 0, "penalty": 0, "qb_kneel": 0, "qb_spike": 0, "two_point_attempt": 0}
+        play.update(overrides)
+        return play
+
+    def test_a_defenders_interception_is_the_card_play(self):
+        pick = self.record("1")
+        tackle = self.record("2", interception=0, complete_pass=1, yards_gained=6, air_yards=3, yards_after_catch=3)
+        player = {"key_plays": [{"play_id": "1"}, {"play_id": "2"}], "plays": [pick, tackle]}
+        self.assertEqual(site.top_drawable_play(player)["play_id"], "1")
+
+
 class CheckTests(SiteTestCase):
     def test_rendered_site_passes_its_checks(self):
         out = self.render()

@@ -8,10 +8,11 @@ from __future__ import annotations
 from html import escape
 
 SPECIAL_TEAMS = {"kickoff", "punt", "field_goal", "extra_point"}
-TEXT_ONLY_FLAGS = ("penalty", "fumble", "interception", "lateral", "qb_kneel", "qb_spike", "two_point_attempt")
+TEXT_ONLY_FLAGS = ("penalty", "fumble", "lateral", "qb_kneel", "qb_spike", "two_point_attempt")
 DOMAIN = (-10, 110)
 MIN_WIDTH = 30
 CAPTION = "Each drawing shows where the play started and ended, not player tracking."
+THROWN_SHORT = ("incomplete", "interception")  # passes that end at the target spot, with no yards after the catch
 SIZES = {"card": (240, 90), "medium": (480, 120), "large": (720, 300)}
 MINUS = "−"
 LABEL_FONT = {"card": 16, "medium": 17, "large": 26}  # rendered .yardage sizes in static/styles.css
@@ -21,7 +22,7 @@ ORDINALS = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
 
 
 def kind(play):
-    """'sack' | 'run' | 'complete' | 'incomplete', or None when the play is shown as text only."""
+    """'sack' | 'run' | 'complete' | 'incomplete' | 'interception', or None when the play is shown as text only."""
     if play.get("play_type") in SPECIAL_TEAMS | {"no_play", "", None}:
         return None
     if any(play.get(flag) == 1 for flag in TEXT_ONLY_FLAGS):
@@ -34,6 +35,8 @@ def kind(play):
     if play.get("rush_attempt") == 1:
         return "run"
     if play.get("pass_attempt") == 1 and play.get("air_yards") is not None:
+        if play.get("interception") == 1:
+            return "interception"
         if play.get("complete_pass") == 1:
             return "complete"
         if play.get("complete_pass") == 0:
@@ -50,7 +53,7 @@ def geometry(play):
     x0 = 100 - play["yardline_100"]
     marker = 100 if play.get("goal_to_go") == 1 else min(x0 + play["ydstogo"], 100)
     end = min(x0 + play["yards_gained"], 100)
-    air_end = x0 + play["air_yards"] if shape in ("complete", "incomplete") else None
+    air_end = x0 + play["air_yards"] if shape in ("complete", *THROWN_SHORT) else None
     points = [x0, marker, end] + ([air_end] if air_end is not None else [])
     lo, hi = min(points) - 10, max(points) + 10
     if hi - lo < MIN_WIDTH:
@@ -95,6 +98,8 @@ def result_line(play):
         return "Complete for no gain" if gained == 0 else f"Complete for a loss of {abs(gained)}"
     if shape == "incomplete":
         return "Incomplete"
+    if shape == "interception":
+        return "Intercepted"
     return None
 
 
@@ -102,8 +107,8 @@ def yardage_label(play):
     shape, gained = kind(play), play.get("yards_gained")
     if shape is None:
         return None
-    if shape == "incomplete":
-        return "Incomplete"
+    if shape in THROWN_SHORT:
+        return "Incomplete" if shape == "incomplete" else "Intercepted"
     return f"+{gained}" if gained > 0 else ("0" if gained == 0 else f"{MINUS}{abs(gained)}")
 
 
@@ -182,9 +187,14 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
         top = max(6, mid - height * 0.32)
         parts.append(f'<path class="air" d="M{origin} {mid} Q{round((origin + x(g["air_end"])) / 2, 1)} {round(top, 1)} {x(g["air_end"])} {mid}"/>')
     gained = play["yards_gained"]
-    if g["kind"] == "incomplete":
-        parts.append(f'<circle class="target" cx="{x(g["air_end"])}" cy="{mid}" r="{radius}"/>')
-        tip = x(g["air_end"])
+    if g["kind"] in THROWN_SHORT:
+        spot = x(g["air_end"])
+        if g["kind"] == "interception":  # an X where the pass was caught by the defense (the intended target spot)
+            reach = radius - 1
+            parts.append(f'<path class="pick" d="M{round(spot - reach, 1)} {round(mid - reach, 1)} L{round(spot + reach, 1)} {round(mid + reach, 1)} M{round(spot - reach, 1)} {round(mid + reach, 1)} L{round(spot + reach, 1)} {round(mid - reach, 1)}"/>')
+        else:
+            parts.append(f'<circle class="target" cx="{spot}" cy="{mid}" r="{radius}"/>')
+        tip = spot
     elif gained == 0:
         parts.append(f'<circle class="ball" cx="{origin}" cy="{mid}" r="{radius}"/>')
         tip = origin
@@ -202,7 +212,7 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
     text = yardage_label(play)
     if text:
         anchor, lx = "middle", round(min(max(tip, 24), width - 24), 1)
-        if g["kind"] != "incomplete" and gained != 0:
+        if g["kind"] not in THROWN_SHORT and gained != 0:
             # At a goal line the tip sits on the dark end zone; keep the label on the field beside it.
             if g["end"] >= 100:
                 anchor, lx = "end", round(max(x(100) - 6, 24), 1)
@@ -212,7 +222,7 @@ def svg(play, size, outcome="", helped=None, path_color="#0057b8", zones=None):
         ly = mid + head + 18 if g["kind"] == "complete" else mid - head - 6
         if anchor == "middle":  # goal-line labels keep their place beside the end zone
             anchor, lx, ly = _clear_label(text, LABEL_FONT[size], width, lx, ly, tip, origin, x(g["marker"]),
-                                          reach=radius if g["kind"] == "incomplete" or gained == 0 else 0,  # an arrow ends at its point
+                                          reach=radius if g["kind"] in THROWN_SHORT or gained == 0 else 0,  # an arrow ends at its point
                                           on_line=mid + LABEL_FONT[size] * 0.35)
         parts.append(f'<text class="yardage" x="{lx}" y="{round(ly, 1)}" text-anchor="{anchor}">{escape(text)}</text>')
     parts.append("</svg>")

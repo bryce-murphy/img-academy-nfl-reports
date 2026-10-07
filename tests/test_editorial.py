@@ -38,6 +38,13 @@ class TomlTests(unittest.TestCase):
         self.assertEqual(loaded["schema"], 1)
 
 
+    def test_card_order_survives_a_round_trip_and_is_omitted_when_unset(self):
+        base = {"featured_player_id": "00-0036282", "headline": "H", "dek": "D", "lead": "L", "alternates": ["A", "B"]}
+        self.assertNotIn("card_order", editorial.loads(editorial.dumps(base)))
+        loaded = editorial.loads(editorial.dumps(dict(base, card_order=["00-0036282", "00-0041438"])))
+        self.assertEqual(loaded["card_order"], ["00-0036282", "00-0041438"])
+
+
 class FallbackTests(unittest.TestCase):
     def test_fallback_passes_its_own_review(self):
         edition = fixture_data.golden_edition()
@@ -94,6 +101,19 @@ class ReviewTests(unittest.TestCase):
 
     def test_featured_player_must_have_played(self):
         self.assertIn("did not play", " ".join(self.review(featured_player_id=self.ids["J.J. McCarthy"]).errors))
+
+    def test_card_order_accepts_players_who_played(self):
+        played = self.edition["featured_ranking"][:2]
+        self.assertEqual(self.review(card_order=played).errors, [])
+        self.assertEqual(self.review(card_order=[]).errors, [])
+
+    def test_card_order_rejects_bad_entries(self):
+        played = self.edition["featured_ranking"]
+        absent = next(p["id"] for p in self.edition["players"] if p["availability"]["label"] != ev.PLAYED)
+        for value, expected in (("00-1", "list of player IDs"), ([1], "list of player IDs"), (["00-9999999"], "not a player in this edition"),
+                                ([absent], "did not play"), ([played[0], played[0]], "more than once")):
+            with self.subTest(value=value):
+                self.assertIn(expected, " ".join(self.review(card_order=value).errors))
 
     def test_featured_player_must_exist(self):
         self.assertTrue(self.review(featured_player_id="00-9999999").errors)

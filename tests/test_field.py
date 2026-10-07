@@ -27,7 +27,7 @@ def edge_cases():
 class KindTests(unittest.TestCase):
     def test_text_only_reasons(self):
         for overrides in ({"play_type": "no_play"}, {"play_type": "punt"}, {"play_type": "kickoff"}, {"play_type": "field_goal"},
-                          {"play_type": "extra_point"}, {"penalty": 1}, {"fumble": 1}, {"interception": 1}, {"lateral": 1},
+                          {"play_type": "extra_point"}, {"penalty": 1}, {"fumble": 1}, {"lateral": 1},
                           {"qb_kneel": 1}, {"qb_spike": 1}, {"two_point_attempt": 1}, {"yardline_100": 0}, {"yardline_100": 100},
                           {"yardline_100": None}, {"yards_gained": None}, {"ydstogo": None}, {"ydstogo": 0}):
             with self.subTest(overrides=overrides):
@@ -40,14 +40,25 @@ class KindTests(unittest.TestCase):
         self.assertEqual(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=12, yards_gained=0)), "incomplete")
         self.assertIsNone(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=None, yards_gained=0)))
 
+    def test_interception_is_its_own_shape(self):
+        pick = dict(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=0, interception=1, air_yards=47, yards_gained=0, yardline_100=65)
+        self.assertEqual(field.kind(base(**pick)), "interception")
+
+    def test_interception_needs_a_pass_with_a_target_depth(self):
+        pick = dict(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=0, interception=1, air_yards=47, yards_gained=0)
+        for overrides in ({"air_yards": None}, {"pass_attempt": 0}, {"fumble": 1}, {"lateral": 1}, {"penalty": 1}):
+            with self.subTest(overrides=overrides):
+                self.assertIsNone(field.kind(base(**{**pick, **overrides})))
+
     def test_pass_with_unknown_completion_is_text_only(self):
         self.assertIsNone(field.kind(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=8, complete_pass=None, yards_gained=8)))
 
     def test_real_edge_cases(self):
         cases = edge_cases()
-        for text_only in ("interception", "lost_fumble", "lateral", "penalty", "kneel", "two_point", "punt"):
+        for text_only in ("lost_fumble", "lateral", "penalty", "kneel", "two_point", "punt"):
             with self.subTest(case=text_only):
                 self.assertIsNone(field.kind(cases[text_only]))
+        self.assertEqual(field.kind(cases["interception"]), "interception")
         self.assertEqual(field.kind(cases["sack"]), "sack")
         self.assertEqual(field.kind(cases["completion"]), "complete")
         self.assertEqual(field.kind(cases["incompletion"]), "incomplete")
@@ -71,6 +82,10 @@ class GeometryTests(unittest.TestCase):
     def test_incompletion_ends_at_the_target(self):
         g = field.geometry(base(play_type="pass", rush_attempt=0, pass_attempt=1, yardline_100=40, air_yards=15, yards_gained=0))
         self.assertEqual((g["air_end"], g["end"]), (75, 60))
+
+    def test_interception_ends_at_the_intended_target(self):
+        g = field.geometry(base(play_type="pass", rush_attempt=0, pass_attempt=1, interception=1, yardline_100=65, air_yards=47, yards_gained=0))
+        self.assertEqual((g["kind"], g["x0"], g["air_end"], g["end"]), ("interception", 35, 82, 35))
 
     def test_goal_to_go_marker_is_the_goal_line_and_touchdown_ends_on_it(self):
         g = field.geometry(base(yardline_100=3, ydstogo=3, goal_to_go=1, yards_gained=3))
@@ -114,6 +129,23 @@ class TextLineTests(unittest.TestCase):
         self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=8, yards_gained=14)), "Complete for 14 yards")
         self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, air_yards=8, yards_gained=0)), "Incomplete")
         self.assertIsNone(field.result_line(base(penalty=1)))
+
+    def test_result_and_label_for_an_interception(self):
+        pick = base(play_type="pass", rush_attempt=0, pass_attempt=1, interception=1, air_yards=47, yards_gained=0, yardline_100=65)
+        self.assertEqual(field.result_line(pick), "Intercepted")
+        self.assertEqual(field.yardage_label(pick), "Intercepted")
+
+    def test_interception_svg_draws_the_throw_and_marks_the_pick(self):
+        pick = base(down=1, offense="PIT", defense="CLE", play_type="pass", rush_attempt=0, pass_attempt=1, interception=1,
+                    air_yards=47, yards_gained=0, yardline_100=65)
+        for size in ("card", "medium", "large"):
+            with self.subTest(size=size):
+                markup = field.svg(pick, size, outcome="Interception")
+                self.assertIn('class="air"', markup)
+                self.assertIn('class="pick"', markup)
+                self.assertIn(">Intercepted<", markup)
+                self.assertNotIn('class="ball"', markup)
+                self.assertIn("1st &amp; 10 at the PIT 35. Intercepted. Interception", markup)
 
     def test_result_line_sign_aware_wording(self):
         self.assertEqual(field.result_line(base(play_type="pass", rush_attempt=0, pass_attempt=1, complete_pass=1, air_yards=5, yards_gained=-3)), "Complete for a loss of 3")
