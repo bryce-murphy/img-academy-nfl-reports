@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0041393"
+headline = "Daylen Everette breaks up two passes as Steelers beat Colts 34-22"
+dek = "IMG Academy defensive backs kept getting hands on the ball: DJ Turner II broke up one pass in a win at Miami, and Grant Delpit had one against the Jets."
+lead = "Daylen Everette made Daniel Jones work for everything in Pittsburgh's 34-22 win over Indianapolis. The cornerback broke up two throws and made five solo tackles. One sequence late in the second quarter told the story: he got a hand on a pass, then on the next snap held a third-down completion to a single yard. He stayed on the field for 67 defensive snaps and six more on special teams. Fifteen IMG Academy alumni played this week."
+alternates = ["Everette's two pass breakups help Steelers top Colts, 34-22", "Steelers corner Daylen Everette stars in 34-22 win over Colts"]
+
+# Roster move: Kaytron Allen, Commanders → Dolphins (first week with the new team).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0041096"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
