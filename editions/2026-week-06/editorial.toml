@@ -1,0 +1,26 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0041438"
+headline = "Carnell Tate catches touchdown as Titans win 26-20 at Indianapolis"
+dek = "Road wins carried the week: Daylen Everette picked off a fourth-quarter pass in Pittsburgh's win at Tampa Bay, and Hjalte Froholdt played 72 snaps in Arizona's."
+lead = "Carnell Tate kept finding space in Indianapolis. Ward looked his way seven times, and Tate caught six of them for 70 yards. The last was an 8-yard touchdown early in the fourth quarter that helped the Titans close out a 26-20 road win. He also opened the second half with a 19-yard catch down the right side. Fellow IMG Academy alumnus JC Latham played 46 snaps up front in the same win. Fifteen IMG Academy alumni played this week."
+alternates = ["Carnell Tate's 6 catches power Titans past the Colts, 26-20", "Daylen Everette's interception helps Steelers win at Tampa Bay"]
+
+# Roster move: DJ Turner II, left the Bengals (left before this week).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0038549"
+# kind = ""                 # release | waived
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
+
+# Roster move: Kaytron Allen, left the Dolphins (left before this week).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0041096"
+# kind = ""                 # release | waived
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
