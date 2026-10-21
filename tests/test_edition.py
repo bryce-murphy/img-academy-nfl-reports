@@ -207,6 +207,37 @@ class EditionTests(unittest.TestCase):
         self.assertTrue(any("Carnell Tate" in w for w in edition["warnings"]))
         self.assertEqual(player(edition, "Grant Delpit")["availability"]["label"], ev.PLAYED)
 
+    @staticmethod
+    def bye_for(data, teams, week="2"):
+        """Mimic nflverse on a bye: no schedule row and no weekly roster rows for these teams."""
+        data["schedule"] = [g for g in data["schedule"] if not (g["week"] == week and {g["home_team"], g["away_team"]} & teams)]
+        data["rosters"] = [r for r in data["rosters"] if not (r["week"] == week and r["team"] in teams)]
+        return data
+
+    def test_player_on_a_bye_team_without_a_weekly_roster_row_is_on_bye(self):
+        # Regression: 2026 Week 6 labelled DJ Turner II (CIN) and Kaytron Allen (MIA) "Not on an NFL roster".
+        neal = player(build(self.bye_for(fixture_data.load()[0], {"LV", "LAC"})), "Evan Neal")
+        self.assertEqual(neal["availability"]["label"], ev.BYE)
+        self.assertEqual((neal["team"], neal["team_name"], neal["game"]), ("LV", "Las Vegas Raiders", None))
+
+    def test_bye_without_a_weekly_roster_row_is_not_a_roster_move(self):
+        edition = build(self.bye_for(fixture_data.load()[0], {"LV", "LAC"}))
+        neal = player(edition, "Evan Neal")
+        week_one = {"week": 1, "games": [], "players": [dict(neal, team="LV", availability={"label": "Practice squad", "evidence": ""})]}
+        self.assertIsNone(moves.detect(neal, 2, edition["games"], [week_one], lambda t: t, lambda t: "#000"))
+
+    def test_missing_weekly_roster_row_when_the_team_played_is_still_not_on_a_roster(self):
+        data, _, _ = fixture_data.load()
+        data["rosters"] = [r for r in data["rosters"] if r["gsis_id"] != alum("Evan Neal")["gsis_id"]]
+        self.assertEqual(player(build(data), "Evan Neal")["availability"]["label"], ev.NOT_ON_ROSTER)
+
+    def test_released_player_on_a_bye_team_is_not_on_a_roster(self):
+        data = self.bye_for(fixture_data.load()[0], {"LV", "LAC"})
+        for row in data["current_rosters"]:
+            if row["gsis_id"] == alum("Evan Neal")["gsis_id"]:
+                row["status"] = "CUT"
+        self.assertEqual(player(build(data), "Evan Neal")["availability"]["label"], ev.NOT_ON_ROSTER)
+
     def test_conflicting_evidence_blocks_social_drafts(self):
         data, _, _ = fixture_data.load()
         for row in data["snaps"]:

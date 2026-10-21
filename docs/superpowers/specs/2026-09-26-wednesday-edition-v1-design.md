@@ -105,7 +105,8 @@ Evaluated in order; first match wins.
 | 2 | Play involvement or positive box-score activity **and** an explicit all-zero snap row | Conflicting evidence | Blocks social drafts |
 | 3 | Player ID in a recorded play role (excluding penalty-only) | Played | Recorded play involvement |
 | 4 | Positive box-score activity | Played | Positive recorded game statistic |
-| 5 | No weekly roster record for the season/week | Not on an NFL roster | Current roster shown separately |
+| 5 | No weekly roster record for the season/week, and the current roster puts the player (not released or retired) on a team with no game this week. Weekly rosters have no rows for teams on a bye | Bye week | No game for the current-roster team |
+| 5a | No weekly roster record for the season/week otherwise | Not on an NFL roster | Current roster shown separately |
 | 6 | Weekly roster status `INA` | Inactive for the game | Weekly roster status |
 | 7 | Weekly roster status `DEV` | Practice squad | Weekly roster status |
 | 8 | Weekly roster status `RES` | Reserve list | No reason is inferred |
