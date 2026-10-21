@@ -4,7 +4,7 @@
   "season": 2026,
   "week": 6,
   "season_type": "REG",
-  "generated_at": "2026-10-20T21:46:38+00:00",
+  "generated_at": "2026-10-21T18:10:46+00:00",
   "label": "Verified source snapshot",
   "historical": false,
   "games": [
@@ -1416,7 +1416,19 @@
           "source": "ngs_passing"
         }
       ],
-      "charting": null,
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": null,
+        "tackling": null,
+        "rushing": {
+          "carries": 2,
+          "before_contact": 23,
+          "after_contact": 3,
+          "broken_tackles": 0
+        },
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "NYG",
@@ -2145,7 +2157,23 @@
         }
       ],
       "next_gen": [],
-      "charting": null,
+      "charting": {
+        "targets": null,
+        "coverage": {
+          "targets": 5,
+          "completions": 4,
+          "yards": 38,
+          "touchdowns": 0,
+          "interceptions": 1
+        },
+        "pass_rush": null,
+        "tackling": {
+          "missed": 0,
+          "attempts": 3
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "PIT",
@@ -2396,7 +2424,23 @@
         }
       ],
       "next_gen": [],
-      "charting": null,
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": {
+          "pressures": 1,
+          "hurries": 0,
+          "qb_hits": 0,
+          "sacks": 1,
+          "blitzes": 0
+        },
+        "tackling": {
+          "missed": 0,
+          "attempts": 3
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "PHI",
@@ -2726,7 +2770,29 @@
         }
       ],
       "next_gen": [],
-      "charting": null,
+      "charting": {
+        "targets": null,
+        "coverage": {
+          "targets": 3,
+          "completions": 1,
+          "yards": 16,
+          "touchdowns": 0,
+          "interceptions": 0
+        },
+        "pass_rush": {
+          "pressures": 0,
+          "hurries": 0,
+          "qb_hits": 0,
+          "sacks": 0,
+          "blitzes": 3
+        },
+        "tackling": {
+          "missed": 0,
+          "attempts": 5
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "PHI",
@@ -3015,7 +3081,23 @@
         }
       ],
       "next_gen": [],
-      "charting": null,
+      "charting": {
+        "targets": null,
+        "coverage": null,
+        "pass_rush": {
+          "pressures": 1,
+          "hurries": 1,
+          "qb_hits": 0,
+          "sacks": 0,
+          "blitzes": 2
+        },
+        "tackling": {
+          "missed": 0,
+          "attempts": 3
+        },
+        "rushing": null,
+        "broken_tackles": null
+      },
       "injury_report": null,
       "current": {
         "team": "NYG",
@@ -4415,13 +4497,13 @@
       "id": "00-0038549",
       "name": "DJ Turner II",
       "position": "CB",
-      "team": "",
-      "team_name": "",
-      "team_color": "#123d35",
+      "team": "CIN",
+      "team_name": "Cincinnati Bengals",
+      "team_color": "#FB4F14",
       "context": "Michigan · 2023 draft, round 2",
       "availability": {
-        "label": "Not on an NFL roster",
-        "evidence": "No weekly roster record; current roster shown separately"
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
       },
       "game": null,
       "metrics": [
@@ -4486,30 +4568,19 @@
       },
       "score": 0.0,
       "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
-      "move": {
-        "kind": "left_before_week",
-        "from": "CIN",
-        "to": null,
-        "from_name": "Cincinnati Bengals",
-        "to_name": null,
-        "from_color": "#FB4F14",
-        "to_color": null,
-        "status": "none",
-        "last_week_with_old_team": 5,
-        "last_game_date": "2026-10-11"
-      }
+      "move": null
     },
     {
       "id": "00-0041096",
       "name": "Kaytron Allen",
       "position": "RB",
-      "team": "",
-      "team_name": "",
-      "team_color": "#123d35",
+      "team": "MIA",
+      "team_name": "Miami Dolphins",
+      "team_color": "#008E97",
       "context": "Penn State · 2026 draft, round 6",
       "availability": {
-        "label": "Not on an NFL roster",
-        "evidence": "No weekly roster record; current roster shown separately"
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
       },
       "game": null,
       "metrics": [
@@ -4574,18 +4645,7 @@
       },
       "score": 0.0,
       "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
-      "move": {
-        "kind": "left_before_week",
-        "from": "MIA",
-        "to": null,
-        "from_name": "Miami Dolphins",
-        "to_name": null,
-        "from_color": "#008E97",
-        "to_color": null,
-        "status": "none",
-        "last_week_with_old_team": 5,
-        "last_game_date": "2026-10-11"
-      }
+      "move": null
     },
     {
       "id": "00-0039367",
@@ -4680,18 +4740,15 @@
     "followed": 23,
     "played": 15,
     "by_label": {
+      "Bye week": 2,
       "Inactive for the game": 1,
-      "Not on an NFL roster": 3,
+      "Not on an NFL roster": 1,
       "Played": 15,
       "Practice squad": 3,
       "Reserve list": 1
     }
   },
-  "warnings": [
-    "pfr_def unavailable; related claims withheld (DataError)",
-    "pfr_rec unavailable; related claims withheld (DataError)",
-    "pfr_rush unavailable; related claims withheld (DataError)"
-  ],
+  "warnings": [],
   "validation": {
     "passed": true,
     "checks": [
