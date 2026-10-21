@@ -355,7 +355,8 @@ def player_record(alum, wk, warnings):
     roster = ev.unique(wk.this_week(data["rosters"], "gsis_id", pid), name + " weekly roster")
     current = ev.unique([r for r in data["current_rosters"] if r["gsis_id"] == pid], name + " current roster")
     stat = ev.unique([r for r in wk.this_week(data["stats"], "player_id", pid) if r["season_type"] in wk.stat_season_types], name + " statistics")
-    team = stat.get("team") or roster.get("team", "")
+    on_bye = None if roster or stat else ev.bye_team(current, wk.games)
+    team = stat.get("team") or roster.get("team") or on_bye or ""
     game = ev.unique([g for g in wk.games if team and team in (g["home_team"], g["away_team"])], name + " team schedule")
     if stat and (not game or stat["game_id"] != game["game_id"]):
         raise DataError(f"Game/team identity mismatch for {name}")
@@ -375,7 +376,7 @@ def player_record(alum, wk, warnings):
         raise DataError(f"Snap count team does not match the game roster for {name}")
     injury = ev.unique([r for r in wk.this_week(data.get("injuries", []), "gsis_id", pid) if r["team"] == team], name + " injury report")
     complete = ev.snap_table_complete(wk.snaps_by_team.get((game.get("game_id"), team), []))
-    label, evidence_text = ev.availability(snap, involvement, stat, roster or None, bool(game), complete)
+    label, evidence_text = ev.availability(snap, involvement, stat, roster or None, bool(game), complete, bool(on_bye))
     mismatches = ev.yardage_mismatches(stat, plays, pid)
     if mismatches:
         warnings.append(f"{name}: stats withheld because {', '.join(mismatches)} disagree with play-by-play")
