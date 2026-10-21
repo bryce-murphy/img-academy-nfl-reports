@@ -7,8 +7,8 @@ from src.errors import DataError, NotReady
 ACTIVE = {"status": "ACT"}
 
 
-def label(snap=None, plays=(), stats=None, roster=ACTIVE, has_game=True, complete=False):
-    return ev.availability(snap or {}, list(plays), stats or {}, roster, has_game, complete)[0]
+def label(snap=None, plays=(), stats=None, roster=ACTIVE, has_game=True, complete=False, team_on_bye=False):
+    return ev.availability(snap or {}, list(plays), stats or {}, roster, has_game, complete, team_on_bye)[0]
 
 
 class AvailabilityTests(unittest.TestCase):
@@ -51,6 +51,10 @@ class AvailabilityTests(unittest.TestCase):
     def test_bye_week(self):
         self.assertEqual(label(has_game=False), ev.BYE)
 
+    def test_no_weekly_roster_record_on_a_bye_team_is_a_bye(self):
+        # Weekly rosters have no rows for teams on a bye (2026 Week 6: CIN, MIA, DET, MIN).
+        self.assertEqual(label(roster=None, has_game=False, team_on_bye=True), ev.BYE)
+
     def test_absent_from_complete_snap_table(self):
         self.assertEqual(label(complete=True), ev.NO_SNAPS)
 
@@ -60,6 +64,21 @@ class AvailabilityTests(unittest.TestCase):
     def test_negative_snaps_are_rejected(self):
         with self.assertRaises(DataError):
             label(snap={"offense_snaps": "-1"})
+
+
+class ByeTeamTests(unittest.TestCase):
+    GAMES = [{"home_team": "BAL", "away_team": "CIN"}]
+
+    def test_current_team_without_a_game_is_on_bye(self):
+        self.assertEqual(ev.bye_team({"team": "MIA", "status": "ACT"}, self.GAMES), "MIA")
+
+    def test_current_team_with_a_game_is_not_on_bye(self):
+        self.assertIsNone(ev.bye_team({"team": "CIN", "status": "ACT"}, self.GAMES))
+
+    def test_released_retired_or_missing_players_have_no_bye_team(self):
+        self.assertIsNone(ev.bye_team({"team": "MIA", "status": "CUT"}, self.GAMES))
+        self.assertIsNone(ev.bye_team({"team": "MIA", "status": "RET"}, self.GAMES))
+        self.assertIsNone(ev.bye_team({}, self.GAMES))
 
 
 class SnapTableTests(unittest.TestCase):
