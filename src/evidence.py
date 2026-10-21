@@ -82,7 +82,17 @@ def snap_table_complete(team_rows):
     return len(players) >= COMPLETE_SNAP_TABLE_MIN_PLAYERS and offense and defense
 
 
-def availability(snap, plays, stats, roster, has_game, team_snaps_complete):
+def bye_team(current, games):
+    """The current-roster team when it has no game this week, else None. Weekly rosters have no rows for teams on a bye."""
+    team = current.get("team")
+    if not team or current.get("status") in ("CUT", "RET"):
+        return None
+    if any(team in (g["home_team"], g["away_team"]) for g in games):
+        return None
+    return team
+
+
+def availability(snap, plays, stats, roster, has_game, team_snaps_complete, team_on_bye=False):
     """Return (label, evidence). The first matching rule wins; see the spec's §5 table."""
     counts = [num(snap.get(key)) for key in SNAP_KEYS]
     if any(value is not None and value < 0 for value in counts):
@@ -97,6 +107,8 @@ def availability(snap, plays, stats, roster, has_game, team_snaps_complete):
         return PLAYED, "Recorded play involvement"
     if activity:
         return PLAYED, "Positive recorded game statistic"
+    if roster is None and team_on_bye:
+        return BYE, "No game on this week's schedule for the current-roster team"
     if roster is None:
         return NOT_ON_ROSTER, "No weekly roster record; current roster shown separately"
     if roster.get("status") in ROSTER_STATUS:
