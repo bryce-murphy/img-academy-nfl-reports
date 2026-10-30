@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0039923"
+headline = "J.J. McCarthy throws for 252 yards as Giants win 27-21 at Houston"
+dek = "IMG Academy alumni shared a field in Tennessee: Grant Delpit made 5 solo tackles in a Browns win, and Carnell Tate caught 5 passes for the Titans."
+lead = "J.J. McCarthy did his damage early in Houston. In the first quarter he hit a 42-yard throw that reached the Texans' 2, then a 47-yarder a few minutes later, and the Giants were on the front foot in a 27-21 road win. Fellow IMG Academy alum Francis Mauigoa was on the line in front of him for 66 offensive snaps. Across the league, 13 IMG Academy alumni played this week."
+alternates = ["Grant Delpit makes 5 solo tackles as Browns edge Titans 27-24", "Giants win 27-21 at Houston behind J.J. McCarthy's 252 yards"]
+
+# Roster move: Evan Neal, Raiders → Eagles (first week with the new team).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0037612"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
