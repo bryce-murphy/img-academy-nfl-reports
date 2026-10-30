@@ -28,7 +28,11 @@ GitHub can start scheduled runs 15 minutes to 2 hours late.
   - *Data readiness:* usually a late feed. When the data lands, run **Actions → Weekly edition → Run workflow** with `final` checked.
   - *Validation:* the sources genuinely disagree. Don't work around it; open a Claude Code session and ask for the issue to be investigated.
 - **Pause all automation:** Settings → Secrets and variables → Actions → Variables → set `EDITION_AUTOMATION` to `off`.
-- **Rebuild an open edition PR with fresher data:** run the workflow with `refresh` checked. Your headline edits are kept.
+- **Rebuild an open edition PR with fresher data:** run the workflow with `refresh` checked. Your headline edits are kept. Typical use: charting (FTN, PFR, Next Gen Stats) that lands on Wednesday or Thursday.
+  - Sources must be under 48 hours old (`max_source_age_hours` in `config.json`). A refresh also accepts an older file when it is byte-for-byte the file this PR was built from (same sha256 in the PR's `sources.json`), so a snap file nflverse hasn't touched since Tuesday doesn't block new charting. The PR body then lists it under **Reused from the previous build**.
+  - If the refresh can't rebuild, the run fails (red) and the bot comments on the PR with the reason, for example `Stale source: snaps, last updated 2026-10-27 11:08 UTC, is past the 48-hour freshness limit`. The PR is unchanged. Run the refresh again once the data lands, or merge as it is.
+  - Don't check `final` with `refresh` to get past a stale snap file: a final build publishes without snaps, so players would drop from "played" to "Participation unverified".
+  - A refresh only works while the PR is open. After merging, use the `--rebuild` path below.
 - **Manual fallback, if automation is broken:** in a Claude Code session, run `.venv/Scripts/python -m src.edition --season 2026 --week N`. Optionally run `.venv/Scripts/python -m src.editorial draft editions/2026-week-NN` (needs `ANTHROPIC_API_KEY` locally). Then commit on a branch named `edition/2026-week-NN`, push, open a PR and merge it as usual.
 - **"Edition … blocked" issue with step "Schedule":** the Wednesday 9 a.m. check found no edition PR and nothing on main, usually because GitHub skipped the scheduled runs. Run **Actions → Weekly edition → Run workflow** with season and week blank; the issue closes itself when the PR opens.
 - **"Site deployment not verified" issue:** re-run **Deploy site** from the Actions tab. If it keeps failing, check Settings → Pages.
