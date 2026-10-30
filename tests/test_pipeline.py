@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 import unittest.mock
@@ -27,9 +28,9 @@ PIPELINE_MOVE = {"kind": "moved_after_game", "from": "MIN", "to": "NYG", "from_n
 
 
 class FakeGitHub:
-    def __init__(self, *, on_main=False, pr=None, authors=(), issue=None, open_prs=(), branch_file=None):
+    def __init__(self, *, on_main=False, pr=None, authors=(), issue=None, open_prs=(), branch_file=None, files=None):
         self.on_main, self.pr, self.authors, self.issue = on_main, pr, set(authors), issue
-        self._open_prs, self.branch_file = list(open_prs), branch_file
+        self._open_prs, self.branch_file, self.files = list(open_prs), branch_file, dict(files or {})
         self.refs = {"main": "main-sha"}
         self.commits, self.opened, self.updated, self.reviews = [], [], [], []
         self.upserts, self.closed, self.comments = [], [], []
@@ -44,7 +45,7 @@ class FakeGitHub:
         return self.authors
 
     def read_file(self, path, ref):
-        return self.branch_file
+        return self.files.get(path, self.branch_file if path.endswith("editorial.toml") else None)
 
     def ref_sha(self, branch):
         return self.refs.get(branch)
@@ -86,7 +87,7 @@ class FakeGitHub:
 
 
 def sources_from(data, manifest):
-    def sources(season, *, week=None, only=None, historical=False):
+    def sources(season, *, week=None, only=None, historical=False, reuse=None):
         if only:
             return {key: data[key] for key in only}, {}, []
         return data, manifest, []
@@ -169,8 +170,104 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("Owner headline", gh.updated[0][1])
         self.assertEqual(gh.updated[0][2], "Edition 2026 Week 2: Owner headline")  # the title follows the headline
 
+    STALE = "snaps unavailable; related claims withheld (Stale source: snaps, last updated 2026-10-27 11:08 UTC, is past the 48-hour freshness limit)"
+    REFRESH = Settings(event="workflow_dispatch", refresh=True, week=2, automation="on", run_url="https://run", bot_login=BOT)
+
+    def without_snaps(self, seen=None):
+        """2026-10-29: nflverse's snap file was past the 48-hour limit, so the refresh saw no snaps."""
+        data = dict(self.data, snaps=[])
+
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
+            if only:
+                return {key: data[key] for key in only}, {}, []
+            if seen is not None:
+                seen.append(reuse)
+            return data, self.manifest, [self.STALE]
+        return sources
+
+    def test_refresh_that_cannot_rebuild_fails_and_comments_on_the_pr(self):
+        gh = FakeGitHub(pr={"number": 9}, authors={BOT})
+        gh.refs["edition/2026-week-02"] = "branch-sha"
+        outcome = pipeline.run_attempt(self.REFRESH, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                                       sources=self.without_snaps(), drafter=template_drafter)
+        self.assertEqual((outcome.state, outcome.failed, outcome.number), ("waiting", True, 9))
+        self.assertIn("Refresh did not rebuild 2026-week-02", outcome.message)
+        self.assertEqual((gh.commits, gh.updated, gh.upserts), ([], [], []))
+        number, body = gh.comments[0]
+        self.assertEqual(number, 9)
+        self.assertIn("**Refresh did not rebuild this edition.**", body)
+        self.assertIn("Waiting for: snap counts for", body)
+        self.assertIn("last updated 2026-10-27 11:08 UTC, is past the 48-hour freshness limit", body)
+        self.assertIn("same sha256 in `sources.json`", body)
+        self.assertIn("https://run", body)
+
+    def test_refresh_without_an_open_pr_still_fails_visibly(self):
+        gh = FakeGitHub()
+        outcome = pipeline.run_attempt(self.REFRESH, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                                       sources=self.without_snaps(), drafter=template_drafter)
+        self.assertEqual((outcome.state, outcome.failed), ("waiting", True))
+        self.assertIn("Stale source: snaps", outcome.message)
+        self.assertEqual((gh.comments, gh.commits), ([], []))
+
+    def test_scheduled_wait_on_a_stale_source_stays_quiet(self):
+        gh = FakeGitHub()
+        settings = Settings(event="schedule", schedule=FIRST, automation="on", run_url="https://run", bot_login=BOT)
+        outcome = pipeline.run_attempt(settings, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                                       sources=self.without_snaps(), drafter=template_drafter)
+        self.assertEqual((outcome.state, outcome.failed), ("waiting", False))
+        self.assertIn("Stale source: snaps", outcome.message)
+        self.assertEqual((gh.comments, gh.upserts, gh.commits), ([], [], []))
+
+    def test_final_refresh_missing_required_data_still_opens_a_blocking_issue(self):
+        gh = FakeGitHub(pr={"number": 9}, authors={BOT})
+        settings = Settings(event="workflow_dispatch", refresh=True, final=True, week=2, automation="on", bot_login=BOT)
+        outcome = self.attempt(gh, settings, data=without_end_of_game(self.data))
+        self.assertEqual(outcome.state, "blocked")
+        self.assertEqual(gh.upserts[0][0], "Edition 2026-week-02 blocked")
+        self.assertEqual(gh.comments, [])
+
+    def test_refresh_offers_the_open_prs_source_digests_for_reuse(self):
+        recorded = {"snaps": {"sha256": "abc", "updated_at": "2026-10-27T11:08:00Z"}, "rosters": {"sha256": "def"}}
+        gh = FakeGitHub(pr={"number": 9}, authors={BOT}, files={"editions/2026-week-02/sources.json": json.dumps(recorded)})
+        seen = []
+        pipeline.run_attempt(self.REFRESH, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                             sources=self.without_snaps(seen), drafter=template_drafter)
+        self.assertEqual(seen, [{"snaps": "abc", "rosters": "def"}])
+
+    def test_a_first_build_offers_nothing_for_reuse(self):
+        seen = []
+        pipeline.run_attempt(self.REFRESH, gh=FakeGitHub(), cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                             sources=self.without_snaps(seen), drafter=template_drafter)
+        self.assertEqual(seen, [None])
+
+    def test_unreadable_sources_json_offers_nothing_for_reuse(self):
+        gh = FakeGitHub(pr={"number": 9}, authors={BOT}, files={"editions/2026-week-02/sources.json": "not json"})
+        self.assertEqual(pipeline.built_from(gh, "2026-week-02", "edition/2026-week-02"), {})
+        self.assertEqual(pipeline.built_from(FakeGitHub(), "2026-week-02", "edition/2026-week-02"), {})
+        listed = FakeGitHub(files={"editions/2026-week-02/sources.json": "[1]"})
+        self.assertEqual(pipeline.built_from(listed, "2026-week-02", "edition/2026-week-02"), {})
+
+    def test_pr_body_lists_reused_sources(self):
+        edition = fixture_data.golden_edition()
+        copy = editorial.fallback(edition)
+        report = {"used": "fallback", "reasons": [], "rejected": None, "notes": []}
+        drafts = {"state": "withheld", "reason": "test"}
+        body = pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run", reused=["snaps"])
+        self.assertIn("**Reused from the previous build**", body)
+        self.assertIn("- snaps", body)
+        self.assertNotIn("Reused from the previous build", pipeline.pr_body(edition, copy, report, Readiness(), drafts, "run"))
+
+    def test_refresh_that_reuses_a_file_says_so_in_the_pr(self):
+        manifest = dict(self.manifest, snaps=dict(self.manifest.get("snaps", {}), reused=True))
+        gh = FakeGitHub(pr={"number": 9}, authors={BOT})
+        gh.refs["edition/2026-week-02"] = "branch-sha"
+        outcome = pipeline.run_attempt(self.REFRESH, gh=gh, cfg=CFG, registry=self.registry, today=fixture_data.TODAY,
+                                       sources=sources_from(self.data, manifest), drafter=template_drafter)
+        self.assertEqual(outcome.state, "opened")
+        self.assertIn("**Reused from the previous build**", gh.updated[0][1])
+
     def _raising_sources(self, message):
-        def sources(season, *, week=None, only=None, historical=False):
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
             raise DataError(message)
         return sources
 
@@ -267,7 +364,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("**Step:** Validation", gh.upserts[0][1])
 
     def test_stale_source_failure_is_labeled_data_sources(self):
-        def sources(season, *, week=None, only=None, historical=False):
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
             if only:
                 return {key: self.data[key] for key in only}, {}, []
             raise DataError("Stale source: rosters")
