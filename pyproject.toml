@@ -3,7 +3,7 @@ name = "img-academy-nfl-reports"
 version = "0.2.0"
 description = "Evidence-led weekly reporting on IMG Academy football alumni in the NFL"
 requires-python = ">=3.11"
-dependencies = ["jinja2>=3.1.6,<4", "anthropic>=1.8,<2"]
+dependencies = ["jinja2>=3.1.6,<4", "anthropic>=1.8,<3"]
 
 [tool.ruff]
 line-length = 100
