@@ -272,16 +272,40 @@ class EditionTests(unittest.TestCase):
         data, manifest, registry = fixture_data.load()
         data["pbp"] = [p for p in data["pbp"] if p["desc"].strip().upper() != "END GAME"]
 
-        def sources(season, *, week=None, only=None, historical=False):
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
             return data, manifest, []
 
         with self.assertRaises(NotReady):
             ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=True, registry=registry, sources=sources)
 
+    def test_not_ready_names_the_source_notes(self):
+        data, manifest, registry = fixture_data.load()
+        data["snaps"] = []
+        stale = "snaps unavailable; related claims withheld (Stale source: snaps, last updated 2026-10-27 11:08 UTC, is past the 48-hour freshness limit)"
+
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
+            return data, manifest, [stale]
+
+        with self.assertRaisesRegex(NotReady, r"Waiting for: snap counts for .*\. Source notes: " + re.escape(stale)):
+            ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False, registry=registry, sources=sources)
+
+    def test_build_week_passes_reuse_to_the_sources(self):
+        data, manifest, registry = fixture_data.load()
+        seen = []
+
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
+            seen.append(reuse)
+            return data, manifest, []
+
+        with tempfile.TemporaryDirectory() as empty:
+            ed.build_week(2026, 2, fixture_data.week_games(data), historical=False, final=False, registry=registry, sources=sources,
+                          editions_root=Path(empty), reuse={"snaps": "abc"})
+        self.assertEqual(seen, [{"snaps": "abc"}])
+
     def test_build_week_from_fixture(self):
         data, manifest, registry = fixture_data.load()
 
-        def sources(season, *, week=None, only=None, historical=False):
+        def sources(season, *, week=None, only=None, historical=False, reuse=None):
             return data, manifest, []
 
         with tempfile.TemporaryDirectory() as empty:

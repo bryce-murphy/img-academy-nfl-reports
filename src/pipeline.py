@@ -1,6 +1,7 @@
 """One automated attempt at this week's edition. Called by .github/workflows/edition.yml."""
 from __future__ import annotations
 
+import json
 import os
 import sys
 from dataclasses import dataclass
@@ -81,10 +82,32 @@ def block(gh, eid, step, reason, settings):
     return Outcome("blocked", reason, failed=True)
 
 
-def not_ready(gh, eid, reason, final, settings):
-    if not final:
+def not_ready(gh, eid, reason, final, settings, pr=None):
+    if final:
+        return block(gh, eid, "Data readiness", f"Still not ready on the final attempt. {reason}", settings)
+    if not settings.refresh:  # scheduled attempts wait quietly for the next one
         return Outcome("waiting", reason)
-    return block(gh, eid, "Data readiness", f"Still not ready on the final attempt. {reason}", settings)
+    # The owner asked for this rebuild: say why it didn't happen, on the PR and as a failed run.
+    if pr:
+        lines = ["**Refresh did not rebuild this edition.** The PR is unchanged.", "", f"**Reason:** {reason}", "", f"**Run:** {settings.run_url}", ""]
+        if "Stale source" in reason:
+            lines += ["A refresh accepts a file past the freshness limit only when it is the same file (same sha256 in `sources.json`) "
+                      "this PR was built from; this one is not, or the PR was built without it.", ""]
+        lines += ["Next: run the refresh again once the data above lands, or merge the PR as it is."]
+        gh.comment(pr["number"], "\n".join(lines))
+    return Outcome("waiting", f"Refresh did not rebuild {eid}. {reason}", failed=True, number=pr["number"] if pr else None)
+
+
+def built_from(gh, eid, branch):
+    """sha256 of each source the open edition PR was built from, read from its sources.json."""
+    text = gh.read_file(f"editions/{eid}/sources.json", branch)
+    try:
+        recorded = json.loads(text) if text else {}
+    except ValueError:
+        return {}
+    if not isinstance(recorded, dict):
+        return {}
+    return {name: entry["sha256"] for name, entry in recorded.items() if isinstance(entry, dict) and entry.get("sha256")}
 
 
 def default_drafter(cfg):
@@ -127,10 +150,11 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
         return Outcome("pending", f"Edition {eid} is waiting for approval in #{pr['number']}.", number=pr["number"])
     if scheduled and cfg["registry_reviewed_season"] != season:
         return block(gh, eid, "Registry review", f"data/alumni.json was last reviewed for {cfg['registry_reviewed_season']}; review it for {season} and update config.json.", s)
+    reuse = built_from(gh, eid, branch) if pr else None
     try:
-        edition, manifest, report = build_week(season, week, games, historical=s.historical, final=final, registry=registry, sources=sources)
+        edition, manifest, report = build_week(season, week, games, historical=s.historical, final=final, registry=registry, sources=sources, reuse=reuse)
     except NotReady as exc:
-        return not_ready(gh, eid, str(exc), final, s)
+        return not_ready(gh, eid, str(exc), final, s, pr)
     except DataError as exc:
         step = "Data sources" if str(exc).startswith(("Cannot verify", "Stale source")) else "Validation"
         return block(gh, eid, step, str(exc), s)
@@ -147,7 +171,8 @@ def run_attempt(settings, *, gh, cfg, registry, today, sources=fetch, drafter=No
         gh.create_branch(branch, head)
     gh.commit_files(branch, head, files, f"Edition {season} Week {week}: data and headline draft")
     drafts = social_drafts(edition, copy, f"{cfg['site_url']}editions/{eid}/")
-    body = pr_body(edition, copy, draft_report, report, drafts, s.run_url)
+    reused = [name for name, entry in manifest.items() if entry.get("reused")]
+    body = pr_body(edition, copy, draft_report, report, drafts, s.run_url, reused=reused)
     title = f"Edition {season} Week {week}: {copy['headline']}"
     note = ""
     if pr:
@@ -204,7 +229,7 @@ def _missing_edition(gh, cfg, today, sources):
     return None if gh.file_exists(f"editions/{eid}/edition.json", "main") else eid
 
 
-def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
+def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url, reused=()):
     players = {p["id"]: p for p in edition["players"]}
     featured = players.get(copy.get("featured_player_id"), {}).get("name", "none")
     played = [players[pid] for pid in edition["featured_ranking"]]
@@ -230,6 +255,9 @@ def pr_body(edition, copy, draft_report, readiness_report, drafts, run_url):
         lines += [f"- [ ] {p['name']}: {moves.describe(p['move'])}. Site shows: \"{moves.neutral(p['move'])}\"" for p in moved] + [""]
     if readiness_report.missing_optional:
         lines += ["**Published without:**"] + [f"- {item}" for item in readiness_report.missing_optional] + [""]
+    if reused:
+        lines += ["**Reused from the previous build** (past the freshness limit, same sha256 as before):"]
+        lines += [f"- {name}" for name in reused] + [""]
     if readiness_report.pending:
         lines += ["**Charting not yet available (those card lines are left off; a refresh adds them):**"]
         lines += [f"- {item}" for item in readiness_report.pending] + [""]

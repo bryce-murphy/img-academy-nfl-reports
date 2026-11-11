@@ -114,9 +114,11 @@ def week_filter(week):
     return lambda row: row.get("week") == wanted
 
 
-def fetch_verified(name, tag, filename, historical, max_age_hours):
+def fetch_verified(name, tag, filename, historical, max_age_hours, reuse=None):
     # nflverse replaces assets in place, so the listed digest can briefly lead the
     # download. Re-read both after a pause; never accept bytes that don't match.
+    # A file past the age limit passes only when its bytes hash to `reuse`, the sha256 the open
+    # edition PR was built from: a refresh then rebuilds from the same evidence, never older evidence.
     for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
         release = json.loads(get_bytes(RELEASES + tag))
         assets = [a for a in release["assets"] if a["name"] == filename]
@@ -127,20 +129,24 @@ def fetch_verified(name, tag, filename, historical, max_age_hours):
         updated = stamp(asset["updated_at"])
         if updated > fetched:
             raise DataError(f"Source timestamp is in the future: {name}")
-        if not historical and name not in {"players", "teams"}:
-            if (fetched - updated).total_seconds() > max_age_hours * 3600:
-                raise DataError(f"Stale source: {name}")
+        stale = not historical and name not in {"players", "teams"} and (fetched - updated).total_seconds() > max_age_hours * 3600
+        if stale:
+            reason = f"Stale source: {name}, last updated {updated:%Y-%m-%d %H:%M} UTC, is past the {max_age_hours}-hour freshness limit"
+            if reuse is None:
+                raise DataError(reason)
         url = DOWNLOADS + tag + "/" + filename
         payload = get_bytes(url)
         digest = hashlib.sha256(payload).hexdigest()
         if not asset.get("digest", "").startswith("sha256:") or asset["digest"] == "sha256:" + digest:
-            return asset, fetched, url, payload, digest
+            if stale and digest != reuse:
+                raise DataError(f"{reason} and is not the file the open edition PR was built from")
+            return asset, fetched, url, payload, digest, stale
         if attempt < DOWNLOAD_ATTEMPTS:
             pause(RETRY_SECONDS * attempt)  # 30, 60, 90 s: a replaced asset can take over a minute to reach the CDN
     raise DataError(f"Upstream checksum mismatch: {name}")
 
 
-def load_sources(season, cache, max_age_hours=48, historical=False, only=None, week=None):
+def load_sources(season, cache, max_age_hours=48, historical=False, only=None, week=None, reuse=None):
     cache = Path(cache)
     cache.mkdir(parents=True, exist_ok=True)
     datasets, manifest, warnings = {}, {}, []
@@ -150,15 +156,18 @@ def load_sources(season, cache, max_age_hours=48, historical=False, only=None, w
         if only is not None and name not in only:
             continue
         try:
-            asset, fetched, url, payload, digest = fetch_verified(name, tag, filename, historical, max_age_hours)
+            asset, fetched, url, payload, digest, reused = fetch_verified(name, tag, filename, historical, max_age_hours, (reuse or {}).get(name))
             keep = week_filter(week) if week is not None and name == "pbp" else None
             datasets[name] = parse_csv(payload, filename, required, keep)
             (cache / filename).write_bytes(payload)
             manifest[name] = {"url": url, "updated_at": asset["updated_at"], "fetched_at": fetched.isoformat(), "sha256": digest, "rows": len(datasets[name])}
+            if reused:
+                manifest[name]["reused"] = True
         except Exception as exc:
             if name not in optional:
                 raise DataError(f"Cannot verify {name}: {exc}") from exc
             datasets[name] = []
-            warnings.append(f"{name} unavailable; related claims withheld ({type(exc).__name__})")
+            detail = exc if str(exc).startswith("Stale source") else type(exc).__name__
+            warnings.append(f"{name} unavailable; related claims withheld ({detail})")
     (cache / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return datasets, manifest, warnings

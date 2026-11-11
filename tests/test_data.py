@@ -81,6 +81,49 @@ class LoadSourcesTests(unittest.TestCase):
             self.load(responses)
 
 
+SNAPS_CSV = b"game_id,pfr_player_id,team,offense_snaps,defense_snaps,st_snaps\n2026_07_NE_CHI,AbcdXy00,NE,40,0,5\n"
+SNAPS_DIGEST = hashlib.sha256(SNAPS_CSV).hexdigest()
+
+
+def snaps_release(updated_at="2026-10-27T11:08:00Z"):
+    return json.dumps({"assets": [{"name": "snap_counts_2026.csv", "updated_at": updated_at, "digest": "sha256:" + SNAPS_DIGEST}]}).encode()
+
+
+class StaleSourceTests(unittest.TestCase):
+    """2026-10-29: a Week 7 refresh waited on a snap file 49 hours old and said only 'Waiting for: snap counts'."""
+
+    def load(self, responses, only, reuse=None):
+        now = data.stamp("2026-10-29T12:00:00Z")
+        with tempfile.TemporaryDirectory() as cache, mock.patch.object(data, "get_bytes", lambda url: responses.pop(0)), \
+                mock.patch.object(data, "utcnow", return_value=now):
+            return load_sources(2026, cache, only=only, reuse=reuse)
+
+    def test_a_stale_optional_source_names_its_update_time_and_the_limit(self):
+        datasets, manifest, warnings = self.load([snaps_release()], {"snaps"})
+        self.assertEqual((datasets["snaps"], manifest), ([], {}))
+        self.assertEqual(warnings, ["snaps unavailable; related claims withheld (Stale source: snaps, last updated 2026-10-27 11:08 UTC, "
+                                    "is past the 48-hour freshness limit)"])
+
+    def test_a_stale_required_source_names_its_update_time_and_the_limit(self):
+        stale = json.dumps({"assets": [{"name": "games.csv.gz", "updated_at": "2026-10-20T08:00:00Z"}]}).encode()
+        with self.assertRaisesRegex(DataError, "Cannot verify schedule: Stale source: schedule, last updated 2026-10-20 08:00 UTC, is past the 48-hour"):
+            self.load([stale], {"schedule"})
+
+    def test_a_stale_file_is_reused_when_it_is_the_file_the_open_pr_was_built_from(self):
+        datasets, manifest, warnings = self.load([snaps_release(), SNAPS_CSV], {"snaps"}, reuse={"snaps": SNAPS_DIGEST})
+        self.assertEqual((len(datasets["snaps"]), warnings), (1, []))
+        self.assertEqual((manifest["snaps"]["sha256"], manifest["snaps"]["reused"]), (SNAPS_DIGEST, True))
+
+    def test_a_stale_file_that_differs_from_the_open_prs_is_not_reused(self):
+        _, manifest, warnings = self.load([snaps_release(), SNAPS_CSV], {"snaps"}, reuse={"snaps": "0" * 64})
+        self.assertEqual(manifest, {})
+        self.assertIn("is not the file the open edition PR was built from", warnings[0])
+
+    def test_a_fresh_file_is_not_marked_reused(self):
+        _, manifest, _ = self.load([snaps_release("2026-10-29T09:00:00Z"), SNAPS_CSV], {"snaps"}, reuse={"snaps": SNAPS_DIGEST})
+        self.assertNotIn("reused", manifest["snaps"])
+
+
 class PlayColumnTests(unittest.TestCase):
     def test_pbp_requires_the_three_player_name_columns(self):
         self.assertTrue({"passer_player_name", "rusher_player_name", "receiver_player_name"} <= specifications(2026)["pbp"][2])

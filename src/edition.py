@@ -498,9 +498,9 @@ def write_edition(edition, sources, directory):
     (directory / "sources.json").write_bytes(dump_json(sources, sort_keys=True))
 
 
-def fetch(season, *, week=None, only=None, historical=False):
+def fetch(season, *, week=None, only=None, historical=False, reuse=None):
     config = load_config()
-    return load_sources(season, ROOT / ".cache", config["max_source_age_hours"], historical, only=only, week=week)
+    return load_sources(season, ROOT / ".cache", config["max_source_age_hours"], historical, only=only, week=week, reuse=reuse)
 
 
 def due_week(season, week, *, today, historical, scheduled, season_types, sources=fetch):
@@ -508,8 +508,8 @@ def due_week(season, week, *, today, historical, scheduled, season_types, source
     return ev.choose_week(schedule, season, today, season_types, week, scheduled)
 
 
-def build_week(season, week, games, *, historical, final, registry, sources=fetch, editions_root=None, keep=None):
-    data, manifest, warnings = sources(season, week=week, historical=historical)
+def build_week(season, week, games, *, historical, final, registry, sources=fetch, editions_root=None, keep=None, reuse=None):
+    data, manifest, warnings = sources(season, week=week, historical=historical, reuse=reuse)
     ids = {alum["gsis_id"] for alum in registry}
     followed_teams = {
         row["team"] for row in data["rosters"]
@@ -517,7 +517,8 @@ def build_week(season, week, games, *, historical, final, registry, sources=fetc
     }
     report = readiness.assess(data, manifest, games, season, week, followed_teams=followed_teams)
     if not report.ready(final):
-        raise NotReady("Waiting for: " + "; ".join(report.missing()), week=week)
+        notes = f". Source notes: {'; '.join(warnings)}" if warnings else ""
+        raise NotReady("Waiting for: " + "; ".join(report.missing()) + notes, week=week)
     warnings = list(warnings) + [f"{item} not yet available; related claims withheld" for item in report.missing_optional]
     edition = build_edition(
         data, registry, games, season, week,
