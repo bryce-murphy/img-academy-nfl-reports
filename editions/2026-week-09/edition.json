@@ -1,0 +1,4405 @@
+{
+  "schema_version": 4,
+  "id": "2026-week-09",
+  "season": 2026,
+  "week": 9,
+  "season_type": "REG",
+  "generated_at": "2026-11-11T00:09:18+00:00",
+  "label": "Verified source snapshot",
+  "historical": false,
+  "games": [
+    {
+      "game_id": "2026_09_JAX_BAL",
+      "gameday": "2026-11-05",
+      "away_team": "JAX",
+      "away_score": 33,
+      "home_team": "BAL",
+      "home_score": 10
+    },
+    {
+      "game_id": "2026_09_ARI_SEA",
+      "gameday": "2026-11-08",
+      "away_team": "ARI",
+      "away_score": 3,
+      "home_team": "SEA",
+      "home_score": 17
+    },
+    {
+      "game_id": "2026_09_CIN_ATL",
+      "gameday": "2026-11-08",
+      "away_team": "CIN",
+      "away_score": 34,
+      "home_team": "ATL",
+      "home_score": 17
+    },
+    {
+      "game_id": "2026_09_CLE_NO",
+      "gameday": "2026-11-08",
+      "away_team": "CLE",
+      "away_score": 22,
+      "home_team": "NO",
+      "home_score": 23
+    },
+    {
+      "game_id": "2026_09_DAL_IND",
+      "gameday": "2026-11-08",
+      "away_team": "DAL",
+      "away_score": 27,
+      "home_team": "IND",
+      "home_score": 23
+    },
+    {
+      "game_id": "2026_09_DEN_CAR",
+      "gameday": "2026-11-08",
+      "away_team": "DEN",
+      "away_score": 26,
+      "home_team": "CAR",
+      "home_score": 21
+    },
+    {
+      "game_id": "2026_09_DET_MIA",
+      "gameday": "2026-11-08",
+      "away_team": "DET",
+      "away_score": 19,
+      "home_team": "MIA",
+      "home_score": 9
+    },
+    {
+      "game_id": "2026_09_GB_NE",
+      "gameday": "2026-11-08",
+      "away_team": "GB",
+      "away_score": 45,
+      "home_team": "NE",
+      "home_score": 27
+    },
+    {
+      "game_id": "2026_09_HOU_LAC",
+      "gameday": "2026-11-08",
+      "away_team": "HOU",
+      "away_score": 44,
+      "home_team": "LAC",
+      "home_score": 22
+    },
+    {
+      "game_id": "2026_09_LA_WAS",
+      "gameday": "2026-11-08",
+      "away_team": "LA",
+      "away_score": 20,
+      "home_team": "WAS",
+      "home_score": 13
+    },
+    {
+      "game_id": "2026_09_LV_SF",
+      "gameday": "2026-11-08",
+      "away_team": "LV",
+      "away_score": 17,
+      "home_team": "SF",
+      "home_score": 38
+    },
+    {
+      "game_id": "2026_09_NYG_PHI",
+      "gameday": "2026-11-08",
+      "away_team": "NYG",
+      "away_score": 19,
+      "home_team": "PHI",
+      "home_score": 11
+    },
+    {
+      "game_id": "2026_09_NYJ_KC",
+      "gameday": "2026-11-08",
+      "away_team": "NYJ",
+      "away_score": 12,
+      "home_team": "KC",
+      "home_score": 35
+    },
+    {
+      "game_id": "2026_09_TB_CHI",
+      "gameday": "2026-11-08",
+      "away_team": "TB",
+      "away_score": 24,
+      "home_team": "CHI",
+      "home_score": 27
+    },
+    {
+      "game_id": "2026_09_BUF_MIN",
+      "gameday": "2026-11-09",
+      "away_team": "BUF",
+      "away_score": 23,
+      "home_team": "MIN",
+      "home_score": 6
+    }
+  ],
+  "teams": {
+    "ARI": {
+      "name": "Arizona Cardinals",
+      "color": "#97233F"
+    },
+    "ATL": {
+      "name": "Atlanta Falcons",
+      "color": "#A71930"
+    },
+    "BAL": {
+      "name": "Baltimore Ravens",
+      "color": "#241773"
+    },
+    "BUF": {
+      "name": "Buffalo Bills",
+      "color": "#00338D"
+    },
+    "CAR": {
+      "name": "Carolina Panthers",
+      "color": "#0085CA"
+    },
+    "CHI": {
+      "name": "Chicago Bears",
+      "color": "#0B162A"
+    },
+    "CIN": {
+      "name": "Cincinnati Bengals",
+      "color": "#FB4F14"
+    },
+    "CLE": {
+      "name": "Cleveland Browns",
+      "color": "#FF3C00"
+    },
+    "DAL": {
+      "name": "Dallas Cowboys",
+      "color": "#002244"
+    },
+    "DEN": {
+      "name": "Denver Broncos",
+      "color": "#002244"
+    },
+    "DET": {
+      "name": "Detroit Lions",
+      "color": "#0076B6"
+    },
+    "GB": {
+      "name": "Green Bay Packers",
+      "color": "#203731"
+    },
+    "HOU": {
+      "name": "Houston Texans",
+      "color": "#03202F"
+    },
+    "IND": {
+      "name": "Indianapolis Colts",
+      "color": "#002C5F"
+    },
+    "JAX": {
+      "name": "Jacksonville Jaguars",
+      "color": "#006778"
+    },
+    "KC": {
+      "name": "Kansas City Chiefs",
+      "color": "#E31837"
+    },
+    "LA": {
+      "name": "Los Angeles Rams",
+      "color": "#003594"
+    },
+    "LAC": {
+      "name": "Los Angeles Chargers",
+      "color": "#007BC7"
+    },
+    "LV": {
+      "name": "Las Vegas Raiders",
+      "color": "#000000"
+    },
+    "MIA": {
+      "name": "Miami Dolphins",
+      "color": "#008E97"
+    },
+    "MIN": {
+      "name": "Minnesota Vikings",
+      "color": "#4F2683"
+    },
+    "NE": {
+      "name": "New England Patriots",
+      "color": "#002244"
+    },
+    "NO": {
+      "name": "New Orleans Saints",
+      "color": "#D3BC8D"
+    },
+    "NYG": {
+      "name": "New York Giants",
+      "color": "#0B2265"
+    },
+    "NYJ": {
+      "name": "New York Jets",
+      "color": "#003F2D"
+    },
+    "PHI": {
+      "name": "Philadelphia Eagles",
+      "color": "#004C54"
+    },
+    "SEA": {
+      "name": "Seattle Seahawks",
+      "color": "#002244"
+    },
+    "SF": {
+      "name": "San Francisco 49ers",
+      "color": "#AA0000"
+    },
+    "TB": {
+      "name": "Tampa Bay Buccaneers",
+      "color": "#A71930"
+    },
+    "WAS": {
+      "name": "Washington Commanders",
+      "color": "#5A1414"
+    }
+  },
+  "players": [
+    {
+      "id": "00-0039923",
+      "name": "J.J. McCarthy",
+      "position": "QB",
+      "team": "NYG",
+      "team_name": "New York Giants",
+      "team_color": "#0B2265",
+      "context": "Michigan · 2024 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "PHI",
+        "home_away": "away",
+        "team_score": 19,
+        "opp_score": 11,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "passing_yards",
+          "label": "pass yards",
+          "value": 127
+        },
+        {
+          "key": "passing_tds",
+          "label": "pass TD",
+          "value": 0
+        },
+        {
+          "key": "passing_interceptions",
+          "label": "INT",
+          "value": 0
+        },
+        {
+          "key": "rushing_yards",
+          "label": "rush yards",
+          "value": 22
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 51,
+        "defense": 0,
+        "st": 0,
+        "team_offense": 67,
+        "team_defense": 70,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "176",
+          "quarter": "Q1",
+          "clock": "12:01",
+          "description": "(12:01) (Shotgun) 18-J.McCarthy pass short left to 17-D.Mooney ran ob at PHI 33 for 17 yards.",
+          "epa": 2.92,
+          "side": "offense",
+          "impact": null,
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "101",
+          "quarter": "Q1",
+          "clock": "13:32",
+          "description": "(13:32) (Shotgun) 18-J.McCarthy pass short right to 9-I.Likely pushed ob at PHI 48 for 27 yards (24-A.Mukuba) [97-M.Ojomo].",
+          "epa": 2.9,
+          "side": "offense",
+          "impact": null,
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "504",
+          "quarter": "Q1",
+          "clock": "07:41",
+          "description": "(7:41) (Shotgun) 18-J.McCarthy pass deep left to 1-M.Nabers to PHI 27 for 22 yards (24-A.Mukuba). Penalty on PHI-27-Q.Mitchell, Defensive Holding, declined.",
+          "epa": 2.69,
+          "side": "offense",
+          "impact": null,
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "101",
+          "quarter": "Q1",
+          "clock": "13:32",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 5,
+          "yardline_100": 75,
+          "yards_gained": 27,
+          "air_yards": 12,
+          "yards_after_catch": 15,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.386,
+          "qb_epa": 2.902,
+          "epa": 2.9,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(13:32) (Shotgun) 18-J.McCarthy pass short right to 9-I.Likely pushed ob at PHI 48 for 27 yards (24-A.Mukuba) [97-M.Ojomo].",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "I.Likely"
+        },
+        {
+          "play_id": "131",
+          "quarter": "Q1",
+          "clock": "12:45",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 48,
+          "yards_gained": 0,
+          "air_yards": 2,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.797,
+          "qb_epa": -0.526,
+          "epa": -0.53,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(12:45) (Shotgun) 18-J.McCarthy pass incomplete short right to 26-D.Singletary.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "D.Singletary"
+        },
+        {
+          "play_id": "176",
+          "quarter": "Q1",
+          "clock": "12:01",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 12,
+          "yardline_100": 50,
+          "yards_gained": 17,
+          "air_yards": 15,
+          "yards_after_catch": 2,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.512,
+          "qb_epa": 2.922,
+          "epa": 2.92,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(12:01) (Shotgun) 18-J.McCarthy pass short left to 17-D.Mooney ran ob at PHI 33 for 17 yards.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "D.Mooney"
+        },
+        {
+          "play_id": "206",
+          "quarter": "Q1",
+          "clock": "11:27",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 33,
+          "yards_gained": 0,
+          "air_yards": 13,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.442,
+          "qb_epa": -0.443,
+          "epa": -0.44,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(11:27) 18-J.McCarthy pass incomplete short left to 17-D.Mooney [58-J.Hunt].",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "D.Mooney"
+        },
+        {
+          "play_id": "229",
+          "quarter": "Q1",
+          "clock": "11:22",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 33,
+          "yards_gained": 0,
+          "air_yards": 18,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.526,
+          "qb_epa": -0.704,
+          "epa": -0.7,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(11:22) 18-J.McCarthy pass incomplete deep left to 88-M.Fields (2-T.Woolen).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Fields"
+        },
+        {
+          "play_id": "252",
+          "quarter": "Q1",
+          "clock": "11:16",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 10,
+          "yardline_100": 33,
+          "yards_gained": -1,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.444,
+          "epa": -1.44,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(11:16) (Shotgun) 18-J.McCarthy sacked at PHI 34 for -1 yards (53-Z.Baun).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        },
+        {
+          "play_id": "504",
+          "quarter": "Q1",
+          "clock": "07:41",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 5,
+          "yardline_100": 49,
+          "yards_gained": 22,
+          "air_yards": 22,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.402,
+          "qb_epa": 2.691,
+          "epa": 2.69,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(7:41) (Shotgun) 18-J.McCarthy pass deep left to 1-M.Nabers to PHI 27 for 22 yards (24-A.Mukuba). Penalty on PHI-27-Q.Mitchell, Defensive Holding, declined.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "540",
+          "quarter": "Q1",
+          "clock": "07:18",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 27,
+          "yards_gained": 3,
+          "air_yards": 3,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.768,
+          "qb_epa": -0.129,
+          "epa": -0.13,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(7:18) (Shotgun) 18-J.McCarthy pass short left to 9-I.Likely to PHI 24 for 3 yards (29-M.Epps). FUMBLES (29-M.Epps), touched at PHI 27, RECOVERED by PHI-29-M.Epps at PHI 29. The Replay Official reviewed the runner was not down by contact ruling, and the play was REVERSED. (Shotgun) 18-J.McCarthy pass short left to 9-I.Likely to PHI 24 for 3 yards (29-M.Epps).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "I.Likely"
+        },
+        {
+          "play_id": "665",
+          "quarter": "Q1",
+          "clock": "06:18",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 4,
+          "yardline_100": 21,
+          "yards_gained": -10,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -2.252,
+          "epa": -2.25,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(6:18) (Shotgun) 18-J.McCarthy sacked at PHI 31 for -10 yards (52-J.Greenard).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        },
+        {
+          "play_id": "1059",
+          "quarter": "Q1",
+          "clock": "02:09",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 80,
+          "yards_gained": 0,
+          "air_yards": 46,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.345,
+          "qb_epa": -0.569,
+          "epa": -0.57,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(2:09) 18-J.McCarthy pass incomplete deep middle to 81-J.Hyatt.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "J.Hyatt"
+        },
+        {
+          "play_id": "1082",
+          "quarter": "Q1",
+          "clock": "02:03",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 80,
+          "yards_gained": 8,
+          "air_yards": 6,
+          "yards_after_catch": 2,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.791,
+          "qb_epa": 0.453,
+          "epa": 0.45,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(2:03) (Shotgun) 18-J.McCarthy pass short middle to 9-I.Likely to NYG 28 for 8 yards (29-M.Epps).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "I.Likely"
+        },
+        {
+          "play_id": "1434",
+          "quarter": "Q2",
+          "clock": "13:09",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 20,
+          "yardline_100": 60,
+          "yards_gained": 10,
+          "air_yards": 10,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.641,
+          "qb_epa": 0.471,
+          "epa": 0.47,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(13:09) (Shotgun) 18-J.McCarthy pass short left to 88-M.Fields to 50 for 10 yards (2-T.Woolen).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Fields"
+        },
+        {
+          "play_id": "1459",
+          "quarter": "Q2",
+          "clock": "12:26",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 50,
+          "yards_gained": -3,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 1,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.256,
+          "epa": -1.26,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer",
+            "fumbled_1"
+          ],
+          "description": "(12:26) 18-J.McCarthy sacked at NYG 42 for -8 yards (98-J.Carter). FUMBLES (98-J.Carter), recovered by NYG-65-F.Mauigoa at NYG 47.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        },
+        {
+          "play_id": "1489",
+          "quarter": "Q2",
+          "clock": "11:39",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 13,
+          "yardline_100": 53,
+          "yards_gained": 1,
+          "air_yards": -4,
+          "yards_after_catch": 5,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.884,
+          "qb_epa": -1.285,
+          "epa": -1.28,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(11:39) (Shotgun) 18-J.McCarthy pass short right to 26-D.Singletary pushed ob at NYG 48 for 1 yard (33-C.DeJean).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "D.Singletary"
+        },
+        {
+          "play_id": "1840",
+          "quarter": "Q2",
+          "clock": "06:26",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 14,
+          "yardline_100": 65,
+          "yards_gained": -8,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.337,
+          "epa": -1.34,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(6:26) (Shotgun) 18-J.McCarthy sacked at NYG 27 for -8 yards (53-Z.Baun).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        },
+        {
+          "play_id": "1860",
+          "quarter": "Q2",
+          "clock": "05:41",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 22,
+          "yardline_100": 73,
+          "yards_gained": 10,
+          "air_yards": -4,
+          "yards_after_catch": 14,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.919,
+          "qb_epa": -0.19,
+          "epa": -0.19,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(5:41) (Shotgun) 18-J.McCarthy pass short left to 9-I.Likely to NYG 37 for 10 yards (97-M.Ojomo). Penalty on NYG, Illegal Shift, declined.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "I.Likely"
+        },
+        {
+          "play_id": "2157",
+          "quarter": "Q2",
+          "clock": "01:57",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 59,
+          "yards_gained": 3,
+          "air_yards": 3,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.779,
+          "qb_epa": -0.161,
+          "epa": -0.16,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(1:57) (Shotgun) 18-J.McCarthy pass short right to 1-M.Nabers to NYG 44 for 3 yards (3-N.Smith).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "2182",
+          "quarter": "Q2",
+          "clock": "01:33",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 7,
+          "yardline_100": 56,
+          "yards_gained": -7,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.024,
+          "epa": -1.02,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(1:33) (No Huddle, Shotgun) 18-J.McCarthy sacked at NYG 37 for -7 yards (90-J.Davis).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        },
+        {
+          "play_id": "2202",
+          "quarter": "Q2",
+          "clock": "00:55",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "run",
+          "down": 3,
+          "ydstogo": 14,
+          "yardline_100": 63,
+          "yards_gained": 9,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.439,
+          "epa": -0.44,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "rusher"
+          ],
+          "description": "(:55) (No Huddle, Shotgun) 18-J.McCarthy scrambles right end pushed ob at NYG 46 for 9 yards (53-Z.Baun).",
+          "passer_name": null,
+          "rusher_name": "J.McCarthy",
+          "receiver_name": null
+        },
+        {
+          "play_id": "2364",
+          "quarter": "Q2",
+          "clock": "00:15",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "qb_kneel",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 94,
+          "yards_gained": -1,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 1,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": 0.0,
+          "epa": 0.0,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "rusher"
+          ],
+          "description": "(:15) 18-J.McCarthy kneels to NYG 5 for -1 yards.",
+          "passer_name": null,
+          "rusher_name": "J.McCarthy",
+          "receiver_name": null
+        },
+        {
+          "play_id": "2594",
+          "quarter": "Q3",
+          "clock": "12:16",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 73,
+          "yards_gained": 3,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.287,
+          "epa": -0.29,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "rusher"
+          ],
+          "description": "(12:16) (Shotgun) 18-J.McCarthy left end to NYG 30 for 3 yards (53-Z.Baun). NYG-18-J.McCarthy was injured during the play.",
+          "passer_name": null,
+          "rusher_name": "J.McCarthy",
+          "receiver_name": null
+        },
+        {
+          "play_id": "3335",
+          "quarter": "Q4",
+          "clock": "15:00",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 5,
+          "yardline_100": 69,
+          "yards_gained": 0,
+          "air_yards": 9,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.668,
+          "qb_epa": -0.812,
+          "epa": -0.81,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(15:00) 18-J.McCarthy pass incomplete short right to 88-M.Fields (2-T.Woolen).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Fields"
+        },
+        {
+          "play_id": "3392",
+          "quarter": "Q4",
+          "clock": "14:47",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 5,
+          "yardline_100": 69,
+          "yards_gained": 11,
+          "air_yards": 5,
+          "yards_after_catch": 6,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.705,
+          "qb_epa": 1.743,
+          "epa": 1.74,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(14:47) (Shotgun) 18-J.McCarthy pass short middle to 1-M.Nabers to NYG 42 for 11 yards (24-A.Mukuba).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "3439",
+          "quarter": "Q4",
+          "clock": "13:26",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 58,
+          "yards_gained": 0,
+          "air_yards": 21,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.476,
+          "qb_epa": -0.825,
+          "epa": -0.82,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(13:26) 18-J.McCarthy pass incomplete deep left to 1-M.Nabers (27-Q.Mitchell).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "3462",
+          "quarter": "Q4",
+          "clock": "13:20",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "run",
+          "down": 3,
+          "ydstogo": 10,
+          "yardline_100": 58,
+          "yards_gained": 11,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": 2.069,
+          "epa": 2.07,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "rusher"
+          ],
+          "description": "(13:20) (Shotgun) 18-J.McCarthy scrambles left end ran ob at PHI 47 for 11 yards (58-J.Hunt).",
+          "passer_name": null,
+          "rusher_name": "J.McCarthy",
+          "receiver_name": null
+        },
+        {
+          "play_id": "3489",
+          "quarter": "Q4",
+          "clock": "12:42",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 47,
+          "yards_gained": 5,
+          "air_yards": 1,
+          "yards_after_catch": 4,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 1,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.814,
+          "qb_epa": -0.007,
+          "epa": -0.01,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(12:42) 18-J.McCarthy pass short left to 1-M.Nabers to PHI 41 for 6 yards (27-Q.Mitchell, 54-J.Trotter). FUMBLES (54-J.Trotter), and recovers at PHI 42.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "3536",
+          "quarter": "Q4",
+          "clock": "11:17",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 34,
+          "yards_gained": 10,
+          "air_yards": 7,
+          "yards_after_catch": 3,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.701,
+          "qb_epa": 0.825,
+          "epa": 0.83,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(11:17) (Shotgun) 18-J.McCarthy pass short left to 17-D.Mooney to PHI 24 for 10 yards (2-T.Woolen).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "D.Mooney"
+        },
+        {
+          "play_id": "3634",
+          "quarter": "Q4",
+          "clock": "09:15",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 6,
+          "yardline_100": 20,
+          "yards_gained": 0,
+          "air_yards": 20,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.273,
+          "qb_epa": -0.99,
+          "epa": -0.99,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "passer"
+          ],
+          "description": "(9:15) (Shotgun) 18-J.McCarthy pass incomplete deep right to 1-M.Nabers.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        }
+      ],
+      "next_gen": [
+        {
+          "label": "Time to throw",
+          "value": 2.97,
+          "unit": "s",
+          "source": "ngs_passing"
+        },
+        {
+          "label": "Completion above expectation",
+          "value": -0.14,
+          "unit": "percentage points",
+          "source": "ngs_passing"
+        }
+      ],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "WAS",
+        "home_away": "home",
+        "date": "2026-11-12",
+        "kickoff_et": "20:15",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 5.96,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0039013",
+      "name": "Nolan Smith",
+      "position": "LB",
+      "team": "PHI",
+      "team_name": "Philadelphia Eagles",
+      "team_color": "#004C54",
+      "context": "Georgia · 2023 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "NYG",
+        "home_away": "home",
+        "team_score": 11,
+        "opp_score": 19,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 2
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 0
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 1
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 44,
+        "st": 2,
+        "team_offense": 70,
+        "team_defense": 67,
+        "team_st": 28
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "2820",
+          "quarter": "Q3",
+          "clock": "09:42",
+          "description": "(9:42) 19-J.Winston sacked at NYG 19 for -6 yards (3-N.Smith).",
+          "epa": -1.65,
+          "side": "defense",
+          "impact": "Sack",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        },
+        {
+          "play_id": "2157",
+          "quarter": "Q2",
+          "clock": "01:57",
+          "description": "(1:57) (Shotgun) 18-J.McCarthy pass short right to 1-M.Nabers to NYG 44 for 3 yards (3-N.Smith).",
+          "epa": -0.16,
+          "side": "defense",
+          "impact": null,
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "2157",
+          "quarter": "Q2",
+          "clock": "01:57",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 59,
+          "yards_gained": 3,
+          "air_yards": 3,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.779,
+          "qb_epa": -0.161,
+          "epa": -0.16,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(1:57) (Shotgun) 18-J.McCarthy pass short right to 1-M.Nabers to NYG 44 for 3 yards (3-N.Smith).",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": "M.Nabers"
+        },
+        {
+          "play_id": "2820",
+          "quarter": "Q3",
+          "clock": "09:42",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 9,
+          "yardline_100": 75,
+          "yards_gained": -6,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.648,
+          "epa": -1.65,
+          "side": "defense",
+          "impact": "Sack",
+          "roles": [
+            "sack",
+            "qb_hit_1",
+            "tackle_for_loss_1",
+            "solo_tackle_1"
+          ],
+          "description": "(9:42) 19-J.Winston sacked at NYG 19 for -6 yards (3-N.Smith).",
+          "passer_name": "J.Winston",
+          "rusher_name": null,
+          "receiver_name": null
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PHI",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "bye",
+        "week": 11,
+        "opponent": "PIT",
+        "home_away": "home",
+        "date": "2026-11-22",
+        "kickoff_et": "16:25",
+        "venue": "Lincoln Financial Field",
+        "bye_week": 10,
+        "team": "PHI",
+        "team_name": "Philadelphia Eagles",
+        "team_color": "#004C54"
+      },
+      "score": 5.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0036996",
+      "name": "Greg Newsome II",
+      "position": "CB",
+      "team": "NYG",
+      "team_name": "New York Giants",
+      "team_color": "#0B2265",
+      "context": "Northwestern · 2021 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "PHI",
+        "home_away": "away",
+        "team_score": 19,
+        "opp_score": 11,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 6
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 0
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 1
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 69,
+        "st": 2,
+        "team_offense": 67,
+        "team_defense": 70,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "2743",
+          "quarter": "Q3",
+          "clock": "10:35",
+          "description": "(10:35) (Shotgun) 14-J.Milton pass incomplete deep left to 80-D.Cooper (20-G.Newsome).",
+          "epa": -1.35,
+          "side": "defense",
+          "impact": "Pass defended",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "3195",
+          "quarter": "Q3",
+          "clock": "02:20",
+          "description": "(2:20) 26-S.Barkley left guard to PHI 23 for 2 yards (20-G.Newsome).",
+          "epa": -0.48,
+          "side": "defense",
+          "impact": null,
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants"
+        },
+        {
+          "play_id": "346",
+          "quarter": "Q1",
+          "clock": "10:26",
+          "description": "(10:26) 26-S.Barkley left guard to PHI 15 for 3 yards (20-G.Newsome).",
+          "epa": -0.42,
+          "side": "defense",
+          "impact": null,
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "346",
+          "quarter": "Q1",
+          "clock": "10:26",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 15,
+          "yardline_100": 88,
+          "yards_gained": 3,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.418,
+          "epa": -0.42,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(10:26) 26-S.Barkley left guard to PHI 15 for 3 yards (20-G.Newsome).",
+          "passer_name": null,
+          "rusher_name": "S.Barkley",
+          "receiver_name": null
+        },
+        {
+          "play_id": "1574",
+          "quarter": "Q2",
+          "clock": "10:14",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 9,
+          "yardline_100": 88,
+          "yards_gained": 17,
+          "air_yards": 12,
+          "yards_after_catch": 5,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.63,
+          "qb_epa": 1.664,
+          "epa": 1.66,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(10:14) (Shotgun) 14-J.Milton pass short left to 9-M.Lemon to PHI 29 for 17 yards (20-G.Newsome).",
+          "passer_name": "J.Milton",
+          "rusher_name": null,
+          "receiver_name": "M.Lemon"
+        },
+        {
+          "play_id": "1916",
+          "quarter": "Q2",
+          "clock": "05:21",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 82,
+          "yards_gained": 1,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.406,
+          "epa": -0.41,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(5:21) 74-F.Johnson reported in as eligible. 14-J.Milton scrambles left end pushed ob at PHI 19 for 1 yard (20-G.Newsome).",
+          "passer_name": null,
+          "rusher_name": "J.Milton",
+          "receiver_name": null
+        },
+        {
+          "play_id": "2743",
+          "quarter": "Q3",
+          "clock": "10:35",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 10,
+          "yardline_100": 78,
+          "yards_gained": 0,
+          "air_yards": 24,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.375,
+          "qb_epa": -1.351,
+          "epa": -1.35,
+          "side": "defense",
+          "impact": "Pass defended",
+          "roles": [
+            "pass_defense_1"
+          ],
+          "description": "(10:35) (Shotgun) 14-J.Milton pass incomplete deep left to 80-D.Cooper (20-G.Newsome).",
+          "passer_name": "J.Milton",
+          "rusher_name": null,
+          "receiver_name": "D.Cooper"
+        },
+        {
+          "play_id": "3195",
+          "quarter": "Q3",
+          "clock": "02:20",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 79,
+          "yards_gained": 2,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.476,
+          "epa": -0.48,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(2:20) 26-S.Barkley left guard to PHI 23 for 2 yards (20-G.Newsome).",
+          "passer_name": null,
+          "rusher_name": "S.Barkley",
+          "receiver_name": null
+        },
+        {
+          "play_id": "4136",
+          "quarter": "Q4",
+          "clock": "03:12",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 7,
+          "yardline_100": 46,
+          "yards_gained": 10,
+          "air_yards": 10,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.569,
+          "qb_epa": 1.414,
+          "epa": 1.41,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(3:12) (Shotgun) 14-J.Milton pass short right to 9-M.Lemon to NYG 36 for 10 yards (20-G.Newsome).",
+          "passer_name": "J.Milton",
+          "rusher_name": null,
+          "receiver_name": "M.Lemon"
+        },
+        {
+          "play_id": "4387",
+          "quarter": "Q4",
+          "clock": "01:32",
+          "offense": "PHI",
+          "defense": "NYG",
+          "offense_name": "Philadelphia Eagles",
+          "defense_name": "New York Giants",
+          "play_type": "pass",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 95,
+          "yards_gained": 16,
+          "air_yards": 16,
+          "yards_after_catch": 0,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.593,
+          "qb_epa": 0.218,
+          "epa": 0.22,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(1:32) (Shotgun) 14-J.Milton pass deep left to 0-M.Brown pushed ob at PHI 21 for 16 yards (20-G.Newsome). The Replay Official reviewed the runner was out of bounds ruling, and the play was REVERSED. (Shotgun) 14-J.Milton pass deep left to 0-M.Brown to PHI 21 for 16 yards (20-G.Newsome). 10-second runoff.",
+          "passer_name": "J.Milton",
+          "rusher_name": null,
+          "receiver_name": "M.Brown"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "WAS",
+        "home_away": "home",
+        "date": "2026-11-12",
+        "kickoff_et": "20:15",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 4.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0038549",
+      "name": "DJ Turner II",
+      "position": "CB",
+      "team": "CIN",
+      "team_name": "Cincinnati Bengals",
+      "team_color": "#FB4F14",
+      "context": "Michigan · 2023 draft, round 2",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_CIN_ATL",
+        "opponent": "ATL",
+        "home_away": "away",
+        "team_score": 34,
+        "opp_score": 17,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 3
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 2
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 60,
+        "st": 0,
+        "team_offense": 57,
+        "team_defense": 62,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "3112",
+          "quarter": "Q4",
+          "clock": "15:00",
+          "description": "(15:00) 7-B.Robinson left end to CIN 32 for 7 yards (6-B.Cook; 0-D.Turner).",
+          "epa": 0.48,
+          "side": "defense",
+          "impact": null,
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals"
+        },
+        {
+          "play_id": "1935",
+          "quarter": "Q2",
+          "clock": "01:15",
+          "description": "(1:15) (Shotgun) 9-M.Penix pass short left to 5-D.London to ATL 46 for 9 yards (0-D.Turner).",
+          "epa": 0.61,
+          "side": "defense",
+          "impact": null,
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals"
+        },
+        {
+          "play_id": "535",
+          "quarter": "Q1",
+          "clock": "08:33",
+          "description": "(8:33) (Shotgun) 9-M.Penix pass short middle to 5-D.London to CIN 45 for 15 yards (0-D.Turner).",
+          "epa": 1.61,
+          "side": "defense",
+          "impact": null,
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "535",
+          "quarter": "Q1",
+          "clock": "08:33",
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 60,
+          "yards_gained": 15,
+          "air_yards": 12,
+          "yards_after_catch": 3,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.744,
+          "qb_epa": 1.612,
+          "epa": 1.61,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(8:33) (Shotgun) 9-M.Penix pass short middle to 5-D.London to CIN 45 for 15 yards (0-D.Turner).",
+          "passer_name": "M.Penix",
+          "rusher_name": null,
+          "receiver_name": "D.London"
+        },
+        {
+          "play_id": "639",
+          "quarter": "Q1",
+          "clock": "07:14",
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals",
+          "play_type": "run",
+          "down": 3,
+          "ydstogo": 5,
+          "yardline_100": 40,
+          "yards_gained": 23,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": 2.783,
+          "epa": 2.78,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(7:14) (Shotgun) 9-M.Penix scrambles left tackle to CIN 17 for 23 yards (0-D.Turner).",
+          "passer_name": null,
+          "rusher_name": "M.Penix",
+          "receiver_name": null
+        },
+        {
+          "play_id": "1935",
+          "quarter": "Q2",
+          "clock": "01:15",
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 14,
+          "yardline_100": 63,
+          "yards_gained": 9,
+          "air_yards": 7,
+          "yards_after_catch": 2,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.759,
+          "qb_epa": 0.612,
+          "epa": 0.61,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(1:15) (Shotgun) 9-M.Penix pass short left to 5-D.London to ATL 46 for 9 yards (0-D.Turner).",
+          "passer_name": "M.Penix",
+          "rusher_name": null,
+          "receiver_name": "D.London"
+        },
+        {
+          "play_id": "3082",
+          "quarter": "Q3",
+          "clock": "00:07",
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 9,
+          "yardline_100": 60,
+          "yards_gained": 21,
+          "air_yards": 5,
+          "yards_after_catch": 16,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.793,
+          "qb_epa": 2.01,
+          "epa": 2.01,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "assist_tackle_1"
+          ],
+          "description": "(:07) (Shotgun) 9-M.Penix pass short right to 5-D.London pushed ob at CIN 39 for 21 yards (0-D.Turner; 49-B.Carter).",
+          "passer_name": "M.Penix",
+          "rusher_name": null,
+          "receiver_name": "D.London"
+        },
+        {
+          "play_id": "3112",
+          "quarter": "Q4",
+          "clock": "15:00",
+          "offense": "ATL",
+          "defense": "CIN",
+          "offense_name": "Atlanta Falcons",
+          "defense_name": "Cincinnati Bengals",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 39,
+          "yards_gained": 7,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": 0.484,
+          "epa": 0.48,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "assist_tackle_2"
+          ],
+          "description": "(15:00) 7-B.Robinson left end to CIN 32 for 7 yards (6-B.Cook; 0-D.Turner).",
+          "passer_name": null,
+          "rusher_name": "B.Robinson",
+          "receiver_name": null
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "CIN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "PIT",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "20:20",
+        "venue": "Paycor Stadium",
+        "team": "CIN",
+        "team_name": "Cincinnati Bengals",
+        "team_color": "#FB4F14"
+      },
+      "score": 2.5,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0036282",
+      "name": "Grant Delpit",
+      "position": "SAF",
+      "team": "CLE",
+      "team_name": "Cleveland Browns",
+      "team_color": "#FF3C00",
+      "context": "LSU · 2020 draft, round 2",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_CLE_NO",
+        "opponent": "NO",
+        "home_away": "away",
+        "team_score": 22,
+        "opp_score": 23,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": 3
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": 1
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": 0
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 75,
+        "st": 6,
+        "team_offense": 73,
+        "team_defense": 75,
+        "team_st": 30
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "278",
+          "quarter": "Q1",
+          "clock": "10:04",
+          "description": "(10:04) (No Huddle, Shotgun) 6-T.Shough left end to CLE 15 for -3 yards (9-G.Delpit).",
+          "epa": -1.06,
+          "side": "defense",
+          "impact": "Tackle for loss",
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns"
+        },
+        {
+          "play_id": "2606",
+          "quarter": "Q3",
+          "clock": "04:06",
+          "description": "(4:06) 30-A.Estime left guard to CLE 7 for 4 yards (7-T.Campbell; 9-G.Delpit).",
+          "epa": -0.11,
+          "side": "defense",
+          "impact": null,
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns"
+        },
+        {
+          "play_id": "4565",
+          "quarter": "OT",
+          "clock": "07:34",
+          "description": "(7:34) (Shotgun) 6-T.Shough pass short middle to 14-D.Vele to CLE 30 for 9 yards (9-G.Delpit).",
+          "epa": 0.56,
+          "side": "defense",
+          "impact": null,
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "278",
+          "quarter": "Q1",
+          "clock": "10:04",
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 12,
+          "yards_gained": -3,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.064,
+          "epa": -1.06,
+          "side": "defense",
+          "impact": "Tackle for loss",
+          "roles": [
+            "tackle_for_loss_1",
+            "solo_tackle_1"
+          ],
+          "description": "(10:04) (No Huddle, Shotgun) 6-T.Shough left end to CLE 15 for -3 yards (9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": "T.Shough",
+          "receiver_name": null
+        },
+        {
+          "play_id": "2606",
+          "quarter": "Q3",
+          "clock": "04:06",
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 11,
+          "yards_gained": 4,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.108,
+          "epa": -0.11,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "assist_tackle_2"
+          ],
+          "description": "(4:06) 30-A.Estime left guard to CLE 7 for 4 yards (7-T.Campbell; 9-G.Delpit).",
+          "passer_name": null,
+          "rusher_name": "A.Estime",
+          "receiver_name": null
+        },
+        {
+          "play_id": "3254",
+          "quarter": "Q4",
+          "clock": "09:14",
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns",
+          "play_type": "pass",
+          "down": 3,
+          "ydstogo": 3,
+          "yardline_100": 51,
+          "yards_gained": 5,
+          "air_yards": 3,
+          "yards_after_catch": 2,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.724,
+          "qb_epa": 1.11,
+          "epa": 1.11,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(9:14) (Shotgun) 6-T.Shough pass short right to 0-J.Tyson ran ob at CLE 46 for 5 yards (9-G.Delpit).",
+          "passer_name": "T.Shough",
+          "rusher_name": null,
+          "receiver_name": "J.Tyson"
+        },
+        {
+          "play_id": "4565",
+          "quarter": "OT",
+          "clock": "07:34",
+          "offense": "NO",
+          "defense": "CLE",
+          "offense_name": "New Orleans Saints",
+          "defense_name": "Cleveland Browns",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 39,
+          "yards_gained": 9,
+          "air_yards": 7,
+          "yards_after_catch": 2,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.787,
+          "qb_epa": 0.563,
+          "epa": 0.56,
+          "side": "defense",
+          "impact": null,
+          "roles": [
+            "solo_tackle_1"
+          ],
+          "description": "(7:34) (Shotgun) 6-T.Shough pass short middle to 14-D.Vele to CLE 30 for 9 yards (9-G.Delpit).",
+          "passer_name": "T.Shough",
+          "rusher_name": null,
+          "receiver_name": "D.Vele"
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "CLE",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "HOU",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Huntington Bank Field",
+        "team": "CLE",
+        "team_name": "Cleveland Browns",
+        "team_color": "#FF3C00"
+      },
+      "score": 2.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0041096",
+      "name": "Kaytron Allen",
+      "position": "RB",
+      "team": "MIA",
+      "team_name": "Miami Dolphins",
+      "team_color": "#008E97",
+      "context": "Penn State · 2026 draft, round 6",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_DET_MIA",
+        "opponent": "DET",
+        "home_away": "home",
+        "team_score": 9,
+        "opp_score": 19,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "rushing_yards",
+          "label": "rush yards",
+          "value": -1
+        },
+        {
+          "key": "carries",
+          "label": "carries",
+          "value": 1
+        },
+        {
+          "key": "rushing_tds",
+          "label": "rush TD",
+          "value": 0
+        },
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": 46
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 6,
+        "defense": 0,
+        "st": 9,
+        "team_offense": 57,
+        "team_defense": 59,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": 1,
+        "team_targets": 21,
+        "air_yards": 12,
+        "team_air_yards": 242
+      },
+      "key_plays": [
+        {
+          "play_id": "3081",
+          "quarter": "Q4",
+          "clock": "14:55",
+          "description": "(14:55) (Punt formation) 48-B.Pinion pass short middle to 30-K.Allen to DET 18 for 46 yards (35-J.Bachie; 17-T.Martin).",
+          "epa": 5.33,
+          "side": "offense",
+          "impact": null,
+          "offense": "MIA",
+          "defense": "DET",
+          "offense_name": "Miami Dolphins",
+          "defense_name": "Detroit Lions"
+        },
+        {
+          "play_id": "2097",
+          "quarter": "Q3",
+          "clock": "14:10",
+          "description": "(14:10) 30-K.Allen right end to MIA 35 for -1 yards (55-D.Barnes).",
+          "epa": -0.93,
+          "side": "offense",
+          "impact": null,
+          "offense": "MIA",
+          "defense": "DET",
+          "offense_name": "Miami Dolphins",
+          "defense_name": "Detroit Lions"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "2097",
+          "quarter": "Q3",
+          "clock": "14:10",
+          "offense": "MIA",
+          "defense": "DET",
+          "offense_name": "Miami Dolphins",
+          "defense_name": "Detroit Lions",
+          "play_type": "run",
+          "down": 1,
+          "ydstogo": 10,
+          "yardline_100": 64,
+          "yards_gained": -1,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 0,
+          "rush_attempt": 1,
+          "complete_pass": 0,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 0,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -0.929,
+          "epa": -0.93,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "rusher"
+          ],
+          "description": "(14:10) 30-K.Allen right end to MIA 35 for -1 yards (55-D.Barnes).",
+          "passer_name": null,
+          "rusher_name": "K.Allen",
+          "receiver_name": null
+        },
+        {
+          "play_id": "3081",
+          "quarter": "Q4",
+          "clock": "14:55",
+          "offense": "MIA",
+          "defense": "DET",
+          "offense_name": "Miami Dolphins",
+          "defense_name": "Detroit Lions",
+          "play_type": "pass",
+          "down": 4,
+          "ydstogo": 3,
+          "yardline_100": 64,
+          "yards_gained": 46,
+          "air_yards": 12,
+          "yards_after_catch": 34,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 1,
+          "sack": 0,
+          "interception": 0,
+          "fumble": 0,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": 0.655,
+          "qb_epa": 5.328,
+          "epa": 5.33,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "receiver"
+          ],
+          "description": "(14:55) (Punt formation) 48-B.Pinion pass short middle to 30-K.Allen to DET 18 for 46 yards (35-J.Bachie; 17-T.Martin).",
+          "passer_name": "B.Pinion",
+          "rusher_name": null,
+          "receiver_name": "K.Allen"
+        }
+      ],
+      "next_gen": [],
+      "charting": {
+        "targets": {
+          "charted": 1,
+          "catchable": 0,
+          "contested": 0,
+          "contested_catches": 0,
+          "drops": 0
+        },
+        "coverage": null,
+        "pass_rush": null,
+        "tackling": null,
+        "rushing": null,
+        "broken_tackles": null
+      },
+      "injury_report": {
+        "designation": "Questionable",
+        "primary_injury": "Quadricep"
+      },
+      "current": {
+        "team": "MIA",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "IND",
+        "home_away": "away",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Lucas Oil Stadium",
+        "team": "MIA",
+        "team_name": "Miami Dolphins",
+        "team_color": "#008E97"
+      },
+      "score": 1.8,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
+    },
+    {
+      "id": "00-0040007",
+      "name": "Tyler Booker",
+      "position": "G",
+      "team": "DAL",
+      "team_name": "Dallas Cowboys",
+      "team_color": "#002244",
+      "context": "Alabama · 2025 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_DAL_IND",
+        "opponent": "IND",
+        "home_away": "away",
+        "team_score": 27,
+        "opp_score": 23,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 79
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 6
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 79,
+        "defense": 0,
+        "st": 6,
+        "team_offense": 79,
+        "team_defense": 64,
+        "team_st": 28
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "DAL",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "SF",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "16:25",
+        "venue": "AT&T Stadium",
+        "team": "DAL",
+        "team_name": "Dallas Cowboys",
+        "team_color": "#002244"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0036408",
+      "name": "Cesar Ruiz",
+      "position": "G",
+      "team": "NO",
+      "team_name": "New Orleans Saints",
+      "team_color": "#D3BC8D",
+      "context": "Michigan · 2020 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_CLE_NO",
+        "opponent": "CLE",
+        "home_away": "home",
+        "team_score": 23,
+        "opp_score": 22,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 72
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 6
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 72,
+        "defense": 0,
+        "st": 6,
+        "team_offense": 75,
+        "team_defense": 73,
+        "team_st": 28
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NO",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "CAR",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Caesars Superdome",
+        "team": "NO",
+        "team_name": "New Orleans Saints",
+        "team_color": "#D3BC8D"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0041505",
+      "name": "Francis Mauigoa",
+      "position": "OT",
+      "team": "NYG",
+      "team_name": "New York Giants",
+      "team_color": "#0B2265",
+      "context": "Miami · 2026 draft, round 1",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "PHI",
+        "home_away": "away",
+        "team_score": 19,
+        "opp_score": 11,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 67
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 5
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 67,
+        "defense": 0,
+        "st": 5,
+        "team_offense": 67,
+        "team_defense": 70,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [
+        {
+          "play_id": "1459",
+          "quarter": "Q2",
+          "clock": "12:26",
+          "description": "(12:26) 18-J.McCarthy sacked at NYG 42 for -8 yards (98-J.Carter). FUMBLES (98-J.Carter), recovered by NYG-65-F.Mauigoa at NYG 47.",
+          "epa": -1.26,
+          "side": "offense",
+          "impact": null,
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles"
+        }
+      ],
+      "plays": [
+        {
+          "play_id": "1459",
+          "quarter": "Q2",
+          "clock": "12:26",
+          "offense": "NYG",
+          "defense": "PHI",
+          "offense_name": "New York Giants",
+          "defense_name": "Philadelphia Eagles",
+          "play_type": "pass",
+          "down": 2,
+          "ydstogo": 10,
+          "yardline_100": 50,
+          "yards_gained": -3,
+          "air_yards": null,
+          "yards_after_catch": null,
+          "goal_to_go": 0,
+          "pass_attempt": 1,
+          "rush_attempt": 0,
+          "complete_pass": 0,
+          "sack": 1,
+          "interception": 0,
+          "fumble": 1,
+          "penalty": 0,
+          "qb_kneel": 0,
+          "qb_spike": 0,
+          "two_point_attempt": 0,
+          "qb_dropback": 1,
+          "lateral": 0,
+          "cp": null,
+          "qb_epa": -1.256,
+          "epa": -1.26,
+          "side": "offense",
+          "impact": null,
+          "roles": [
+            "fumble_recovery_1"
+          ],
+          "description": "(12:26) 18-J.McCarthy sacked at NYG 42 for -8 yards (98-J.Carter). FUMBLES (98-J.Carter), recovered by NYG-65-F.Mauigoa at NYG 47.",
+          "passer_name": "J.McCarthy",
+          "rusher_name": null,
+          "receiver_name": null
+        }
+      ],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NYG",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "WAS",
+        "home_away": "home",
+        "date": "2026-11-12",
+        "kickoff_et": "20:15",
+        "venue": "MetLife Stadium",
+        "team": "NYG",
+        "team_name": "New York Giants",
+        "team_color": "#0B2265"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
+    },
+    {
+      "id": "00-0036985",
+      "name": "Robert Hainsey",
+      "position": "C",
+      "team": "JAX",
+      "team_name": "Jacksonville Jaguars",
+      "team_color": "#006778",
+      "context": "Notre Dame · 2021 draft, round 3",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_JAX_BAL",
+        "opponent": "BAL",
+        "home_away": "away",
+        "team_score": 33,
+        "opp_score": 10,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 56
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 56,
+        "defense": 0,
+        "st": 0,
+        "team_offense": 56,
+        "team_defense": 46,
+        "team_st": 21
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "JAX",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "TEN",
+        "home_away": "away",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Nissan Stadium",
+        "team": "JAX",
+        "team_name": "Jacksonville Jaguars",
+        "team_color": "#006778"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0035258",
+      "name": "Hjalte Froholdt",
+      "position": "C",
+      "team": "ARI",
+      "team_name": "Arizona Cardinals",
+      "team_color": "#97233F",
+      "context": "Arkansas · 2019 draft, round 4",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_ARI_SEA",
+        "opponent": "SEA",
+        "home_away": "away",
+        "team_score": 3,
+        "opp_score": 17,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 53
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 0
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 53,
+        "defense": 0,
+        "st": 0,
+        "team_offense": 53,
+        "team_defense": 67,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": 0,
+        "team_targets": null,
+        "air_yards": 0,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "ARI",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "LA",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "16:05",
+        "venue": "State Farm Stadium",
+        "team": "ARI",
+        "team_name": "Arizona Cardinals",
+        "team_color": "#97233F"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0036941",
+      "name": "Andre Cisco",
+      "position": "SAF",
+      "team": "NYJ",
+      "team_name": "New York Jets",
+      "team_color": "#003F2D",
+      "context": "Syracuse · 2021 draft, round 3",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_NYJ_KC",
+        "opponent": "KC",
+        "home_away": "away",
+        "team_score": 12,
+        "opp_score": 35,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 0,
+        "st": 17,
+        "team_offense": 63,
+        "team_defense": 66,
+        "team_st": 24
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "DET",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": true,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "NE",
+        "home_away": "neutral",
+        "date": "2026-11-15",
+        "kickoff_et": "09:30",
+        "venue": "FC Bayern Munich Stadium",
+        "team": "DET",
+        "team_name": "Detroit Lions",
+        "team_color": "#0076B6"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": {
+        "kind": "moved_after_game",
+        "from": "NYJ",
+        "to": "DET",
+        "from_name": "New York Jets",
+        "to_name": "Detroit Lions",
+        "from_color": "#003F2D",
+        "to_color": "#0076B6",
+        "status": null,
+        "last_week_with_old_team": 9,
+        "last_game_date": "2026-11-08"
+      }
+    },
+    {
+      "id": "00-0038118",
+      "name": "Daniel Faalele",
+      "position": "G",
+      "team": "JAX",
+      "team_name": "Jacksonville Jaguars",
+      "team_color": "#006778",
+      "context": "Minnesota · 2022 draft, round 4",
+      "availability": {
+        "label": "Played",
+        "evidence": "Positive snap count"
+      },
+      "game": {
+        "game_id": "2026_09_JAX_BAL",
+        "opponent": "BAL",
+        "home_away": "away",
+        "team_score": 33,
+        "opp_score": 10,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": 0
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": 7
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": 0,
+        "defense": 0,
+        "st": 7,
+        "team_offense": 56,
+        "team_defense": 46,
+        "team_st": 21
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "JAX",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "TEN",
+        "home_away": "away",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Nissan Stadium",
+        "team": "JAX",
+        "team_name": "Jacksonville Jaguars",
+        "team_color": "#006778"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0041079",
+      "name": "DeMonte Capehart",
+      "position": "DT",
+      "team": "TB",
+      "team_name": "Tampa Bay Buccaneers",
+      "team_color": "#A71930",
+      "context": "Clemson · 2026 draft, round 5",
+      "availability": {
+        "label": "Inactive for the game",
+        "evidence": "Weekly roster status: inactive"
+      },
+      "game": {
+        "game_id": "2026_09_TB_CHI",
+        "opponent": "CHI",
+        "home_away": "away",
+        "team_score": 24,
+        "opp_score": 27,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": 68,
+        "team_defense": 61,
+        "team_st": 20
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TB",
+        "roster_status": "INA",
+        "roster_label": "Inactive"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "bye",
+        "week": 11,
+        "opponent": "DET",
+        "home_away": "away",
+        "date": "2026-11-22",
+        "kickoff_et": "13:00",
+        "venue": "Ford Field",
+        "bye_week": 10,
+        "team": "TB",
+        "team_name": "Tampa Bay Buccaneers",
+        "team_color": "#A71930"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
+    },
+    {
+      "id": "00-0040708",
+      "name": "Jihaad Campbell",
+      "position": "LB",
+      "team": "PHI",
+      "team_name": "Philadelphia Eagles",
+      "team_color": "#004C54",
+      "context": "Alabama · 2025 draft, round 1",
+      "availability": {
+        "label": "Inactive for the game",
+        "evidence": "Weekly roster status: inactive"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "NYG",
+        "home_away": "home",
+        "team_score": 11,
+        "opp_score": 19,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": 70,
+        "team_defense": 67,
+        "team_st": 28
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": {
+        "designation": "Out",
+        "primary_injury": "Hamstring"
+      },
+      "current": {
+        "team": "PHI",
+        "roster_status": "INA",
+        "roster_label": "Inactive"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "bye",
+        "week": 11,
+        "opponent": "PIT",
+        "home_away": "home",
+        "date": "2026-11-22",
+        "kickoff_et": "16:25",
+        "venue": "Lincoln Financial Field",
+        "bye_week": 10,
+        "team": "PHI",
+        "team_name": "Philadelphia Eagles",
+        "team_color": "#004C54"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0040371",
+      "name": "Eric Gregory",
+      "position": "DT",
+      "team": "NE",
+      "team_name": "New England Patriots",
+      "team_color": "#002244",
+      "context": "Arkansas",
+      "availability": {
+        "label": "Practice squad",
+        "evidence": "Weekly roster status: practice squad"
+      },
+      "game": {
+        "game_id": "2026_09_GB_NE",
+        "opponent": "GB",
+        "home_away": "home",
+        "team_score": 27,
+        "opp_score": 45,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": 63,
+        "team_defense": 61,
+        "team_st": 30
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "NE",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "DET",
+        "home_away": "neutral",
+        "date": "2026-11-15",
+        "kickoff_et": "09:30",
+        "venue": "FC Bayern Munich Stadium",
+        "team": "NE",
+        "team_name": "New England Patriots",
+        "team_color": "#002244"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0037612",
+      "name": "Evan Neal",
+      "position": "G",
+      "team": "PHI",
+      "team_name": "Philadelphia Eagles",
+      "team_color": "#004C54",
+      "context": "Alabama · 2022 draft, round 1",
+      "availability": {
+        "label": "Practice squad",
+        "evidence": "Weekly roster status: practice squad"
+      },
+      "game": {
+        "game_id": "2026_09_NYG_PHI",
+        "opponent": "NYG",
+        "home_away": "home",
+        "team_score": 11,
+        "opp_score": 19,
+        "result": "L"
+      },
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": null
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": 70,
+        "team_defense": 67,
+        "team_st": 28
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PHI",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "bye",
+        "week": 11,
+        "opponent": "PIT",
+        "home_away": "home",
+        "date": "2026-11-22",
+        "kickoff_et": "16:25",
+        "venue": "Lincoln Financial Field",
+        "bye_week": 10,
+        "team": "PHI",
+        "team_name": "Philadelphia Eagles",
+        "team_color": "#004C54"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0040016",
+      "name": "Warren Brinson",
+      "position": "DT",
+      "team": "GB",
+      "team_name": "Green Bay Packers",
+      "team_color": "#203731",
+      "context": "Georgia · 2025 draft, round 6",
+      "availability": {
+        "label": "Reserve list",
+        "evidence": "Reserve list; no reason is inferred"
+      },
+      "game": {
+        "game_id": "2026_09_GB_NE",
+        "opponent": "NE",
+        "home_away": "away",
+        "team_score": 45,
+        "opp_score": 27,
+        "result": "W"
+      },
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": 66,
+        "team_defense": 61,
+        "team_st": 25
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "GB",
+        "roster_status": "RES",
+        "roster_label": "Reserve list"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "MIN",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Lambeau Field",
+        "team": "GB",
+        "team_name": "Green Bay Packers",
+        "team_color": "#203731"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0041438",
+      "name": "Carnell Tate",
+      "position": "WR",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Ohio State · 2026 draft, round 1",
+      "availability": {
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": null
+        },
+        {
+          "key": "receptions",
+          "label": "catches",
+          "value": null
+        },
+        {
+          "key": "targets",
+          "label": "targets",
+          "value": null
+        },
+        {
+          "key": "receiving_tds",
+          "label": "TD",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "JAX",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Nissan Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
+    },
+    {
+      "id": "00-0041393",
+      "name": "Daylen Everette",
+      "position": "CB",
+      "team": "PIT",
+      "team_name": "Pittsburgh Steelers",
+      "team_color": "#000000",
+      "context": "Georgia · 2026 draft, round 3",
+      "availability": {
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "PIT",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "CIN",
+        "home_away": "away",
+        "date": "2026-11-15",
+        "kickoff_et": "20:20",
+        "venue": "Paycor Stadium",
+        "team": "PIT",
+        "team_name": "Pittsburgh Steelers",
+        "team_color": "#000000"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/11-schools-have-multiple-former-high-school-football-players-taken-in-2026-nfl-draft/",
+      "move": null
+    },
+    {
+      "id": "00-0039731",
+      "name": "JC Latham",
+      "position": "OT",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Alabama · 2024 draft, round 1",
+      "availability": {
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "offense_snaps",
+          "label": "offensive snaps",
+          "value": null
+        },
+        {
+          "key": "st_snaps",
+          "label": "special-teams snaps",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "ACT",
+        "roster_label": "Active roster"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "JAX",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Nissan Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    },
+    {
+      "id": "00-0036345",
+      "name": "K.J. Osborn",
+      "position": "WR",
+      "team": "TEN",
+      "team_name": "Tennessee Titans",
+      "team_color": "#4495D2",
+      "context": "Miami; Buffalo · 2020 draft, round 5",
+      "availability": {
+        "label": "Bye week",
+        "evidence": "No game on this week's schedule for the current-roster team"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "receiving_yards",
+          "label": "receiving yards",
+          "value": null
+        },
+        {
+          "key": "receptions",
+          "label": "catches",
+          "value": null
+        },
+        {
+          "key": "targets",
+          "label": "targets",
+          "value": null
+        },
+        {
+          "key": "receiving_tds",
+          "label": "TD",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "TEN",
+        "roster_status": "DEV",
+        "roster_label": "Practice squad"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "game",
+        "week": 10,
+        "opponent": "JAX",
+        "home_away": "home",
+        "date": "2026-11-15",
+        "kickoff_et": "13:00",
+        "venue": "Nissan Stadium",
+        "team": "TEN",
+        "team_name": "Tennessee Titans",
+        "team_color": "#4495D2"
+      },
+      "score": 0.0,
+      "alumni_source": "https://highschoolfootballamerica.com/the-city-of-houston-leads-the-way-with-24-high-school-football-players-in-the-nfl/",
+      "move": null
+    },
+    {
+      "id": "00-0039367",
+      "name": "Xavier Thomas",
+      "position": "LB",
+      "team": "",
+      "team_name": "",
+      "team_color": "#123d35",
+      "context": "Clemson · 2024 draft, round 5",
+      "availability": {
+        "label": "Not on an NFL roster",
+        "evidence": "No weekly roster record; current roster shown separately"
+      },
+      "game": null,
+      "metrics": [
+        {
+          "key": "def_tackles_solo",
+          "label": "solo tackles",
+          "value": null
+        },
+        {
+          "key": "def_tackle_assists",
+          "label": "assists",
+          "value": null
+        },
+        {
+          "key": "def_sacks",
+          "label": "sacks",
+          "value": null
+        },
+        {
+          "key": "def_pass_defended",
+          "label": "passes defended",
+          "value": null
+        }
+      ],
+      "stats_withheld": false,
+      "snaps": {
+        "offense": null,
+        "defense": null,
+        "st": null,
+        "team_offense": null,
+        "team_defense": null,
+        "team_st": null
+      },
+      "usage": {
+        "targets": null,
+        "team_targets": null,
+        "air_yards": null,
+        "team_air_yards": null
+      },
+      "key_plays": [],
+      "plays": [],
+      "next_gen": [],
+      "charting": null,
+      "injury_report": null,
+      "current": {
+        "team": "",
+        "roster_status": "",
+        "roster_label": "Not found"
+      },
+      "team_changed": false,
+      "next_game": {
+        "kind": "unconfirmed",
+        "team": "",
+        "team_name": "",
+        "team_color": "#123d35"
+      },
+      "score": 0.0,
+      "alumni_source": "https://playfootball.nfl.com/news-events/news-and-features/texas-and-south-florida-high-schools-dominate-nfl-kickoff-weekend-rosters/",
+      "move": null
+    }
+  ],
+  "featured_ranking": [
+    "00-0039923",
+    "00-0039013",
+    "00-0036996",
+    "00-0038549",
+    "00-0036282",
+    "00-0041096",
+    "00-0040007",
+    "00-0036408",
+    "00-0041505",
+    "00-0036985",
+    "00-0035258",
+    "00-0036941",
+    "00-0038118"
+  ],
+  "counts": {
+    "followed": 23,
+    "played": 13,
+    "by_label": {
+      "Bye week": 4,
+      "Inactive for the game": 2,
+      "Not on an NFL roster": 1,
+      "Played": 13,
+      "Practice squad": 2,
+      "Reserve list": 1
+    }
+  },
+  "warnings": [
+    "pfr_def unavailable; related claims withheld (DataError)",
+    "pfr_rec unavailable; related claims withheld (DataError)",
+    "pfr_rush unavailable; related claims withheld (DataError)"
+  ],
+  "validation": {
+    "passed": true,
+    "checks": [
+      "Final scores match the play-by-play end-of-game record for all 15 games.",
+      "Players are matched by GSIS and PFR IDs, never by name.",
+      "Passing, rushing and receiving yards reconcile with play-by-play for 2 players.",
+      "Missing statistics are never treated as a DNP; absences come from weekly roster statuses and complete snap tables."
+    ]
+  },
+  "publication_ready": true
+}

@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0039923"
+headline = "J.J. McCarthy throws for 127 yards as Giants win 19-11 at Eagles"
+dek = "IMG Academy alumni were all over Giants-Eagles: Greg Newsome II made 6 solo tackles, and Nolan Smith sacked Jameis Winston for Philadelphia."
+lead = "McCarthy did his best work early, finding Likely for 27 yards and Nabers for 22 in the first quarter, then added 22 yards with his legs. When a second-quarter sack jarred the ball loose, fellow IMG Academy product Francis Mauigoa fell on it, keeping the ball in Giants hands. That kind of help mattered in a low-scoring game the defense closed out by holding Philadelphia to 11 points. Thirteen IMG Academy alumni played this week."
+alternates = ["Greg Newsome II makes 6 solo tackles as Giants beat Eagles 19-11", "Nolan Smith gets a sack, but Eagles fall 19-11 to the Giants"]
+
+# Roster move: Andre Cisco, Jets → Lions (moved after the game).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0036941"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
