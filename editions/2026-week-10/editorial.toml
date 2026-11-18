@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0039923"
+headline = "J.J. McCarthy throws for 293 yards as Giants fall 24-21 to Washington"
+dek = "IMG Academy alumni met across the line: DJ Turner II broke up a pass in Cincinnati's 38-18 win, and Daylen Everette had 2 solo tackles for Pittsburgh."
+lead = "J.J. McCarthy threw for 293 yards against Washington, and his 66-yard touchdown to Likely in the fourth quarter was the Giants' biggest play of the day. It still wasn't enough. An interception, plus a third-quarter fumble by Nabers after a short completion, cost New York chances in a 24-21 loss. Teammates Greg Newsome II, with three solo tackles, and Francis Mauigoa, at tackle, shared the afternoon with him. Thirteen IMG Academy alumni played this week."
+alternates = ["McCarthy's 66-yard TD pass not enough as Giants lose 24-21", "J.J. McCarthy hits a 66-yard score, but Washington edges Giants 24-21"]
+
+# Roster move: Andre Cisco, Jets → Lions (first week with the new team).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0036941"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"

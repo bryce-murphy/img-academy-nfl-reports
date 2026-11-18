@@ -1,0 +1,114 @@
+{
+  "current_rosters": {
+    "fetched_at": "2026-11-18T01:44:33.730618+00:00",
+    "rows": 3074,
+    "sha256": "4ccdf13dd7eb7423e9d023ff4948f272f92ca7e237497363fa176ed18fd7457a",
+    "updated_at": "2026-11-17T16:54:33Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2026.csv"
+  },
+  "ftn": {
+    "fetched_at": "2026-11-18T01:44:38.307040+00:00",
+    "rows": 25310,
+    "sha256": "236f7394ece0d71a3312a3a8be1b87aeb0fdd8c11e3d3bcb9637abd8f91efc09",
+    "updated_at": "2026-11-17T12:02:16Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.csv"
+  },
+  "injuries": {
+    "fetched_at": "2026-11-18T01:44:37.152072+00:00",
+    "rows": 3168,
+    "sha256": "8169fb6947f3e86b436fabd025df6211f77eca5f2a38c3d91d2412b568b58441",
+    "updated_at": "2026-11-17T16:50:46Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_2026.csv"
+  },
+  "ngs_passing": {
+    "fetched_at": "2026-11-18T01:44:37.640880+00:00",
+    "rows": 6273,
+    "sha256": "284ce9b70b4d669d0a82895d245628498bee6a405ad35270eac2ea5bcf1d616c",
+    "updated_at": "2026-11-17T16:36:14Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/nextgen_stats/ngs_passing.csv.gz"
+  },
+  "ngs_receiving": {
+    "fetched_at": "2026-11-18T01:44:37.826368+00:00",
+    "rows": 15544,
+    "sha256": "5e4ab7f59160dbc1e02535ba37a4d6295a5216f7a368c6bc9179ea2cb414d031",
+    "updated_at": "2026-11-17T16:36:32Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/nextgen_stats/ngs_receiving.csv.gz"
+  },
+  "ngs_rushing": {
+    "fetched_at": "2026-11-18T01:44:38.044941+00:00",
+    "rows": 6409,
+    "sha256": "c4040ad48c955b1805328f6036d7bc8131fd27900886cef9cb192a5223e4e223",
+    "updated_at": "2026-11-17T16:36:23Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/nextgen_stats/ngs_rushing.csv.gz"
+  },
+  "pbp": {
+    "fetched_at": "2026-11-18T01:44:35.177268+00:00",
+    "rows": 2424,
+    "sha256": "8de1574affe5771c1d9a0847db6d7f4d1a55956c10cd460f4eee1c64e74ec9a4",
+    "updated_at": "2026-11-17T20:00:09Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2026.csv.gz"
+  },
+  "pfr_def": {
+    "fetched_at": "2026-11-18T01:44:38.739504+00:00",
+    "rows": 3928,
+    "sha256": "5ad4ba047ea0096706cf1f448ebb737dde019e1d92c68ac1912631b08dfaade2",
+    "updated_at": "2026-11-16T12:03:32Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/pfr_advstats/advstats_week_def_2026.csv"
+  },
+  "pfr_rec": {
+    "fetched_at": "2026-11-18T01:44:38.886620+00:00",
+    "rows": 2180,
+    "sha256": "80caec51123f0627eebaafe5de36428b3b17bc59055bea32e633b8bb0f8f202a",
+    "updated_at": "2026-11-16T12:03:28Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/pfr_advstats/advstats_week_rec_2026.csv"
+  },
+  "pfr_rush": {
+    "fetched_at": "2026-11-18T01:44:39.025401+00:00",
+    "rows": 1093,
+    "sha256": "98c90cb56bb94f6b2db43d59901336bb4f5015f2472803d83a6ee8dc080cc586",
+    "updated_at": "2026-11-16T12:03:25Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/pfr_advstats/advstats_week_rush_2026.csv"
+  },
+  "players": {
+    "fetched_at": "2026-11-18T01:44:33.970607+00:00",
+    "rows": 24869,
+    "sha256": "07d69a7df6fe8ef7e0d104d3414ef145cd4354bd471a4235b05e30800021fe5d",
+    "updated_at": "2026-11-17T17:18:01Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/players/players.csv"
+  },
+  "rosters": {
+    "fetched_at": "2026-11-18T01:44:33.185121+00:00",
+    "rows": 26649,
+    "sha256": "6e222ed84d304ecf8ea92f02e52bf9ccf2451ebaf965e23a0ae44697f01e3636",
+    "updated_at": "2026-11-17T16:54:29Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/weekly_rosters/roster_weekly_2026.csv"
+  },
+  "schedule": {
+    "fetched_at": "2026-11-18T01:44:32.877931+00:00",
+    "rows": 7548,
+    "sha256": "aa84db0073b5ee6f2c0de800d8ecdad35e67e079dbf28474ca9f8d939188b779",
+    "updated_at": "2026-11-18T01:36:14Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/schedules/games.csv.gz"
+  },
+  "snaps": {
+    "fetched_at": "2026-11-18T01:44:36.837053+00:00",
+    "rows": 14004,
+    "sha256": "f8fa8e23e3c12ef29dacbfaf55d0ac3b6fe63ad3c1fd4557baa5e0765fc93d57",
+    "updated_at": "2026-11-17T12:01:31Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/snap_counts/snap_counts_2026.csv"
+  },
+  "stats": {
+    "fetched_at": "2026-11-18T01:44:34.644865+00:00",
+    "rows": 10446,
+    "sha256": "d8ec7281296fc9c1e396f7781714505ea8cfcd949e7240301e423af30c582ac9",
+    "updated_at": "2026-11-17T18:31:27Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2026.csv"
+  },
+  "teams": {
+    "fetched_at": "2026-11-18T01:44:37.393236+00:00",
+    "rows": 36,
+    "sha256": "4eab559fcf89cb4eaf61cb63a88abc47b01b6c9049187c59f3efe95888c3d048",
+    "updated_at": "2026-03-27T15:49:46Z",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/teams/teams_colors_logos.csv"
+  }
+}
