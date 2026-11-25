@@ -1,0 +1,17 @@
+schema = 1
+source = "claude"
+model = "claude-opus-5-5"
+featured_player_id = "00-0039923"
+headline = "J.J. McCarthy throws a TD as Giants beat Jaguars 23-18"
+dek = "IMG Academy alumni met on opposite sidelines twice: Nolan Smith had a sack in the Eagles' 19-16 win, and Daylen Everette broke up a pass for Pittsburgh."
+lead = "J.J. McCarthy threw for 173 yards and a touchdown and ran for 33 more as the Giants held off Jacksonville 23-18. His legs changed the game, most visibly on a 22-yard scramble in the second quarter. A third-quarter fumble gave the Jaguars life, but New York closed it out with Francis Mauigoa playing 70 offensive snaps up front, while Daniel Faalele lined up for Jacksonville. Across the league, 14 IMG Academy alumni played this week."
+alternates = ["Nolan Smith sacks Aaron Rodgers in Eagles' 19-16 win over Steelers", "Carnell Tate's 59-yard touchdown not enough in Titans' 51-30 loss"]
+
+# Roster move: Andre Cisco, Jets → Lions (first week with the new team).
+# To say why, uncomment the lines below and fill them in with a link from an allowed site (docs/OPERATIONS.md).
+# [[roster_moves]]
+# player_id = "00-0036941"
+# kind = ""                 # trade | waiver claim | signing
+# date = YYYY-MM-DD
+# details = ""              # optional, your words from the source
+# source = "https://"
